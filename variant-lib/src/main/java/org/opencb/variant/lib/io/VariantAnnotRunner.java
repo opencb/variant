@@ -10,6 +10,7 @@ import org.opencb.variant.lib.io.variant.writers.VariantVcfDataWriter;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,6 +24,9 @@ public class VariantAnnotRunner {
     private VariantDataReader vcfReader;
     private VariantDataWriter vcfWriter;
     private List<VcfAnnotator> annots;
+    private int batchSize = 1000;
+
+
 
 
     public VariantAnnotRunner() {
@@ -36,9 +40,43 @@ public class VariantAnnotRunner {
 
     }
 
+    public void runParallel(){
+
+        vcfReader.open();
+        vcfWriter.open();
+
+        vcfReader.pre();
+        vcfWriter.pre();
+
+
+        Data data = new Data();
+
+        ExecutorService threadPool = Executors.newFixedThreadPool(5);
+
+        threadPool.execute(new Consumer("1", data));
+        threadPool.execute(new Consumer("2", data));
+        threadPool.execute(new Consumer("3", data));
+        Future producerStatus = threadPool.submit(new Producer(data));
+        Future writer = threadPool.submit(new Writer(data));
+
+        try {
+            producerStatus.get();
+            writer.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        threadPool.shutdown();
+
+        vcfReader.post();
+        vcfWriter.post();
+
+        vcfReader.close();
+        vcfWriter.close();
+
+    }
+
     public void run() {
 
-        int batchSize = 1000;
         int cont = 1;
         List<VcfRecord> batch;
 
@@ -74,5 +112,148 @@ public class VariantAnnotRunner {
 
     public void annotations(List<VcfAnnotator> listAnnots) {
         this.annots = listAnnots;
+    }
+    private class Data{
+
+        private BlockingQueue<List<VcfRecord>> read;
+        private BlockingQueue<List<VcfRecord>> write;
+        private boolean continueProducing = true;
+
+        private Data() {
+            read = new ArrayBlockingQueue<>(10);
+            write = new ArrayBlockingQueue<>(10);
+        }
+
+        public void putRead(List<VcfRecord> batch){
+            try {
+                this.read.put(batch);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public List<VcfRecord> getRead(){
+            if(!continueProducing && read.size() == 0){
+                return null;
+            }
+            try {
+                return this.read.take();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        public void putWrite(List<VcfRecord> batch){
+            try {
+                this.write.put(batch);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public List<VcfRecord> getWrite(){
+            try {
+                return this.write.poll(1, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+
+
+
+    }
+    private class Producer implements Runnable{
+
+        private Data data;
+
+        private Producer(Data data) {
+            this.data = data;
+        }
+
+        @Override
+        public void run() {
+            List<VcfRecord> batch;
+
+            batch = vcfReader.read(batchSize);
+
+            System.out.println("START READER");
+            vcfWriter.writeVcfHeader(vcfReader.getHeader());
+            while(!batch.isEmpty()){
+                data.putRead(batch);
+                batch = vcfReader.read(batchSize);
+
+            }
+
+            data.continueProducing = false;
+
+            System.out.println("END READER");
+
+        }
+    }
+
+    private class Consumer implements  Runnable{
+
+        private Data data;
+        private String id;
+
+        private Consumer(String id, Data data) {
+            this.id = id;
+            this.data = data;
+        }
+
+        @Override
+        public void run() {
+
+
+            System.out.println("START CONSUMER");
+            List<VcfRecord> batch = data.getRead();
+
+            while(data.continueProducing ||  batch != null){
+
+                Annot.applyAnnotations(batch, annots);
+
+                data.putWrite(batch);
+
+                batch = data.getRead();
+            }
+
+            System.out.println("END CONSUMER");
+
+
+        }
+    }
+
+    private class Writer implements Runnable{
+
+        private Data data;
+
+        private Writer(Data data) {
+            this.data = data;
+        }
+
+        @Override
+        public void run() {
+
+
+            List<VcfRecord> batch = data.getWrite();
+
+            while( data.continueProducing || batch != null){
+
+                vcfWriter.writeBatch(batch);
+
+                batch.clear();
+                batch = data.getWrite();
+
+            }
+
+            System.out.println("Fin writer");
+
+
+
+
+        }
     }
 }

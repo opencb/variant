@@ -10,6 +10,7 @@ import org.opencb.variant.lib.io.VariantAnnotRunner;
 import org.opencb.variant.lib.io.VariantStatsRunner;
 import org.opencb.variant.lib.io.variant.annotators.VcfAnnotator;
 import org.opencb.variant.lib.io.variant.annotators.VcfControlAnnotator;
+import org.opencb.variant.lib.io.variant.annotators.VcfTestAnnotator;
 import org.opencb.variant.lib.io.variant.writers.VariantStatsFileDataWriter;
 
 import java.io.*;
@@ -111,6 +112,17 @@ public class VariantMain {
                 System.out.println("Under construction");
                 break;
 
+            case "test":
+                System.out.println("===== TEST =====");
+                List<VcfAnnotator> test = new ArrayList<>();
+                test.add(new VcfTestAnnotator());
+                var = new VariantAnnotRunner(commandLine.getOptionValue("vcf-file"), commandLine.getOptionValue("outdir") + "/" + "file_annot.vcf");
+                var.annotations(test);
+                var.run();
+
+
+                break;
+
             case "annot":
                 System.out.println("===== ANNOT =====");
 
@@ -193,7 +205,7 @@ public class VariantMain {
     }
 
     private static boolean checkCommand(String command) {
-        return command.equalsIgnoreCase("stats") || command.equalsIgnoreCase("filter") || command.equalsIgnoreCase("index") || command.equalsIgnoreCase("annot");
+        return command.equalsIgnoreCase("stats") || command.equalsIgnoreCase("filter") || command.equalsIgnoreCase("index") || command.equalsIgnoreCase("annot") || command.equalsIgnoreCase("test");
     }
 
     private static void parse(String[] args, boolean stopAtNoOption) {
