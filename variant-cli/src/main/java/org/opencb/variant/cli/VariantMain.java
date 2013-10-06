@@ -58,6 +58,7 @@ public class VariantMain {
         options.addOption(OptionFactory.createOption("control", "Control filename", false, true));
         options.addOption(OptionFactory.createOption("control-list", "Control filename list", false, true));
         options.addOption(OptionFactory.createOption("control-prefix", "Control prefix", false, true));
+        options.addOption(OptionFactory.createOption("threads", "Num threads", false, true));
 
 
     }
@@ -74,8 +75,15 @@ public class VariantMain {
 
         VariantStatsRunner vr;
         VariantAnnotRunner var;
+        int numThreads = 1;
+
+
 
         parse(args, false);
+
+        if(commandLine.hasOption("threads")){
+            numThreads = Integer.parseInt(commandLine.getOptionValue("threads"));
+        }
 
         switch (command) {
             case "index":
@@ -145,7 +153,7 @@ public class VariantMain {
                 listAnnots.add(control);
 
                 var.annotations(listAnnots);
-                var.run();
+                var.parallel(numThreads).run();
 
 
                 break;

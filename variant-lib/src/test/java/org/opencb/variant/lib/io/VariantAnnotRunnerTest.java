@@ -53,7 +53,7 @@ public class VariantAnnotRunnerTest {
         list.add(new VcfTestAnnotator());
 
         vr.annotations(list);
-        vr.runParallel();
+        vr.run();
 
     }
 

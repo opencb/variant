@@ -1,5 +1,6 @@
 package org.opencb.variant.lib.io;
 
+import java.io.IOException;
 import java.util.List;
 
 /**

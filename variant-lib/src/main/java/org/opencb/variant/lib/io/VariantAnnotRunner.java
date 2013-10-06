@@ -25,11 +25,13 @@ public class VariantAnnotRunner {
     private VariantDataWriter vcfWriter;
     private List<VcfAnnotator> annots;
     private int batchSize = 1000;
+    private int threads;
 
 
 
 
     public VariantAnnotRunner() {
+        this.threads = 2;
     }
 
     public VariantAnnotRunner(String vcfFileName, String vcfOutFilename) {
@@ -40,7 +42,12 @@ public class VariantAnnotRunner {
 
     }
 
-    public void runParallel(){
+    public VariantAnnotRunner parallel(int numThreads){
+        this.threads = numThreads;
+        return this;
+    }
+
+    public void run(){
 
         vcfReader.open();
         vcfWriter.open();
@@ -51,11 +58,13 @@ public class VariantAnnotRunner {
 
         Data data = new Data();
 
-        ExecutorService threadPool = Executors.newFixedThreadPool(5);
+        ExecutorService threadPool = Executors.newFixedThreadPool(2 + this.threads);
 
-        threadPool.execute(new Consumer("1", data));
-        threadPool.execute(new Consumer("2", data));
-        threadPool.execute(new Consumer("3", data));
+        for(int i = 0; i < this.threads; i++ ){
+
+            threadPool.execute(new Consumer( data));
+        }
+
         Future producerStatus = threadPool.submit(new Producer(data));
         Future writer = threadPool.submit(new Writer(data));
 
@@ -75,7 +84,7 @@ public class VariantAnnotRunner {
 
     }
 
-    public void run() {
+    /*public void run() {
 
         int cont = 1;
         List<VcfRecord> batch;
@@ -108,7 +117,7 @@ public class VariantAnnotRunner {
         vcfReader.close();
         vcfWriter.close();
 
-    }
+    }*/
 
     public void annotations(List<VcfAnnotator> listAnnots) {
         this.annots = listAnnots;
@@ -117,11 +126,13 @@ public class VariantAnnotRunner {
 
         private BlockingQueue<List<VcfRecord>> read;
         private BlockingQueue<List<VcfRecord>> write;
+        private int numConsumers;
         private boolean continueProducing = true;
 
         private Data() {
-            read = new ArrayBlockingQueue<>(10);
-            write = new ArrayBlockingQueue<>(10);
+            read = new ArrayBlockingQueue<>(100);
+            write = new ArrayBlockingQueue<>(100);
+            numConsumers = 0;
         }
 
         public void putRead(List<VcfRecord> batch){
@@ -161,6 +172,19 @@ public class VariantAnnotRunner {
             return null;
         }
 
+        public void incConsumer(){
+            this.numConsumers++;
+        }
+
+        private int getNumConsumers() {
+            return numConsumers;
+        }
+
+        public void decConsumer(){
+            this.numConsumers--;
+
+        }
+
 
 
 
@@ -197,11 +221,10 @@ public class VariantAnnotRunner {
     private class Consumer implements  Runnable{
 
         private Data data;
-        private String id;
 
-        private Consumer(String id, Data data) {
-            this.id = id;
+        private Consumer(Data data) {
             this.data = data;
+            this.data.incConsumer();
         }
 
         @Override
@@ -221,6 +244,7 @@ public class VariantAnnotRunner {
             }
 
             System.out.println("END CONSUMER");
+            this.data.decConsumer();
 
 
         }
@@ -240,7 +264,7 @@ public class VariantAnnotRunner {
 
             List<VcfRecord> batch = data.getWrite();
 
-            while( data.continueProducing || batch != null){
+            while( data.getNumConsumers() > 0 || batch != null){
 
                 vcfWriter.writeBatch(batch);
 
@@ -250,6 +274,7 @@ public class VariantAnnotRunner {
             }
 
             System.out.println("Fin writer");
+
 
 
 
