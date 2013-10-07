@@ -130,8 +130,8 @@ public class VariantAnnotRunner {
         private boolean continueProducing = true;
 
         private Data() {
-            read = new ArrayBlockingQueue<>(100);
-            write = new ArrayBlockingQueue<>(100);
+            read = new ArrayBlockingQueue<>(10);
+            write = new ArrayBlockingQueue<>(10);
             numConsumers = 0;
         }
 
@@ -165,12 +165,20 @@ public class VariantAnnotRunner {
 
         public List<VcfRecord> getWrite(){
             try {
-                return this.write.poll(1, TimeUnit.SECONDS);
+                return this.write.take();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             return null;
+        }public List<VcfRecord> getPollWrite(){
+            return this.write.poll();
         }
+
+        public int writeSize(){
+            return this.write.size();
+        }
+
+
 
         public void incConsumer(){
             this.numConsumers++;
@@ -183,6 +191,11 @@ public class VariantAnnotRunner {
         public void decConsumer(){
             this.numConsumers--;
 
+        }
+
+        public String toString(){
+
+            return read.size() + " - " + write.size();
         }
 
 
@@ -208,7 +221,6 @@ public class VariantAnnotRunner {
             while(!batch.isEmpty()){
                 data.putRead(batch);
                 batch = vcfReader.read(batchSize);
-
             }
 
             data.continueProducing = false;
@@ -262,18 +274,27 @@ public class VariantAnnotRunner {
         public void run() {
 
 
-            List<VcfRecord> batch = data.getWrite();
+            List<VcfRecord> batch;
 
-            while( data.getNumConsumers() > 0 || batch != null){
+            while( data.getNumConsumers() > 0){
+                batch = data.getWrite();
 
                 vcfWriter.writeBatch(batch);
 
                 batch.clear();
-                batch = data.getWrite();
 
             }
 
-            System.out.println("Fin writer");
+            if(data.writeSize() > 0){
+                batch = data.getPollWrite();
+                while(batch != null){
+                    vcfWriter.writeBatch(batch);
+
+                    batch.clear();
+                    batch = data.getPollWrite();
+                }
+            }
+            System.out.println("END WRITER");
 
 
 
