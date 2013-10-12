@@ -220,7 +220,7 @@ public class VariantStatsSqliteDataWriter implements VariantStatsDataWriter {
         try {
             String res = jsonObjectWriter.writeValueAsString(vi);
             PrintWriter out = new PrintWriter(jsonName);
-//            System.out.println(res);
+            System.out.println(res);
             out.println(res);
             out.close();
         } catch (JsonProcessingException | FileNotFoundException e) {
@@ -357,6 +357,8 @@ public class VariantStatsSqliteDataWriter implements VariantStatsDataWriter {
                 pstmt.setInt(4, s.getHomozygotesNumber());
 
                 pstmt.execute();
+
+                vi.addSampleStats(name, s.getMendelianErrors(), s.getMissingGenotypes(), s.getHomozygotesNumber());
 
             }
             con.commit();

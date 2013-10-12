@@ -31,13 +31,17 @@ VariantWidget.prototype = {
         this.statsName = this.dbName.substring(0, this.dbName.lastIndexOf('.')) + '.json';
 
         this.rendered = true;
+
     },
     draw: function () {
         var _this = this;
 
         /* main panel */
         this.panel = this._createPanel(this.targetId);
+        this.summaryPanel = this._createSummaryPanel();
 
+
+        this.variantPanel = this._createVariantPanel();
 
         this.optValues = Ext.create('Ext.data.Store', {
             fields: ['value', 'name'],
@@ -63,15 +67,16 @@ VariantWidget.prototype = {
         this.gridEffect = this._createEffectGrid();
         this.panelGV = this._createGenomeViewer();
 
-        this.panel.insert(0, this.form);
+        this.variantPanel.insert(0, this.form);
 
-        this.tabPanel = this._createTabPanel();
-        this.tabPanel.add(this.gridEffect);
-        this.tabPanel.add(this.panelGV);
+//        this.tabPanel = this._createTabPanel();
+//        this.tabPanel.add(this.gridEffect);
+//        this.tabPanel.add(this.panelGV);
 
         Ext.getCmp(this.id + 'rightpanel').add(this.grid);
         Ext.getCmp(this.id + 'rightpanel').add(this.tabPanel);
-        this.tabPanel.setActiveTab(0);
+        // this.tabPanel.setActiveTab(0);
+        this.variantPanel.add(this.grid);
 
         this.grid.getSelectionModel().on('selectionchange', function (sm, selectedRecord) {
 
@@ -134,7 +139,9 @@ VariantWidget.prototype = {
             }
         });
 
-        // Analysis info
+
+        this.panel.add(this.summaryPanel);
+
         _this._updateInfo();
 
 
@@ -154,7 +161,7 @@ VariantWidget.prototype = {
         var _this = this;
 
 
-        _this.form.setLoading(true);
+        _this.panel.setLoading(true);
 
         if (_this.sampleNames != null) {
 
@@ -224,6 +231,29 @@ VariantWidget.prototype = {
 
                 _this.grid.reconfigure(null, _this.columnsGrid);
 
+                var cts = [];
+                var ss = [];
+
+                for (var key in response.consequenceTypes) {
+                    cts.push({
+                        name: key,
+                        count: response.consequenceTypes[key]
+                    });
+                }
+
+
+                for (var key in response.sampleStats) {
+                    ss.push({
+                        sampleName: key,
+                        homozygotesNumber: response.sampleStats[key].homozygotesNumber,
+                        mendelianErrors: response.sampleStats[key].mendelianErrors,
+                        missingGenotypes: response.sampleStats[key].missingGenotypes
+                    });
+                }
+
+                _this.ctStore.loadData(cts);
+                _this.ssStore.loadData(ss);
+
                 var ctForm = Ext.getCmp("conseq_type_panel");
                 ctForm.removeAll();
                 ctForm.add(_this._createDynCombobox("conseq_type", "Consequence Type", response.consequenceTypes, "non_synonymous_codon"));
@@ -236,12 +266,12 @@ VariantWidget.prototype = {
                 samples.removeAll();
                 samples.add(fcItems);
 
-                _this.form.setLoading(false);
+                _this.panel.setLoading(false);
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log('WEB SERVICE ERROR: info');
-                _this.form.setLoading(false);
+                _this.panel.setLoading(false);
             }
         });
 
@@ -299,6 +329,7 @@ VariantWidget.prototype = {
         }
     },
     _createPanel: function (targetId) {
+        var _this = this;
         var panel = Ext.create('Ext.panel.Panel', {
             title: 'widget',
             width: '100%',
@@ -308,10 +339,28 @@ VariantWidget.prototype = {
             closable: true,
             cls: 'ocb-border-top-lightgrey',
             tbar: {items: [
-                {text: '<span style="color:red">Summary</span>', handler: function () {
+                {text: 'Summary', handler: function () {
                     //TODO
-                    alert("summary")
-                }}
+                    _this.panel.removeAll(false);
+                    _this.panel.add(_this.summaryPanel);
+                }
+                },
+                {text: 'Variants', handler: function () {
+                    //TODO
+                    _this.panel.removeAll(false);
+                    _this.panel.add(_this.variantPanel);
+                }
+                },
+                {text: 'Effect', handler: function () {
+                    //TODO
+                    alert("Under Construction");
+                }
+                },
+                {text: 'Genome Viewer', handler: function () {
+                    //TODO
+                    alert("Under Construction");
+                }
+                }
             ]},
             items: [
                 {
@@ -325,6 +374,176 @@ VariantWidget.prototype = {
         });
         targetId.add(panel);
         targetId.setActiveTab(panel);
+        return panel;
+    },
+    _createSummaryPanel: function () {
+
+        var _this = this;
+
+        _this.ctStore = Ext.create('Ext.data.Store', {
+            fields: ['name', 'count'],
+            autoload: false
+        });
+
+        _this.ssStore = Ext.create('Ext.data.Store', {
+            fields: ['sampleName', 'homozygotesNumber', 'mendelianErrors', 'missingGenotypes'],
+            data: [],
+            autoload: false
+        });
+
+        var store = Ext.create('Ext.data.JsonStore', {
+            fields: ['year', 'comedy', 'action', 'drama', 'thriller'],
+            data: [
+                {year: 2005, comedy: 34000000, action: 23890000, drama: 18450000, thriller: 20060000},
+                {year: 2006, comedy: 56703000, action: 38900000, drama: 12650000, thriller: 21000000},
+                {year: 2007, comedy: 42100000, action: 50410000, drama: 25780000, thriller: 23040000},
+                {year: 2008, comedy: 38910000, action: 56070000, drama: 24810000, thriller: 26940000}
+            ]
+        });
+
+        var chartCT = Ext.create('Ext.chart.Chart', {
+            xtype: 'chart',
+            width: 700,
+            height: 500,
+            store: _this.ctStore,
+            animate: true,
+            shadow: true,
+            legend: {
+                position: 'right'
+            },
+            theme: 'Base:gradients',
+            insetPadding: 60,
+            series: [
+                {
+                    type: 'pie',
+                    field: 'count',
+                    showInLegend: true,
+                    tips: {
+                        trackMouse: true,
+                        width: 200,
+                        height: 28,
+                        renderer: function (storeItem, item) {
+                            //calculate percentage.
+                            var total = 0;
+                            _this.ctStore.each(function (rec) {
+                                total += rec.get('count');
+                            });
+                            var name = Utils.formatText(storeItem.get('name'), "_");
+                            this.setTitle(name + ': ' + Math.round(storeItem.get('count') / total * 100) + '%');
+                        }
+                    },
+                    highlight: {
+                        segment: {
+                            margin: 20
+                        }
+                    },
+
+                    label: {
+                        field: 'name',
+                        display: 'rotate',
+                        contrast: true,
+                        font: '10px Arial'
+                    }
+
+                }
+            ]
+        });
+        var chartSS = Ext.create('Ext.chart.Chart', {
+            xtype: 'chart',
+            width: 700,
+            height: 500,
+            animate: true,
+            shadow: true,
+            store: _this.ssStore,
+            legend: {
+                position: 'right'
+            },
+            axes: [
+                {
+                    type: 'Numeric',
+                    position: 'bottom',
+                    fields: ['homozygotesNumber', 'mendelianErrors', 'missingGenotypes'],
+                    title: false,
+                    grid: true,
+                    label: {
+                        renderer: function (v) {
+                            return String(v).replace(/000000$/, 'M');
+                        }
+                    },
+                    roundToDecimal: false
+                },
+                {
+                    type: 'Category',
+                    position: 'left',
+                    fields: ['sampleName'],
+                    title: false
+                }
+            ],
+            series: [
+                {
+                    type: 'bar',
+                    axis: 'bottom',
+                    gutter: 80,
+                    xField: 'sampleName',
+                    yField: ['homozygotesNumber', 'mendelianErrors', 'missingGenotypes'],
+                    tips: {
+                        trackMouse: true,
+                        width: 100,
+                        height: 28,
+                        renderer: function (storeItem, item) {
+                            this.setTitle(String(item.value[1]));
+                        }
+                    }
+                }
+            ]
+        });
+
+        var ctContainer = Ext.create('Ext.container.Container', {
+            items: [
+                {
+                    xtype: 'box',
+                    html: "Consequence type"
+
+                },
+                chartCT,
+                {
+                    xtype: 'box',
+                    html: "Sample Stats"
+
+                },
+                chartSS
+            ]
+        })
+
+
+        var panel = Ext.create('Ext.panel.Panel', {
+            title: 'summary',
+            width: '100%',
+            height: '100%',
+            border: 0,
+//            layout: 'fit',
+            autoScroll: true,
+
+            cls: 'ocb-border-top-lightgrey',
+            items: [ctContainer]
+        });
+
+        return panel;
+    },
+    _createVariantPanel: function () {
+
+        var panel = Ext.create('Ext.panel.Panel', {
+            title: 'variants',
+            width: '100%',
+            height: '100%',
+            border: 0,
+            layout: 'hbox',
+            cls: 'ocb-border-top-lightgrey',
+            items: [
+            ]
+        });
+        // targetId.add(panel);
+        // targetId.setActiveTab(panel);
         return panel;
     },
     _createGenomeViewer: function (targetId) {
@@ -478,7 +697,7 @@ VariantWidget.prototype = {
 
         var accordion = Ext.create('Ext.form.Panel', {
             border: false,
-            flex: 1,
+            flex: 0.3,
             height: "100%",
             title: "Filters",
             width: "100%",
@@ -1789,4 +2008,5 @@ VariantWidget.prototype = {
             }
         });
     }
-};
+}
+;
