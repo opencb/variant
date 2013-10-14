@@ -88,8 +88,6 @@ VariantWidget.prototype = {
     },
     _updateInfo: function () {
         var _this = this;
-
-
         _this.panel.setLoading(true);
 
         if (_this.sampleNames != null) {
@@ -185,7 +183,6 @@ VariantWidget.prototype = {
                 _this.panel.setLoading(false);
             }
         });
-
 
     },
     _addSampleColumn: function (sampleName) {
@@ -533,8 +530,8 @@ VariantWidget.prototype = {
             height: '100%',
             border: 0,
             html: "<div id='genomeViewer' style='width:1000px;height:100%;position:relative;'></div>",
-            titleCollapse: true,
-            collapsible: true,
+            // titleCollapse: true,
+            // collapsible: true,
             listeners: {
                 afterRender: function () {
 
@@ -677,7 +674,7 @@ VariantWidget.prototype = {
             height: '100%',
             border: 0,
             layout: 'hbox',
-            cls: 'ocb-border-top-lightgrey',
+            cls: 'ocb-border-top-lightgrey'
         });
         return panel;
     },
@@ -897,8 +894,8 @@ VariantWidget.prototype = {
             store: this.stEffect,
             loadMask: true,
             border: 0,
-            titleCollapse: true,
-            collapsible: true,
+            // titleCollapse: true,
+            // collapsible: true,
             columns: [
                 {xtype: 'rownumberer'},
                 {
