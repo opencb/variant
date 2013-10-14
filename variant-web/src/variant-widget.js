@@ -521,23 +521,21 @@ VariantWidget.prototype = {
         });
         return panel;
     },
-    _createGenomeViewer: function(){
-        var _this=this;
+    _createGenomeViewer: function () {
+        var _this = this;
 
         var gvpanel = Ext.create('Ext.panel.Panel', {
             title: 'Genome Viewer',
             flex: 8,
             height: '100%',
             border: 0,
-            html: "<div id='genomeViewer' style='width:1000px;height:100%;position:relative;'></div>",
-            // titleCollapse: true,
-            // collapsible: true,
+            html: "<div id='genomeViewer' style='width:1200px;height:1500;position:relative;'></div>",
             listeners: {
                 afterRender: function () {
 
                     var w = this.getWidth();
                     $("#genomeViewer").width(w);
-                    console.log($("genomeViewer").width());
+                    console.log("width: " + $("genomeViewer").width());
 
                     var region = new Region({
                         chromosome: "13",
@@ -661,9 +659,7 @@ VariantWidget.prototype = {
                 }
             }
         });
-
         return gvpanel;
-
     },
     _createGenomeViewerPanel: function () {
         var _this = this;
@@ -700,9 +696,9 @@ VariantWidget.prototype = {
                 columns: [
                     {
                         text: 'Variant',
+                        flex: 1,
                         xtype: "templatecolumn",
-                        tpl: '{chr}:{pos} {ref}>{alt}',
-                        flex: 1
+                        tpl: '{chr}:{pos} {ref}>{alt}'
                     }
                 ]}
         );
@@ -732,6 +728,8 @@ VariantWidget.prototype = {
                         console.log(response);
                         if (response.length > 0) {
                             _this.gridEffect.getStore().loadData(response);
+                            Ext.getCmp(_this.id + "numRowsLabelEffect").setText(response.length + " effects");
+
                             var region = new Region({
                                 chromosome: chr,
                                 start: pos,
@@ -902,7 +900,7 @@ VariantWidget.prototype = {
                     text: "Position chr:start:end (strand)",
                     dataIndex: "featureChromosome",
                     xtype: "templatecolumn",
-                    tpl: "{featureChromosome}:{featureStart}-{featureEnd} ({featureStrand})",
+                    tpl: '{featureChromosome}:{featureStart}-{featureEnd} <tpl if="featureStrand == 1">(+)<tpl elseif="featureStrand == -1">(-)</tpl>',
                     flex: 1
                 },
                 {
@@ -924,7 +922,7 @@ VariantWidget.prototype = {
                 {
                     text: "Aminoacid Change",
                     xtype: "templatecolumn",
-                    tpl: "{aminoacidChange} - {codonChange} ({aaPosition})",
+                    tpl: '<tpl if="aminoacidChange">{aminoacidChange} - {codonChange} ({aaPosition}) <tpl else>.</tpl>  ',
                     flex: 1
                 },
                 {
@@ -978,7 +976,19 @@ VariantWidget.prototype = {
                     flex: 1
                 }
             ],
-            features: [groupingFeature]
+            features: [groupingFeature, {ftype: 'summary'}],
+            dockedItems: [
+                {
+                    xtype: 'toolbar',
+                    dock: 'bottom',
+                    items: [
+                        {
+                            xtype: 'tbtext',
+                            id: this.id + "numRowsLabelEffect"
+                        }
+                    ]
+                }
+            ]
         });
         return gridEffect
     },
@@ -1669,7 +1679,8 @@ VariantWidget.prototype = {
             name: "end_pos",
             margin: '5 0 0 5',
             width: "20%",
-            allowBlank: false
+            allowBlank: false,
+            value: 20000000
         });
 
         return Ext.create('Ext.form.Panel', {
