@@ -113,11 +113,10 @@ public class VcfControlAnnotator implements VcfAnnotator {
                     while (it != null && (line = it.next()) != null) {
 
                         String[] fields = line.split("\t");
-                        tabixRecord = new VcfRecord(fields);
+                        tabixRecord = new VcfRecord(fields, samples);
 
                         if (tabixRecord.getReference().equals(record.getReference()) && tabixRecord.getAlternate().equals(record.getAlternate())) {
 
-                            tabixRecord.setSampleIndex(this.samplesMap);
                             controlBatch.add(tabixRecord);
                             map.put(record, cont++);
                         }

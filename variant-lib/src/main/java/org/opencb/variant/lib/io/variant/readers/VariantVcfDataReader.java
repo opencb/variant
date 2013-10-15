@@ -39,16 +39,16 @@ public class VariantVcfDataReader implements VariantDataReader {
 
 
     @Override
-    public boolean open(){
+    public boolean open() {
 
         try {
             this.file = new File(this.filename);
             vcf4 = new Vcf4();
             FileUtils.checkFile(this.file);
 
-            if(Files.probeContentType(file.toPath()).contains("gzip")){
+            if (Files.probeContentType(file.toPath()).contains("gzip")) {
                 this.reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(this.file))));
-            }   else{
+            } else {
                 this.reader = new BufferedReader(new FileReader(this.file));
             }
 
@@ -62,7 +62,7 @@ public class VariantVcfDataReader implements VariantDataReader {
 
 
     @Override
-    public boolean pre(){
+    public boolean pre() {
 
         try {
             processHeader();
@@ -74,7 +74,7 @@ public class VariantVcfDataReader implements VariantDataReader {
     }
 
     @Override
-    public boolean close(){
+    public boolean close() {
         try {
             reader.close();
         } catch (IOException e) {
@@ -101,11 +101,14 @@ public class VariantVcfDataReader implements VariantDataReader {
                 VcfRecord vcfRecord = null;
                 if (fields.length == 8) {
                     vcfRecord = new VcfRecord(fields[0], Integer.parseInt(fields[1]), fields[2], fields[3], fields[4], fields[5], fields[6], fields[7]);
-                    vcfRecord.setSampleIndex(vcf4.getSamples());
+//                    vcfRecord.setSampleNames(vcf4.getSampleNames());
+
+//                    vcfRecord.setSampleIndex(vcf4.getSamples());
                 } else {
                     if (fields.length > 8) {
-                        vcfRecord = new VcfRecord(fields);
-                        vcfRecord.setSampleIndex(vcf4.getSamples());
+                        vcfRecord = new VcfRecord(fields, vcf4.getSampleNames());
+//                        vcfRecord.setSampleNames(vcf4.getSampleNames());
+//                        vcfRecord.setSampleIndex(vcf4.getSamples());
                     }
                 }
                 return vcfRecord;
@@ -128,12 +131,12 @@ public class VariantVcfDataReader implements VariantDataReader {
 
             if (vcfFilters != null && vcfFilters.size() > 0) {
                 if (andVcfFilters.apply(vcfRecord)) {
-                    vcfRecord.setSampleIndex(vcf4.getSamples());
+                    //vcfRecord.setSampleIndex(vcf4.getSamples());
                     listRecords.add(vcfRecord);
                     i++;
                 }
             } else {
-                vcfRecord.setSampleIndex(vcf4.getSamples());
+                //vcfRecord.setSampleIndex(vcf4.getSamples());
                 listRecords.add(vcfRecord);
                 i++;
             }
@@ -179,7 +182,6 @@ public class VariantVcfDataReader implements VariantDataReader {
         header.append("#").append(ListUtils.toString(vcf4.getHeaderLine(), "\t")).append("\n");
 
 
-
         return header.toString();
     }
 
@@ -193,9 +195,9 @@ public class VariantVcfDataReader implements VariantDataReader {
         String[] fields;
 
         BufferedReader localBufferedReader;
-        if(Files.probeContentType(file.toPath()).contains("gzip")){
+        if (Files.probeContentType(file.toPath()).contains("gzip")) {
             localBufferedReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(this.file))));
-        }   else{
+        } else {
             localBufferedReader = new BufferedReader(new FileReader(this.file));
         }
 
@@ -232,7 +234,7 @@ public class VariantVcfDataReader implements VariantDataReader {
                 vcf4.getMetaInformation().put(fields[0], fields[1]);
             }
         }
-        if(!header){
+        if (!header) {
             System.err.println("VCF Header must be provided.");
             System.exit(-1);
         }
