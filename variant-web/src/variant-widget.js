@@ -531,7 +531,7 @@ VariantWidget.prototype = {
             border: 0,
             html: "<div id='genomeViewer' style='width:1200px;height:1500;position:relative;'></div>",
             listeners: {
-                afterRender: function () {
+                afterlayout: function () {
 
                     var w = this.getWidth();
                     $("#genomeViewer").width(w);

@@ -86,9 +86,9 @@ public class VariantStatsSqliteDataWriter implements VariantStatsDataWriter {
                 "position INT64, " +
                 "allele_ref TEXT, " +
                 "allele_alt TEXT, " +
-                "id TEXT, " +
-                "maf DOUBLE, " +
-                "mgf DOUBLE," +
+                "id TEXT, " + // Quitar
+                "maf DOUBLE, " + // allele_maf_freq
+                "mgf DOUBLE," +  // genotype_maf_freq
                 "allele_maf TEXT, " +
                 "genotype_maf TEXT, " +
                 "miss_allele INT, " +
@@ -130,6 +130,7 @@ public class VariantStatsSqliteDataWriter implements VariantStatsDataWriter {
                 "data TEXT, " +
                 "FOREIGN KEY(id_variant) REFERENCES variant(id_variant)," +
                 "FOREIGN KEY(sample_name) REFERENCES sample(name));";
+
         String variantInfoTable = "CREATE TABLE IF NOT EXISTS variant_info(" +
                 "id_variant_info INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "id_variant INTEGER, " +
