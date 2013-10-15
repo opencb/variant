@@ -2,6 +2,8 @@ package org.opencb.variant.lib.io;
 
 import org.opencb.variant.lib.annot.Annot;
 import org.opencb.variant.lib.core.formats.VcfRecord;
+import org.opencb.variant.lib.io.priorityqueue.DataItem;
+import org.opencb.variant.lib.io.priorityqueue.DataRW;
 import org.opencb.variant.lib.io.variant.annotators.VcfAnnotator;
 import org.opencb.variant.lib.io.variant.readers.VariantDataReader;
 import org.opencb.variant.lib.io.variant.readers.VariantVcfDataReader;
@@ -9,6 +11,7 @@ import org.opencb.variant.lib.io.variant.writers.vcf.VariantDataWriter;
 import org.opencb.variant.lib.io.variant.writers.vcf.VariantVcfDataWriter;
 
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,9 +25,12 @@ public class VariantAnnotRunner {
     private VariantDataReader vcfReader;
     private VariantDataWriter vcfWriter;
     private List<VcfAnnotator> annots;
+    private int batchSize = 1000;
+    private int threads;
 
 
     public VariantAnnotRunner() {
+        this.threads = 2;
     }
 
     public VariantAnnotRunner(String vcfFileName, String vcfOutFilename) {
@@ -35,11 +41,12 @@ public class VariantAnnotRunner {
 
     }
 
-    public void run() {
+    public VariantAnnotRunner parallel(int numThreads) {
+        this.threads = numThreads;
+        return this;
+    }
 
-        int batchSize = 1000;
-        int cont = 1;
-        List<VcfRecord> batch;
+    public void run() {
 
         vcfReader.open();
         vcfWriter.open();
@@ -47,21 +54,26 @@ public class VariantAnnotRunner {
         vcfReader.pre();
         vcfWriter.pre();
 
-        batch = vcfReader.read(batchSize);
 
-        vcfWriter.writeVcfHeader(vcfReader.getHeader());
+        DataRW<List<VcfRecord>, List<VcfRecord>> data = new DataRW<>();
 
-        while (!batch.isEmpty()) {
+        ExecutorService threadPool = Executors.newFixedThreadPool(2 + this.threads);
 
-            System.out.println("Batch: " + cont++);
+        for (int i = 0; i < this.threads; i++) {
 
-            Annot.applyAnnotations(batch, this.annots);
-
-            vcfWriter.writeBatch(batch);
-
-            batch = vcfReader.read(batchSize);
-
+            threadPool.execute(new Annotator(data));
         }
+
+        Future producerStatus = threadPool.submit(new Reader(data));
+        Future writer = threadPool.submit(new Writer(data));
+
+        try {
+            producerStatus.get();
+            writer.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        threadPool.shutdown();
 
         vcfReader.post();
         vcfWriter.post();
@@ -73,5 +85,98 @@ public class VariantAnnotRunner {
 
     public void annotations(List<VcfAnnotator> listAnnots) {
         this.annots = listAnnots;
+    }
+
+    private class Reader implements Runnable {
+
+        private DataRW<List<VcfRecord>, List<VcfRecord>> data;
+        private int count;
+
+        private Reader(DataRW data) {
+            this.data = data;
+            this.count = 0;
+
+        }
+
+        @Override
+        public void run() {
+            List<VcfRecord> batch;
+
+            batch = vcfReader.read(batchSize);
+
+            System.out.println("START READER");
+            vcfWriter.writeVcfHeader(vcfReader.getHeader());
+            while (!batch.isEmpty()) {
+                data.putRead(count++, batch);
+                batch = vcfReader.read(batchSize);
+            }
+
+            data.setContinueProducing(false);
+
+            System.out.println("END READER");
+
+        }
+    }
+
+    private class Annotator implements Runnable {
+
+        private DataRW<List<VcfRecord>, List<VcfRecord>> data;
+
+        private Annotator(DataRW data) {
+            this.data = data;
+            this.data.incConsumer();
+        }
+
+        @Override
+        public void run() {
+
+
+            System.out.println("START ANNOTATOR");
+            DataItem<List<VcfRecord>> dataItem = data.getRead();
+            List<VcfRecord> batch;
+            int priority;
+
+            while (data.isContinueProducing() || dataItem != null) {
+                batch = dataItem.getData();
+                priority = dataItem.getPriority();
+
+                Annot.applyAnnotations(batch, annots);
+
+                data.putWrite(priority, batch);
+
+                dataItem = data.getRead();
+            }
+
+            System.out.println("END ANNOTATOR");
+            this.data.decConsumer();
+        }
+    }
+
+    private class Writer implements Runnable {
+
+        private DataRW<List<VcfRecord>, List<VcfRecord>> data;
+
+        private Writer(DataRW data) {
+            this.data = data;
+        }
+
+        @Override
+        public void run() {
+
+            System.out.println("START WRITER");
+
+            DataItem<List<VcfRecord>> dataItem;
+            List<VcfRecord> batch;
+            dataItem = data.getWrite();
+
+            while (dataItem != null) {
+                batch = dataItem.getData();
+                System.out.println("Writing: " + dataItem.getPriority());
+                vcfWriter.writeBatch(batch);
+                batch.clear();
+                dataItem = data.getWrite();
+            }
+            System.out.println("END WRITER");
+        }
     }
 }

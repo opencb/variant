@@ -14,6 +14,7 @@ import org.opencb.variant.lib.io.variant.annotators.VcfControlAnnotator;
 import org.opencb.variant.lib.io.variant.readers.VariantVcfDataReader;
 import org.opencb.variant.lib.io.variant.writers.stats.VariantStatsFileDataWriter;
 import org.opencb.variant.lib.io.variant.writers.index.VariantIndexSqliteDataWriter;
+import org.opencb.variant.lib.io.variant.annotators.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ public class VariantMain {
         options.addOption(OptionFactory.createOption("control", "Control filename", false, true));
         options.addOption(OptionFactory.createOption("control-list", "Control filename list", false, true));
         options.addOption(OptionFactory.createOption("control-prefix", "Control prefix", false, true));
+        options.addOption(OptionFactory.createOption("threads", "Num threads", false, true));
 
 
     }
@@ -78,9 +80,15 @@ public class VariantMain {
         VariantStatsRunner vr;
         VariantAnnotRunner var;
         VariantIndexRunner vi;
+        int numThreads = 1;
+
 
         parse(args, false);
         String outputFile;
+
+        if (commandLine.hasOption("threads")) {
+            numThreads = Integer.parseInt(commandLine.getOptionValue("threads"));
+        }
 
         switch (command) {
             case "index":
@@ -134,6 +142,19 @@ public class VariantMain {
                 System.out.println("Under construction");
                 break;
 
+            case "test":
+                System.out.println("===== TEST =====");
+                List<VcfAnnotator> test = new ArrayList<>();
+//                test.add(new VcfTestAnnotator());
+                test.add(new VcfConsequenceTypeAnnotator());
+                var = new VariantAnnotRunner(commandLine.getOptionValue("vcf-file"), commandLine.getOptionValue("outdir") + "/" + "file_annot.vcf");
+                var.annotations(test);
+                var.parallel(numThreads);
+                var.run();
+
+
+                break;
+
             case "annot":
                 System.out.println("===== ANNOT =====");
 
@@ -159,11 +180,9 @@ public class VariantMain {
 
                 }
 
-
                 listAnnots.add(control);
-
                 var.annotations(listAnnots);
-                var.run();
+                var.parallel(numThreads).run();
 
 
                 break;
@@ -223,7 +242,7 @@ public class VariantMain {
     }
 
     private static boolean checkCommand(String command) {
-        return command.equalsIgnoreCase("stats") || command.equalsIgnoreCase("filter") || command.equalsIgnoreCase("index") || command.equalsIgnoreCase("annot");
+        return command.equalsIgnoreCase("stats") || command.equalsIgnoreCase("filter") || command.equalsIgnoreCase("index") || command.equalsIgnoreCase("annot") || command.equalsIgnoreCase("test");
     }
 
     private static void parse(String[] args, boolean stopAtNoOption) {

@@ -29,9 +29,8 @@ public class VcfConsequenceTypeAnnotator implements VcfAnnotator {
     private WebResource webResource;
 
 
-
-    public VcfConsequenceTypeAnnotator(){
-        wsRestClient =  Client.create();
+    public VcfConsequenceTypeAnnotator() {
+        wsRestClient = Client.create();
         webResource = wsRestClient.resource("http://ws.bioinfo.cipf.es/cellbase/rest/latest/hsa/genomic/variant/");
 
     }
@@ -45,7 +44,7 @@ public class VcfConsequenceTypeAnnotator implements VcfAnnotator {
         StringBuilder chunkVcfRecords = new StringBuilder();
 
 
-        for(VcfRecord record : batch){
+        for (VcfRecord record : batch) {
             chunkVcfRecords.append(record.getChromosome()).append(":");
             chunkVcfRecords.append(record.getPosition()).append(":");
             chunkVcfRecords.append(record.getReference()).append(":");
@@ -53,19 +52,22 @@ public class VcfConsequenceTypeAnnotator implements VcfAnnotator {
 
         }
 
-        FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
-        formDataMultiPart.field("variants", chunkVcfRecords.substring(0, chunkVcfRecords.length()-1));
 
+        FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
+        formDataMultiPart.field("variants", chunkVcfRecords.substring(0, chunkVcfRecords.length() - 1));
+
+        System.out.println("WEB");
         String response = webResource.path("consequence_type").queryParam("of", "json").type(MediaType.MULTIPART_FORM_DATA).post(String.class, formDataMultiPart);
 
         try {
-            batchEffect = mapper.readValue(response, new TypeReference<List<VariantEffect>>(){});
+            batchEffect = mapper.readValue(response, new TypeReference<List<VariantEffect>>() {
+            });
         } catch (IOException e) {
             System.err.println(chunkVcfRecords.toString());
             e.printStackTrace();
         }
 
-        for(VcfRecord variant: batch){
+        for (VcfRecord variant : batch) {
 
             annotVariantEffect(variant, batchEffect);
         }
@@ -75,21 +77,21 @@ public class VcfConsequenceTypeAnnotator implements VcfAnnotator {
     private void annotVariantEffect(VcfRecord variant, List<VariantEffect> batchEffect) {
 
         Set<String> ct = new HashSet<>();
-        for(VariantEffect effect: batchEffect){
+        for (VariantEffect effect : batchEffect) {
 
-            if(variant.getChromosome().equals(effect.getChromosome()) &&
+            if (variant.getChromosome().equals(effect.getChromosome()) &&
                     variant.getPosition() == effect.getPosition() &&
-                    variant.getReference().equals(effect.getReferenceAllele())&&
-                    variant.getAlternate().equals(effect.getAlternativeAllele())){
+                    variant.getReference().equals(effect.getReferenceAllele()) &&
+                    variant.getAlternate().equals(effect.getAlternativeAllele())) {
 
-                ct.add(effect.getConsequenceTypeObo()) ;
+                ct.add(effect.getConsequenceTypeObo());
             }
 
         }
 
         String ct_all = StringUtils.join(ct, ",");
 
-        if(ct.size() > 0){
+        if (ct.size() > 0) {
             variant.addInfoField("ConsType=" + ct_all);
         }
 
