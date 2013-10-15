@@ -2,7 +2,9 @@ package org.opencb.variant.lib.io;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.opencb.variant.lib.io.variant.annotators.*;
 import org.opencb.variant.lib.io.variant.annotators.VcfAnnotator;
 import org.opencb.variant.lib.io.variant.annotators.VcfConsequenceTypeAnnotator;
@@ -27,20 +29,27 @@ import java.util.List;
  */
 public class VariantAnnotRunnerTest {
 
-    private String fileIn = "/home/aleman/tmp/file.vcf";
-    private String fileOut = "/home/aleman/tmp/file_annot.vcf";
+    private String fileIn = "/home/aaleman/tmp/file.vcf";
+    private String fileOut = "/home/aaleman/tmp/file_annot.vcf";
     private String controlBIER = "/media/data/controls/bier/bier.gz";
     private String control1000GList = "/media/data/controls/1000genomes/list.txt";
+    private long start;
+    private long end;
 
+
+    @Rule
+    public TestName name = new TestName();
 
     @Before
     public void setUp() throws Exception {
+        start = System.currentTimeMillis();
 
     }
 
     @After
     public void tearDown() throws Exception {
-
+        end = System.currentTimeMillis();
+        System.out.println("Time " + name.getMethodName() + ": " + (end - start));
     }
 
     @Test
@@ -49,11 +58,13 @@ public class VariantAnnotRunnerTest {
         VariantAnnotRunner vr = new VariantAnnotRunner(fileIn, fileOut);
 
         List<VcfAnnotator> list = new ArrayList<>();
-
-        list.add(new VcfTestAnnotator());
-
-        vr.annotations(list);
-        vr.run();
+        try {
+            list.add(new VcfControlAnnotator("BIER", controlBIER));
+            vr.annotations(list);
+            vr.parallel(4).run();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 

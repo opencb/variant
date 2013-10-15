@@ -120,12 +120,6 @@ public class VcfControlAnnotator implements VcfAnnotator {
         int cont = 0;
         for (VcfRecord record : batch) {
 
-            /*if (this.tabix == null && controlList != null) {
-                currentTabix = controlList.get(record.getChromosome());
-            } else {
-                currentTabix = new TabixReader(this.tabixFile);
-            }*/
-
             if (currentTabix != null) {
 
 

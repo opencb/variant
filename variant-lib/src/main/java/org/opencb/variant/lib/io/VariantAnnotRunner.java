@@ -2,13 +2,14 @@ package org.opencb.variant.lib.io;
 
 import org.opencb.variant.lib.annot.Annot;
 import org.opencb.variant.lib.core.formats.VcfRecord;
+import org.opencb.variant.lib.io.priorityqueue.DataItem;
+import org.opencb.variant.lib.io.priorityqueue.DataRW;
 import org.opencb.variant.lib.io.variant.annotators.VcfAnnotator;
 import org.opencb.variant.lib.io.variant.readers.VariantDataReader;
 import org.opencb.variant.lib.io.variant.readers.VariantVcfDataReader;
 import org.opencb.variant.lib.io.variant.writers.VariantDataWriter;
 import org.opencb.variant.lib.io.variant.writers.VariantVcfDataWriter;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -28,8 +29,6 @@ public class VariantAnnotRunner {
     private int threads;
 
 
-
-
     public VariantAnnotRunner() {
         this.threads = 2;
     }
@@ -42,12 +41,12 @@ public class VariantAnnotRunner {
 
     }
 
-    public VariantAnnotRunner parallel(int numThreads){
+    public VariantAnnotRunner parallel(int numThreads) {
         this.threads = numThreads;
         return this;
     }
 
-    public void run(){
+    public void run() {
 
         vcfReader.open();
         vcfWriter.open();
@@ -56,16 +55,16 @@ public class VariantAnnotRunner {
         vcfWriter.pre();
 
 
-        Data data = new Data();
+        DataRW<List<VcfRecord>, List<VcfRecord>> data = new DataRW<>();
 
         ExecutorService threadPool = Executors.newFixedThreadPool(2 + this.threads);
 
-        for(int i = 0; i < this.threads; i++ ){
+        for (int i = 0; i < this.threads; i++) {
 
-            threadPool.execute(new Consumer( data));
+            threadPool.execute(new Annotator(data));
         }
 
-        Future producerStatus = threadPool.submit(new Producer(data));
+        Future producerStatus = threadPool.submit(new Reader(data));
         Future writer = threadPool.submit(new Writer(data));
 
         try {
@@ -84,130 +83,19 @@ public class VariantAnnotRunner {
 
     }
 
-    /*public void run() {
-
-        int cont = 1;
-        List<VcfRecord> batch;
-
-        vcfReader.open();
-        vcfWriter.open();
-
-        vcfReader.pre();
-        vcfWriter.pre();
-
-        batch = vcfReader.read(batchSize);
-
-        vcfWriter.writeVcfHeader(vcfReader.getHeader());
-
-        while (!batch.isEmpty()) {
-
-            System.out.println("Batch: " + cont++);
-
-            Annot.applyAnnotations(batch, this.annots);
-
-            vcfWriter.writeBatch(batch);
-
-            batch = vcfReader.read(batchSize);
-
-        }
-
-        vcfReader.post();
-        vcfWriter.post();
-
-        vcfReader.close();
-        vcfWriter.close();
-
-    }*/
-
     public void annotations(List<VcfAnnotator> listAnnots) {
         this.annots = listAnnots;
     }
-    private class Data{
 
-        private BlockingQueue<List<VcfRecord>> read;
-        private BlockingQueue<List<VcfRecord>> write;
-        private int numConsumers;
-        private boolean continueProducing = true;
+    private class Reader implements Runnable {
 
-        private Data() {
-            read = new ArrayBlockingQueue<>(10);
-            write = new ArrayBlockingQueue<>(10);
-            numConsumers = 0;
-        }
+        private DataRW<List<VcfRecord>, List<VcfRecord>> data;
+        private int count;
 
-        public void putRead(List<VcfRecord> batch){
-            try {
-                this.read.put(batch);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public List<VcfRecord> getRead(){
-            if(!continueProducing && read.size() == 0){
-                return null;
-            }
-            try {
-                return this.read.take();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        public void putWrite(List<VcfRecord> batch){
-            try {
-                this.write.put(batch);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public List<VcfRecord> getWrite(){
-            try {
-                return this.write.take();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }public List<VcfRecord> getPollWrite(){
-            return this.write.poll();
-        }
-
-        public int writeSize(){
-            return this.write.size();
-        }
-
-
-
-        public void incConsumer(){
-            this.numConsumers++;
-        }
-
-        private int getNumConsumers() {
-            return numConsumers;
-        }
-
-        public void decConsumer(){
-            this.numConsumers--;
-
-        }
-
-        public String toString(){
-
-            return read.size() + " - " + write.size();
-        }
-
-
-
-
-    }
-    private class Producer implements Runnable{
-
-        private Data data;
-
-        private Producer(Data data) {
+        private Reader(DataRW data) {
             this.data = data;
+            this.count = 0;
+
         }
 
         @Override
@@ -218,23 +106,23 @@ public class VariantAnnotRunner {
 
             System.out.println("START READER");
             vcfWriter.writeVcfHeader(vcfReader.getHeader());
-            while(!batch.isEmpty()){
-                data.putRead(batch);
+            while (!batch.isEmpty()) {
+                data.putRead(count++, batch);
                 batch = vcfReader.read(batchSize);
             }
 
-            data.continueProducing = false;
+            data.setContinueProducing(false);
 
             System.out.println("END READER");
 
         }
     }
 
-    private class Consumer implements  Runnable{
+    private class Annotator implements Runnable {
 
-        private Data data;
+        private DataRW<List<VcfRecord>, List<VcfRecord>> data;
 
-        private Consumer(Data data) {
+        private Annotator(DataRW data) {
             this.data = data;
             this.data.incConsumer();
         }
@@ -243,63 +131,52 @@ public class VariantAnnotRunner {
         public void run() {
 
 
-            System.out.println("START CONSUMER");
-            List<VcfRecord> batch = data.getRead();
+            System.out.println("START ANNOTATOR");
+            DataItem<List<VcfRecord>> dataItem = data.getRead();
+            List<VcfRecord> batch;
+            int priority;
 
-            while(data.continueProducing ||  batch != null){
+            while (data.isContinueProducing() || dataItem != null) {
+                batch = dataItem.getData();
+                priority = dataItem.getPriority();
 
                 Annot.applyAnnotations(batch, annots);
 
-                data.putWrite(batch);
+                data.putWrite(priority, batch);
 
-                batch = data.getRead();
+                dataItem = data.getRead();
             }
 
-            System.out.println("END CONSUMER");
+            System.out.println("END ANNOTATOR");
             this.data.decConsumer();
-
-
         }
     }
 
-    private class Writer implements Runnable{
+    private class Writer implements Runnable {
 
-        private Data data;
+        private DataRW<List<VcfRecord>, List<VcfRecord>> data;
 
-        private Writer(Data data) {
+        private Writer(DataRW data) {
             this.data = data;
         }
 
         @Override
         public void run() {
 
+            System.out.println("START WRITER");
 
+            DataItem<List<VcfRecord>> dataItem;
             List<VcfRecord> batch;
+            dataItem = data.getWrite();
 
-            while( data.getNumConsumers() > 0){
-                batch = data.getWrite();
-
+            while (dataItem != null) {
+                batch = dataItem.getData();
+                System.out.println("Writing: " + dataItem.getPriority());
                 vcfWriter.writeBatch(batch);
-
                 batch.clear();
-
-            }
-
-            if(data.writeSize() > 0){
-                batch = data.getPollWrite();
-                while(batch != null){
-                    vcfWriter.writeBatch(batch);
-
-                    batch.clear();
-                    batch = data.getPollWrite();
-                }
+                dataItem = data.getWrite();
             }
             System.out.println("END WRITER");
-
-
-
-
-
         }
     }
 }

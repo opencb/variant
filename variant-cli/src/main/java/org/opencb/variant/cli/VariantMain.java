@@ -8,9 +8,7 @@ import org.opencb.variant.cli.servlets.GetFoldersServlet;
 import org.opencb.variant.cli.servlets.HelloServlet;
 import org.opencb.variant.lib.io.VariantAnnotRunner;
 import org.opencb.variant.lib.io.VariantStatsRunner;
-import org.opencb.variant.lib.io.variant.annotators.VcfAnnotator;
-import org.opencb.variant.lib.io.variant.annotators.VcfControlAnnotator;
-import org.opencb.variant.lib.io.variant.annotators.VcfTestAnnotator;
+import org.opencb.variant.lib.io.variant.annotators.*;
 import org.opencb.variant.lib.io.variant.writers.VariantStatsFileDataWriter;
 
 import java.io.*;
@@ -78,10 +76,9 @@ public class VariantMain {
         int numThreads = 1;
 
 
-
         parse(args, false);
 
-        if(commandLine.hasOption("threads")){
+        if (commandLine.hasOption("threads")) {
             numThreads = Integer.parseInt(commandLine.getOptionValue("threads"));
         }
 
@@ -123,9 +120,11 @@ public class VariantMain {
             case "test":
                 System.out.println("===== TEST =====");
                 List<VcfAnnotator> test = new ArrayList<>();
-                test.add(new VcfTestAnnotator());
+//                test.add(new VcfTestAnnotator());
+                test.add(new VcfConsequenceTypeAnnotator());
                 var = new VariantAnnotRunner(commandLine.getOptionValue("vcf-file"), commandLine.getOptionValue("outdir") + "/" + "file_annot.vcf");
                 var.annotations(test);
+                var.parallel(numThreads);
                 var.run();
 
 
@@ -150,8 +149,10 @@ public class VariantMain {
                 }
 
 
-                listAnnots.add(control);
+//                listAnnots.add(control);
 
+//                listAnnots.add(new VcfConsequenceTypeAnnotator());
+                listAnnots.add(new VcfTestAnnotator());
                 var.annotations(listAnnots);
                 var.parallel(numThreads).run();
 

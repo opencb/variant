@@ -12,15 +12,22 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class VcfTestAnnotator implements VcfAnnotator {
+
+    private String text;
+
+    public VcfTestAnnotator(String text) {
+        this.text = text;
+    }
+
     @Override
     public void annot(List<VcfRecord> batch) {
-       for(VcfRecord v: batch){
-           this.annot(v);
-       }
+        for (VcfRecord v : batch) {
+            this.annot(v);
+        }
     }
 
     @Override
     public void annot(VcfRecord elem) {
-        elem.setId("hola");
+        elem.setId(text);
     }
 }
