@@ -335,6 +335,7 @@ Variant.prototype.jobItemClick = function (record) {
             record.raw.command = Utils.parseJobCommand(record.raw);
             var variantWidget = new VariantWidget({
                 targetId: this.panel,
+                title:record.raw.name,
                 job:record.raw,
                 autoRender:true
             });
