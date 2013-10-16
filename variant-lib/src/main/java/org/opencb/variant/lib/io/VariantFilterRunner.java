@@ -1,12 +1,12 @@
 package org.opencb.variant.lib.io;
 
-import org.opencb.variant.lib.core.formats.VcfRecord;
-import org.opencb.variant.lib.filters.VcfRecordFilters;
-import org.opencb.variant.lib.filters.customfilters.VcfFilter;
-import org.opencb.variant.lib.io.variant.readers.VariantDataReader;
-import org.opencb.variant.lib.io.variant.readers.VariantVcfDataReader;
-import org.opencb.variant.lib.io.variant.writers.vcf.VariantDataWriter;
-import org.opencb.variant.lib.io.variant.writers.vcf.VariantVcfDataWriter;
+import org.opencb.javalibs.bioformats.commons.filters.FilterApplicator;
+import org.opencb.javalibs.bioformats.variant.vcf4.VcfRecord;
+import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfFilter;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantDataReader;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.vcf.VariantDataWriter;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataWriter;
 
 import java.util.List;
 
@@ -55,9 +55,7 @@ public class VariantFilterRunner {
 
             System.out.println("Batch: " + cont++);
 
-//            Annot.applyAnnotations(batch, this.filters);
-
-            batch = VcfRecordFilters.filter(batch, filters);
+            batch = FilterApplicator.filter(batch, filters);
 
             vcfWriter.writeBatch(batch);
 

@@ -1,14 +1,13 @@
 package org.opencb.variant.lib.io;
 
-import org.opencb.variant.lib.annot.Annot;
-import org.opencb.variant.lib.core.formats.VcfRecord;
-import org.opencb.variant.lib.io.priorityqueue.DataItem;
-import org.opencb.variant.lib.io.priorityqueue.DataRW;
-import org.opencb.variant.lib.io.variant.annotators.VcfAnnotator;
-import org.opencb.variant.lib.io.variant.readers.VariantDataReader;
-import org.opencb.variant.lib.io.variant.readers.VariantVcfDataReader;
-import org.opencb.variant.lib.io.variant.writers.vcf.VariantDataWriter;
-import org.opencb.variant.lib.io.variant.writers.vcf.VariantVcfDataWriter;
+import org.opencb.javalibs.bioformats.variant.vcf4.VcfRecord;
+import org.opencb.javalibs.bioformats.variant.vcf4.annotators.VcfAnnotator;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantDataReader;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.vcf.VariantDataWriter;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataWriter;
+import org.opencb.javalibs.commons.containers.DataItem;
+import org.opencb.javalibs.commons.containers.DataRW;
 
 import java.util.List;
 import java.util.concurrent.*;
@@ -138,9 +137,9 @@ public class VariantAnnotRunner {
 
             while (data.isContinueProducing() || dataItem != null) {
                 batch = dataItem.getData();
-                priority = dataItem.getPriority();
+                priority = dataItem.getTokenId();
 
-                Annot.applyAnnotations(batch, annots);
+                applyAnnotations(batch, annots);
 
                 data.putWrite(priority, batch);
 
@@ -149,6 +148,13 @@ public class VariantAnnotRunner {
 
             System.out.println("END ANNOTATOR");
             this.data.decConsumer();
+        }
+        public void applyAnnotations(List<VcfRecord> batch, List<VcfAnnotator> annotations){
+
+            for(VcfAnnotator annot: annotations){
+                annot.annot(batch);
+            }
+
         }
     }
 
@@ -171,7 +177,7 @@ public class VariantAnnotRunner {
 
             while (dataItem != null) {
                 batch = dataItem.getData();
-                System.out.println("Writing: " + dataItem.getPriority());
+                System.out.println("Writing: " + dataItem.getTokenId());
                 vcfWriter.writeBatch(batch);
                 batch.clear();
                 dataItem = data.getWrite();

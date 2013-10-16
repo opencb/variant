@@ -1,14 +1,16 @@
 package org.opencb.variant.lib.core.sqlite;
 
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import org.apache.commons.lang.StringUtils;
-import org.opencb.variant.lib.core.formats.*;
+import org.opencb.javalibs.bioformats.variant.vcf4.VariantEffect;
+import org.opencb.javalibs.bioformats.variant.vcf4.stats.VcfVariantStat;
+import org.opencb.variant.lib.core.json.VariantAnalysisInfo;
+import org.opencb.variant.lib.core.json.VariantControl;
+import org.opencb.variant.lib.core.json.VariantInfo;
 
 import java.io.IOException;
 import java.sql.*;

@@ -108,6 +108,18 @@
                 <version>1.5</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.opencb.java-libs</groupId>
+                <artifactId>bioformats</artifactId>
+                <version>0.1.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.opencb.java-libs</groupId>
+                <artifactId>commons</artifactId>
+                <version>0.1.0</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>

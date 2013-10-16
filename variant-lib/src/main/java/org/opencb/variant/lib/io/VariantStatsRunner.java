@@ -1,16 +1,19 @@
 package org.opencb.variant.lib.io;
 
-import org.opencb.variant.lib.core.formats.*;
-import org.opencb.variant.lib.filters.customfilters.VcfFilter;
-import org.opencb.variant.lib.filters.VcfRecordFilters;
-import org.opencb.variant.lib.io.ped.readers.PedDataReader;
-import org.opencb.variant.lib.io.ped.readers.PedFileDataReader;
-import org.opencb.variant.lib.io.ped.writers.PedDataWriter;
-import org.opencb.variant.lib.io.variant.readers.VariantDataReader;
-import org.opencb.variant.lib.io.variant.readers.VariantVcfDataReader;
-import org.opencb.variant.lib.io.variant.writers.stats.VariantStatsDataWriter;
-import org.opencb.variant.lib.io.variant.writers.stats.VariantStatsSqliteDataWriter;
-import org.opencb.variant.lib.stats.*;
+import org.opencb.javalibs.bioformats.commons.filters.FilterApplicator;
+import org.opencb.javalibs.bioformats.pedigree.Pedigree;
+import org.opencb.javalibs.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.javalibs.bioformats.pedigree.io.readers.PedFileDataReader;
+import org.opencb.javalibs.bioformats.pedigree.io.writers.PedDataWriter;
+import org.opencb.javalibs.bioformats.variant.vcf4.VariantEffect;
+import org.opencb.javalibs.bioformats.variant.vcf4.VcfRecord;
+import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfFilter;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantDataReader;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.stats.VariantStatsDataWriter;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.stats.VariantStatsSqliteDataWriter;
+import org.opencb.javalibs.bioformats.variant.vcf4.stats.*;
+import org.opencb.variant.lib.effect.EffectCalculator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -133,7 +136,7 @@ public class VariantStatsRunner {
         while (!batch.isEmpty()) {
 
             if (filters != null) {
-                batch = VcfRecordFilters.filter(batch, filters);
+                batch = FilterApplicator.filter(batch, filters);
             }
 
             if (stats) {
@@ -164,7 +167,7 @@ public class VariantStatsRunner {
             if (effect) {
 
 
-                batchEffect = CalculateStats.variantEffects(batch);
+                batchEffect = EffectCalculator.variantEffects(batch);
                 vcfWriter.writeVariantEffect(batchEffect);
 
             }

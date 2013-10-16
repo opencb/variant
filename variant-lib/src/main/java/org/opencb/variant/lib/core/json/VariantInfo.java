@@ -1,6 +1,8 @@
-package org.opencb.variant.lib.core.formats;
+package org.opencb.variant.lib.core.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.opencb.javalibs.bioformats.variant.vcf4.VariantEffect;
+import org.opencb.javalibs.bioformats.variant.vcf4.stats.VcfVariantStat;
 
 import java.util.*;
 

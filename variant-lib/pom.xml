@@ -57,6 +57,16 @@
             <groupId>org.utgenome.thirdparty</groupId>
             <artifactId>picard</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.opencb.java-libs</groupId>
+            <artifactId>bioformats</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opencb.java-libs</groupId>
+            <artifactId>commons</artifactId>
+        </dependency>
     </dependencies>
+
+
 
 </project>

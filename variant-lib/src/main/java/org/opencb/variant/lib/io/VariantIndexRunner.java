@@ -1,11 +1,11 @@
 package org.opencb.variant.lib.io;
 
-import org.opencb.variant.lib.core.formats.*;
-import org.opencb.variant.lib.filters.customfilters.VcfFilter;
-import org.opencb.variant.lib.io.ped.readers.PedDataReader;
-import org.opencb.variant.lib.io.ped.writers.PedDataWriter;
-import org.opencb.variant.lib.io.variant.readers.VariantDataReader;
-import org.opencb.variant.lib.io.variant.writers.index.VariantIndexDataWriter;
+import org.opencb.javalibs.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.javalibs.bioformats.pedigree.io.writers.PedDataWriter;
+import org.opencb.javalibs.bioformats.variant.vcf4.VcfRecord;
+import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfFilter;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantDataReader;
+import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.index.VariantIndexDataWriter;
 
 import java.io.IOException;
 import java.util.List;

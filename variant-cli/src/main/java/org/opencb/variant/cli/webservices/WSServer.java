@@ -5,9 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.lang.StringUtils;
-import org.opencb.variant.lib.core.formats.VariantAnalysisInfo;
-import org.opencb.variant.lib.core.formats.VariantEffect;
-import org.opencb.variant.lib.core.formats.VariantInfo;
+import org.opencb.javalibs.bioformats.variant.vcf4.VariantEffect;
+import org.opencb.variant.lib.core.json.VariantAnalysisInfo;
+import org.opencb.variant.lib.core.json.VariantInfo;
 import org.opencb.variant.lib.core.sqlite.WSSqliteManager;
 
 import javax.servlet.http.HttpServletRequest;

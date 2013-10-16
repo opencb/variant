@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.opencb.variant.lib.core.formats.Pedigree;
+import org.opencb.variant.lib.core.json.Pedigree;
 
 /**
  * Created with IntelliJ IDEA.

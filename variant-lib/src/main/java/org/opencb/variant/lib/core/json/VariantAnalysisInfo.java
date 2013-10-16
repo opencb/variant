@@ -1,4 +1,4 @@
-package org.opencb.variant.lib.core.formats;
+package org.opencb.variant.lib.core.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
