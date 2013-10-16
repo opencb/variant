@@ -1,4 +1,4 @@
-package org.opencb.variant.lib.io;
+package org.opencb.variant.lib.runners;
 
 import org.opencb.javalibs.bioformats.pedigree.io.readers.PedDataReader;
 import org.opencb.javalibs.bioformats.pedigree.io.writers.PedDataWriter;

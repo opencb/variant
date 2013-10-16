@@ -1,4 +1,4 @@
-package org.opencb.variant.lib.io;
+package org.opencb.variant.lib.runners;
 
 import org.opencb.javalibs.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.javalibs.bioformats.variant.vcf4.annotators.VcfAnnotator;

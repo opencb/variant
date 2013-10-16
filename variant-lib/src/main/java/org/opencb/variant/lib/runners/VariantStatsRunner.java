@@ -1,4 +1,4 @@
-package org.opencb.variant.lib.io;
+package org.opencb.variant.lib.runners;
 
 import org.opencb.javalibs.bioformats.commons.filters.FilterApplicator;
 import org.opencb.javalibs.bioformats.pedigree.Pedigree;

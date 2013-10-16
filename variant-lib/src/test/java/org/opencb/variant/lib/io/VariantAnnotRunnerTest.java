@@ -1,23 +1,19 @@
-package org.opencb.variant.lib.io;
+package org.opencb.variant.lib.runners;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.opencb.variant.lib.io.variant.annotators.*;
-import org.opencb.variant.lib.io.variant.annotators.VcfAnnotator;
-import org.opencb.variant.lib.io.variant.annotators.VcfConsequenceTypeAnnotator;
-import org.opencb.variant.lib.io.variant.annotators.VcfControlAnnotator;
-import org.opencb.variant.lib.io.variant.annotators.VcfGeneNameAnnotator;
-import org.opencb.variant.lib.io.variant.annotators.VcfTestAnnotator;
+import org.opencb.variant.lib.runners.variant.annotators.*;
+import org.opencb.variant.lib.runners.variant.annotators.VcfAnnotator;
+import org.opencb.variant.lib.runners.variant.annotators.VcfConsequenceTypeAnnotator;
+import org.opencb.variant.lib.runners.variant.annotators.VcfControlAnnotator;
+import org.opencb.variant.lib.runners.variant.annotators.VcfGeneNameAnnotator;
+import org.opencb.variant.lib.runners.variant.annotators.VcfTestAnnotator;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**

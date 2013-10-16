@@ -12,9 +12,9 @@ import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.index.VariantIndex
 import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.stats.VariantStatsFileDataWriter;
 import org.opencb.variant.cli.servlets.GetFoldersServlet;
 import org.opencb.variant.cli.servlets.HelloServlet;
-import org.opencb.variant.lib.io.VariantAnnotRunner;
-import org.opencb.variant.lib.io.VariantIndexRunner;
-import org.opencb.variant.lib.io.VariantStatsRunner;
+import org.opencb.variant.lib.runners.VariantAnnotRunner;
+import org.opencb.variant.lib.runners.VariantIndexRunner;
+import org.opencb.variant.lib.runners.VariantStatsRunner;
 
 import java.io.*;
 import java.util.ArrayList;

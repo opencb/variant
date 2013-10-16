@@ -1,13 +1,13 @@
-package org.opencb.variant.lib.io;
+package org.opencb.variant.lib.runners;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opencb.variant.lib.filters.customfilters.VcfConsequenceTypeFilter;
 import org.opencb.variant.lib.filters.customfilters.VcfFilter;
-import org.opencb.variant.lib.io.variant.annotators.VcfAnnotator;
-import org.opencb.variant.lib.io.variant.annotators.VcfConsequenceTypeAnnotator;
-import org.opencb.variant.lib.io.variant.annotators.VcfGeneNameAnnotator;
+import org.opencb.variant.lib.runners.variant.annotators.VcfAnnotator;
+import org.opencb.variant.lib.runners.variant.annotators.VcfConsequenceTypeAnnotator;
+import org.opencb.variant.lib.runners.variant.annotators.VcfGeneNameAnnotator;
 
 import java.util.ArrayList;
 import java.util.List;

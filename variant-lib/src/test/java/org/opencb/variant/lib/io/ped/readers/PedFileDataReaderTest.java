@@ -1,4 +1,4 @@
-package org.opencb.variant.lib.io.ped.readers;
+package org.opencb.variant.lib.runners.ped.readers;
 
 import org.junit.After;
 import org.junit.Before;

@@ -3,7 +3,7 @@ package org.opencb.variant.lib.filters.customfilters;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.opencb.variant.lib.io.VariantFilterRunner;
+import org.opencb.variant.lib.runners.VariantFilterRunner;
 
 import java.util.ArrayList;
 import java.util.List;
