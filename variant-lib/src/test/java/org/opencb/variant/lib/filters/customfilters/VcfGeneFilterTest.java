@@ -3,6 +3,8 @@ package org.opencb.variant.lib.filters.customfilters;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfFilter;
+import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfGeneFilter;
 import org.opencb.variant.lib.runners.VariantFilterRunner;
 
 import java.util.ArrayList;

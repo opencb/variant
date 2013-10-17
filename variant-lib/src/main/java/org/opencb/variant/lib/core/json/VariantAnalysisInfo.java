@@ -1,4 +1,4 @@
-package org.opencb.variant.lib.core.formats;
+package org.opencb.variant.lib.core.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -26,6 +26,8 @@ public class VariantAnalysisInfo {
     HashMap<String, Double> globalStats;
     @JsonProperty
     HashMap<String, SampleStat> sampleStats;
+    @JsonProperty
+    HashMap<String, Integer> chromosomes;
 
     public VariantAnalysisInfo() {
         samples = new ArrayList<>(5);
@@ -33,6 +35,7 @@ public class VariantAnalysisInfo {
         biotypes = new LinkedHashMap<>(50);
         globalStats = new LinkedHashMap<>(20);
         sampleStats = new LinkedHashMap<>(5);
+        chromosomes = new LinkedHashMap<>(25);
 
     }
 
@@ -104,6 +107,22 @@ public class VariantAnalysisInfo {
                 ", consequenceTypes=" + consequenceTypes +
                 ", biotypes=" + biotypes +
                 '}';
+    }
+
+    public void addBiotype(String bt, int count) {
+        if (bt.equals("")) {
+            bt = ".";
+        }
+
+        biotypes.put(bt, count);
+    }
+
+    public void addChromosome(String chromosome, int count) {
+        chromosomes.put(chromosome, count);
+    }
+
+    public void addConsequenceType(String ct, int count) {
+        consequenceTypes.put(ct, count);
     }
 
     private class SampleStat {

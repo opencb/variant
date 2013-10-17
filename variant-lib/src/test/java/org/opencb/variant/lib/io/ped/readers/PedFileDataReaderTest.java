@@ -1,11 +1,13 @@
-package org.opencb.variant.lib.runners.ped.readers;
+package org.opencb.variant.lib.io.ped.readers;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.opencb.variant.lib.core.json.Pedigree;
+import org.opencb.javalibs.bioformats.pedigree.Pedigree;
+import org.opencb.javalibs.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.javalibs.bioformats.pedigree.io.readers.PedFileDataReader;
 
 /**
  * Created with IntelliJ IDEA.
