@@ -657,7 +657,7 @@ VariantWidget.prototype = {
             flex: 8,
             height: '100%',
             border: 1,
-            html: '<div id="'+this.id+'genomeViewer" style="width:1200px;height:1500;position:relative;"></div>',
+            html: '<div id="' + this.id + 'genomeViewer" style="width:1200px;height:1500;position:relative;"></div>',
             listeners: {
                 afterlayout: {
                     fn: function () {
@@ -667,7 +667,7 @@ VariantWidget.prototype = {
                         }
                         rendered = false;
                         var w = this.getWidth();
-                        $('#'+_this.id + 'genomeViewer').width(w);
+                        $('#' + _this.id + 'genomeViewer').width(w);
 
                         var region = new Region({
                             chromosome: "13",
@@ -678,7 +678,7 @@ VariantWidget.prototype = {
 
                         var genomeViewer = new GenomeViewer({
                             sidePanel: false,
-                            targetId: _this.id+'genomeViewer',
+                            targetId: _this.id + 'genomeViewer',
                             autoRender: true,
                             border: false,
                             resizable: true,
@@ -919,14 +919,14 @@ VariantWidget.prototype = {
                         xtype: 'button',
                         text: 'Reload',
                         handler: function () {
-                            Ext.example.msg('Reload','Sucessfully')
+                            Ext.example.msg('Reload', 'Sucessfully')
                         }
                     } ,
                     {
                         xtype: 'button',
                         text: 'Clear',
                         handler: function () {
-                            Ext.example.msg('Clear','Sucessfully')
+                            Ext.example.msg('Clear', 'Sucessfully')
                         }
                     },
                     '->',
@@ -1506,39 +1506,50 @@ VariantWidget.prototype = {
                 var alt = row.alt;
 
 
-                _this.gridEffect.setLoading(true);
-                CellBaseManager.get({
-                    host: 'http://ws.bioinfo.cipf.es/cellbase/rest',
-                    version: 'latest',
-                    species: 'hsa', //TODO multiples species
-                    category: 'genomic',
-                    subCategory: 'variant',
-                    query: chr + ':' + pos + ':' + ref + ':' + alt,
-                    resource: 'consequence_type',
-                    success: function (response, textStatus, jqXHR) {
-                        console.log(response);
-                        if (response.length > 0) {
-                            _this.gridEffect.getStore().loadData(response);
-                            _this.gridEffect.setTitle('<span class="ssel">Effect</span> - <spap class="info">' + chr + ':' + pos +' ' + ref + '>' + alt + '</spap>');
-                            Ext.getCmp(_this.id + "numRowsLabelEffect").setText(response.length + " effects");
+                _this._updateEffectGrid(chr, pos, ref, alt);
 
-                        } else {
-                            _this.gridEffect.getStore().removeAll();
-                        }
-                        _this.gridEffect.setLoading(false);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log('Error loading Effect');
-                        _this.gridEffect.setLoading(false);
-
-                    }
-                });
 
             }
         });
 
         return grid;
     },
+    _updateEffectGrid: function (chr, pos, ref, alt) {
+
+        var _this = this;
+
+        _this.gridEffect.setLoading(true);
+        CellBaseManager.get({
+            host: 'http://ws.bioinfo.cipf.es/cellbase/rest',
+            version: 'latest',
+            species: 'hsa', //TODO multiples species
+            category: 'genomic',
+            subCategory: 'variant',
+            query: chr + ':' + pos + ':' + ref + ':' + alt,
+            resource: 'consequence_type',
+            success: function (response, textStatus, jqXHR) {
+                console.log(response);
+                if (response.length > 0) {
+                    _this.gridEffect.getStore().loadData(response);
+                    _this.gridEffect.setTitle('<span class="ssel">Effect</span> - <spap class="info">' + chr + ':' + pos + ' ' + ref + '>' + alt + '</spap>');
+                    Ext.getCmp(_this.id + "numRowsLabelEffect").setText(response.length + " effects");
+
+                } else {
+                    _this.gridEffect.getStore().removeAll();
+                }
+                _this.gridEffect.setLoading(false);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log('Error loading Effect');
+                _this.gridEffect.setLoading(false);
+
+            }
+        });
+
+
+    },
+
+
     _getSubColumn: function (colName) {
         var _this = this;
         var subCols = [];
@@ -1769,19 +1780,25 @@ VariantWidget.prototype = {
             formData: formParams,
             success: function (response, textStatus, jqXHR) {
                 console.log(response);
-                var data = _this._prepareData(response);
 
-                _this.st.loadData(data);
+                if (response.length) {
+                    var data = _this._prepareData(response);
 
-                _this.grid.getView().refresh();
+                    _this.st.loadData(data);
 
-                Ext.getCmp(_this.id + "numRowsLabel").setText(data.length + " variants");
+                    _this.grid.getView().refresh();
 
+                    _this.grid.getSelectionModel().select(0);
 
-                _this._updateInfoVariantMini(response);
+                    Ext.getCmp(_this.id + "numRowsLabel").setText(data.length + " variants");
+
+                    _this._updateInfoVariantMini(response);
+
+                    Ext.example.msg('Search', 'Sucessfully')
+
+                }
+
                 _this.grid.setLoading(false);
-                Ext.example.msg('Search','Sucessfully')
-
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -1828,6 +1845,9 @@ VariantWidget.prototype = {
 
 
         _this.stMini.loadData(result);
+        if (result.length) {
+            _this.variantGridMini.getSelectionModel().select(0);
+        }
 
     },
 
