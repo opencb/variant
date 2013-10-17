@@ -1,4 +1,4 @@
-package org.opencb.variant.lib.core.json;
+package org.opencb.variant.lib.core.formats;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,14 +25,15 @@ public class VariantAnalysisInfo {
     @JsonProperty
     HashMap<String, Double> globalStats;
     @JsonProperty
-    HashMap<String, Integer> chromosomes;
+    HashMap<String, SampleStat> sampleStats;
 
     public VariantAnalysisInfo() {
         samples = new ArrayList<>(5);
         consequenceTypes = new LinkedHashMap<>(50);
         biotypes = new LinkedHashMap<>(50);
         globalStats = new LinkedHashMap<>(20);
-        chromosomes = new LinkedHashMap<>(24);
+        sampleStats = new LinkedHashMap<>(5);
+
     }
 
     public List<String> getSamples() {
@@ -91,6 +92,11 @@ public class VariantAnalysisInfo {
 
     }
 
+    public void addSampleStats(String sample, int mendelianErrors, int missingGenotypes, int homozygotesNumber) {
+        sampleStats.put(sample, new SampleStat(mendelianErrors, missingGenotypes, homozygotesNumber));
+
+    }
+
     @Override
     public String toString() {
         return "VariantAnalysisInfo{" +
@@ -100,16 +106,19 @@ public class VariantAnalysisInfo {
                 '}';
     }
 
-    public void addConsequenceType(String consequence_type_obo, int count) {
-        consequenceTypes.put(consequence_type_obo, count);
+    private class SampleStat {
+        @JsonProperty
+        int mendelianErrors;
+        @JsonProperty
+        int missingGenotypes;
+        @JsonProperty
+        int homozygotesNumber;
 
+        private SampleStat(int mendelianErrors, int missingGenotypes, int homozygotesNumber) {
+            this.mendelianErrors = mendelianErrors;
+            this.missingGenotypes = missingGenotypes;
+            this.homozygotesNumber = homozygotesNumber;
+        }
     }
 
-    public void addBiotype(String feature_biotype, int count) {
-        biotypes.put(feature_biotype, count);
-    }
-
-    public void addChromosome(String chr, int numVariants) {
-        chromosomes.put(chr, numVariants);
-    }
 }
