@@ -28,8 +28,6 @@ import java.util.regex.Pattern;
  */
 public class WSSqliteManager {
 
-//    private static final String pathDB = "/opt/data/data/";
-
     public static List<VariantInfo> getRecords(HashMap<String, String> options) {
 
         Connection con;
@@ -40,7 +38,6 @@ public class WSSqliteManager {
 
         try {
             Class.forName("org.sqlite.JDBC");
-//            con = DriverManager.getConnection("jdbc:sqlite:" + pathDB + dbName);
             con = DriverManager.getConnection("jdbc:sqlite:" + dbName);
 
             List<String> whereClauses = new ArrayList<>(10);
@@ -265,6 +262,8 @@ public class WSSqliteManager {
                             rs.getDouble("cases_percent_recessive"), rs.getDouble("controls_percent_recessive"));
                     vs.setId(rs.getString("id"));
 
+                    vi.addGenotypes(rs.getString("genotypes"));
+
                     vi.addStats(vs);
                 }
 
@@ -402,7 +401,7 @@ public class WSSqliteManager {
         while (it.hasNext() && res) {
 
             String sampleName = it.next();
-            if (!sampleGenotypes.get(sampleName).contains(variantInfo.getGenotypes().get(sampleName))) {
+            if (!sampleGenotypes.get(sampleName).contains(variantInfo.getSampleGenotypes().get(sampleName))) {
                 res = false;
             }
 

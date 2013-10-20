@@ -65,7 +65,10 @@ public class VariantInfo {
     private Set<VariantEffect> effect;
 
     @JsonProperty
-    private HashMap<String, String> genotypes;
+    private HashMap<String, String> sampleGenotypes;
+
+    @JsonProperty
+    private Map<String, Integer> genotypes;
 
 
     public VariantInfo(String chromosome, int position, String ref, String alt) {
@@ -75,7 +78,7 @@ public class VariantInfo {
         this.alt = alt;
         this.effect = new HashSet<>();
         this.genes = new LinkedHashMap<>();
-        this.genotypes = new LinkedHashMap<>();
+        this.sampleGenotypes = new LinkedHashMap<>();
         this.controls = new LinkedHashMap<>();
 
 
@@ -247,16 +250,16 @@ public class VariantInfo {
         this.stats_controls_percent_recessive = stats_controls_percent_recessive;
     }
 
-    public HashMap<String, String> getGenotypes() {
-        return genotypes;
+    public HashMap<String, String> getSampleGenotypes() {
+        return sampleGenotypes;
     }
 
-    public void setGenotypes(HashMap<String, String> genotypes) {
-        this.genotypes = genotypes;
+    public void setSampleGenotypes(HashMap<String, String> sampleGenotypes) {
+        this.sampleGenotypes = sampleGenotypes;
     }
 
     public void addSammpleGenotype(String sample, String gt) {
-        this.genotypes.put(sample, gt);
+        this.sampleGenotypes.put(sample, gt);
     }
 
     public void addControl(String key, String value) {
@@ -306,6 +309,18 @@ public class VariantInfo {
         this.controls = controls;
     }
 
+    public Map<String, Integer> getGenotypes() {
+        return genotypes;
+    }
+
+    public void setGenotypes(Map<String, Integer> genotypes) {
+        this.genotypes = genotypes;
+    }
+
+    public void addGenotype(String gt, int count) {
+        this.genotypes.put(gt, count);
+    }
+
     @Override
     public String toString() {
         return "VariantInfo{" +
@@ -330,7 +345,16 @@ public class VariantInfo {
                 ", genes=" + genes +
                 ", controls=" + controls +
                 ", effect=" + effect +
-                ", genotypes=" + genotypes +
+                ", sampleGenotypes=" + sampleGenotypes +
                 '}';
+    }
+
+    public void addGenotypes(String genotypes) {
+        String[] splits = genotypes.split(",");
+        String[] aux;
+        for (String split : splits) {
+            aux = split.split(":");
+            this.addGenotype(aux[0], Integer.parseInt(aux[1]));
+        }
     }
 }
