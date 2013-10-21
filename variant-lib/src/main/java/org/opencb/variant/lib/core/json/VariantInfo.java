@@ -80,6 +80,8 @@ public class VariantInfo {
         this.genes = new LinkedHashMap<>();
         this.sampleGenotypes = new LinkedHashMap<>();
         this.controls = new LinkedHashMap<>();
+        this.genotypes = new LinkedHashMap<>();
+
 
 
     }
@@ -264,6 +266,9 @@ public class VariantInfo {
 
     public void addControl(String key, String value) {
 
+        if(!key.contains("_")){
+            return;
+        }
         String[] fields = key.split("_");
         String controlName = fields[0];
         String controlType = fields[1];
