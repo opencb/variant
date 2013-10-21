@@ -1091,7 +1091,7 @@ VariantWidget.prototype = {
                     text: "gene (EnsemblId)",
                     dataIndex: "geneName",
                     xtype: 'templatecolumn',
-                    tpl: '{geneName} (<a href="http://www.ensembl.org/Homo_sapiens/Location/View?g={geneId}" target="_blank">{geneId}</a>)',
+                    tpl: '<tpl if="geneName">{geneName} (<a href="http://www.ensembl.org/Homo_sapiens/Location/View?g={geneId}" target="_blank">{geneId}</a>)<tpl else>.</tpl>',
                     flex: 1
                 },
                 {
