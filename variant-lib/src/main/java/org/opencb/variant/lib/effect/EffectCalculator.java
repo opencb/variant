@@ -1,6 +1,5 @@
 package org.opencb.variant.lib.effect;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
@@ -21,7 +20,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class EffectCalculator {
-    public static List<VariantEffect> variantEffects(List<VcfRecord> batch){
+    public static List<VariantEffect> variantEffects(List<VcfRecord> batch) {
 
 
         ObjectMapper mapper = new ObjectMapper();
@@ -32,8 +31,7 @@ public class EffectCalculator {
         Client wsRestClient = Client.create();
         WebResource webResource = wsRestClient.resource("http://ws.bioinfo.cipf.es/cellbase/rest/latest/hsa/genomic/variant/");
 
-
-        for(VcfRecord record : batch){
+        for (VcfRecord record : batch) {
             chunkVcfRecords.append(record.getChromosome()).append(":");
             chunkVcfRecords.append(record.getPosition()).append(":");
             chunkVcfRecords.append(record.getReference()).append(":");
@@ -42,12 +40,12 @@ public class EffectCalculator {
         }
 
         FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
-        formDataMultiPart.field("variants", chunkVcfRecords.substring(0, chunkVcfRecords.length()-1));
+        formDataMultiPart.field("variants", chunkVcfRecords.substring(0, chunkVcfRecords.length() - 1));
 
         String response = webResource.path("consequence_type").queryParam("of", "json").type(MediaType.MULTIPART_FORM_DATA).post(String.class, formDataMultiPart);
 
         try {
-            batchEffect = mapper.readValue(response, new TypeReference<List<VariantEffect>>(){});
+            batchEffect = mapper.readValue(response, mapper.getTypeFactory().constructCollectionType(List.class, VariantEffect.class));
         } catch (IOException e) {
             System.err.println(chunkVcfRecords.toString());
             e.printStackTrace();

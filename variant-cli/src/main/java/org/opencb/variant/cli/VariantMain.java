@@ -7,12 +7,17 @@ import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfConsequenceTypeAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
+import org.opencb.commons.bioformats.variant.vcf4.filters.VcfRegionFilter;
+import org.opencb.commons.bioformats.variant.vcf4.filters.VcfSnpFilter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantIndexSqliteDataWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsFileDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataWriter;
 import org.opencb.variant.cli.servlets.GetFoldersServlet;
 import org.opencb.variant.cli.servlets.HelloServlet;
 import org.opencb.variant.lib.runners.VariantAnnotRunner;
+import org.opencb.variant.lib.runners.VariantFilterRunner;
 import org.opencb.variant.lib.runners.VariantIndexRunner;
 import org.opencb.variant.lib.runners.VariantStatsRunner;
 
@@ -79,6 +84,7 @@ public class VariantMain {
         VariantStatsRunner vr;
         VariantAnnotRunner var;
         VariantIndexRunner vi;
+        VariantFilterRunner vf;
         int numThreads = 1;
 
 
@@ -138,7 +144,22 @@ public class VariantMain {
 
             case "filter":
                 System.out.println("===== FILTER =====");
-                System.out.println("Under construction");
+
+                outputFile = "filter.vcf";
+
+                if (commandLine.hasOption("output-file")) {
+                    outputFile = commandLine.getOptionValue("output-file");
+                }
+
+                List<VcfFilter> filterList = new ArrayList<>();
+//                filterList.add(new VcfSnpFilter());
+                filterList.add(new VcfRegionFilter("1", 0, 1000000000));
+                vf = new VariantFilterRunner(new VariantVcfDataReader(commandLine.getOptionValue("vcf-file")), new VariantVcfDataWriter(commandLine.getOptionValue("outdir") + "/" + outputFile));
+
+                vf.parallel(numThreads);
+                vf.filters(filterList);
+                vf.run();
+
                 break;
 
             case "test":
