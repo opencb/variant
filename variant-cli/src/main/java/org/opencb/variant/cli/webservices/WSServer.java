@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.lang.StringUtils;
-import org.opencb.javalibs.bioformats.variant.vcf4.VariantEffect;
+import org.opencb.commons.bioformats.variant.vcf4.VariantEffect;
 import org.opencb.variant.lib.core.json.VariantAnalysisInfo;
 import org.opencb.variant.lib.core.json.VariantInfo;
 import org.opencb.variant.lib.core.sqlite.WSSqliteManager;
@@ -20,24 +20,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-
-// war
-//ws-beta.bioinfo.cipf.es/bierapp/rest/
-//http://ws-beta.bioinfo.cipf.es/bierapp/rest/echo/a
-
-
-// HTML
-// /httpd/bioinfo/www-apps/bierapp/index.html
-// http://bioinfo.cipf.es/apps-beta/bierapp/
-
 @Path("/")
 @Produces("text/plain")
 public class WSServer {
 
-    protected ResourceBundle properties;
-    protected File dataDir;
     protected static ObjectMapper jsonObjectMapper;
     protected static ObjectWriter jsonObjectWriter;
+    protected ResourceBundle properties;
+    protected File dataDir;
 
 
     public WSServer(@Context UriInfo uriInfo, @Context HttpServletRequest httpServletRequest) throws IOException {
@@ -116,7 +106,7 @@ public class WSServer {
             map.put(entry.getKey(), entry.getValue().get(0));
         }
 
-        VariantAnalysisInfo vi= WSSqliteManager.getAnalysisInfo(map);
+        VariantAnalysisInfo vi = WSSqliteManager.getAnalysisInfo(map);
 
         jsonObjectMapper = new ObjectMapper();
         jsonObjectWriter = jsonObjectMapper.writer();

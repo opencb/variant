@@ -1,12 +1,12 @@
 package org.opencb.variant.lib.runners;
 
-import org.opencb.javalibs.bioformats.commons.filters.FilterApplicator;
-import org.opencb.javalibs.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfFilter;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.vcf.VariantDataWriter;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataWriter;
+import org.opencb.commons.bioformats.commons.filters.FilterApplicator;
+import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
+import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
+import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataWriter;
 
 import java.util.List;
 

@@ -1,16 +1,19 @@
 package org.opencb.variant.lib.runners;
 
-import org.opencb.javalibs.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.javalibs.bioformats.variant.vcf4.annotators.VcfAnnotator;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.vcf.VariantDataWriter;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataWriter;
 import org.opencb.javalibs.commons.containers.DataItem;
 import org.opencb.javalibs.commons.containers.DataRW;
 
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created with IntelliJ IDEA.
@@ -149,9 +152,10 @@ public class VariantAnnotRunner {
             System.out.println("END ANNOTATOR");
             this.data.decConsumer();
         }
-        public void applyAnnotations(List<VcfRecord> batch, List<VcfAnnotator> annotations){
 
-            for(VcfAnnotator annot: annotations){
+        public void applyAnnotations(List<VcfRecord> batch, List<VcfAnnotator> annotations) {
+
+            for (VcfAnnotator annot : annotations) {
                 annot.annot(batch);
             }
 

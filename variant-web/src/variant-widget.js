@@ -152,6 +152,7 @@ VariantWidget.prototype = {
 
         this.form = this._createForm();
         this.grid = this._createGrid();
+        this.colSelector = this._createColumnSelector();
         this.gridEffect = this._createEffectGrid();
 
         var panel = Ext.create('Ext.panel.Panel', {
@@ -187,10 +188,6 @@ VariantWidget.prototype = {
                 }
             ]
         });
-
-
-//        this.variantPanel.insert(0, this.form);
-//        this.variantPanel.add(this.grid);
 
         return panel;
     },
@@ -295,25 +292,6 @@ VariantWidget.prototype = {
 
         _this.panel.setLoading(false);
 
-
-//
-//        OpencgaManager.poll({
-//            accountId: $.cookie("bioinfo_account"),
-//            sessionId: $.cookie("bioinfo_sid"),
-//            filename: this.statsName,
-//            jobId: this.job.id,
-//            success: function (data, textStatus, jqXHR) {
-//                var response = JSON.parse(data);
-//                console.log(response);
-//
-//
-//            },
-//            error: function (jqXHR, textStatus, errorThrown) {
-//                console.log('WEB SERVICE ERROR: info');
-//                _this.panel.setLoading(false);
-//            }
-//        });
-
     },
     _addSampleColumn: function (sampleName) {
 
@@ -366,7 +344,36 @@ VariantWidget.prototype = {
             }
         }
     },
+    _createColumnSelector: function () {
+        var _this = this;
+        var items = [];
 
+        for (var i = 0; i < this.columnsGrid.length; i++) {
+            var col = this.columnsGrid[i];
+            var elem = {
+                xtype: 'checkbox',
+                fieldLabel: col["text"],
+                inputValue: col["text"],
+                checked: !col["hidden"],
+                handler: function (field, value) {
+                    var colName = field.inputValue;
+                    for (var i = 0; i < _this.grid.columns.length; i++) {
+                        if (_this.grid.columns[i].text == colName) {
+                            _this.grid.columns[i].setVisible(value);
+                        }
+                    }
+                }
+            };
+            items.push(elem);
+
+        }
+        var panel = Ext.create('Ext.container.Container', {
+                items: items
+            }
+        );
+
+        return panel;
+    },
     _createSummaryPanel: function (data) {
         var _this = this;
 
@@ -379,7 +386,6 @@ VariantWidget.prototype = {
                 count: data.consequenceTypes[key]
             });
         }
-
 
         for (var key in data.sampleStats) {
             ss.push({
@@ -1418,6 +1424,19 @@ VariantWidget.prototype = {
                             '->',
                             {
                                 xtype: 'button',
+                                text: 'Columns',
+                                id: this.id + "gridColSelectorBtn",
+                                menu: {
+                                    width: 150,
+                                    margin: '0 0 10 0',
+                                    id: this.id + "gridColSelectorMenu",
+                                    plain: true,
+                                    items: []
+                                }
+
+                            },
+                            {
+                                xtype: 'button',
                                 text: 'Export data...',
                                 handler: function () {
                                     if (!Ext.getCmp(_this.id + "exportWindow")) {
@@ -1490,7 +1509,18 @@ VariantWidget.prototype = {
                             }
                         ]
                     }
-                ]
+                ],
+                listeners: {
+                    afterrender: function () {
+
+
+                        var btn = Ext.getCmp(_this.id + "gridColSelectorMenu");
+
+                        btn.add(_this.colSelector);
+
+
+                    }
+                }
             }
         );
 
@@ -1751,9 +1781,6 @@ VariantWidget.prototype = {
     _getResult: function () {
         var _this = this;
 
-        // Remove all elements from gridEffect
-        // _this.gridEffect.getStore().removeAll();
-
         var values = this.form.getForm().getValues();
 
         console.log(values);
@@ -1772,6 +1799,10 @@ VariantWidget.prototype = {
 
         _this.grid.setLoading(true);
 
+        // Remove all elements from grids
+        _this.grid.store.removeAll();
+        _this.gridEffect.store.removeAll();
+
         OpencgaManager.variants({
             accountId: $.cookie("bioinfo_account"),
             sessionId: $.cookie("bioinfo_sid"),
@@ -1779,8 +1810,6 @@ VariantWidget.prototype = {
             jobId: this.job.id,
             formData: formParams,
             success: function (response, textStatus, jqXHR) {
-                console.log(response);
-
                 if (response.length) {
                     var data = _this._prepareData(response);
 

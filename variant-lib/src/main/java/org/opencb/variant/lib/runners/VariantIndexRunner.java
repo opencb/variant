@@ -1,11 +1,11 @@
 package org.opencb.variant.lib.runners;
 
-import org.opencb.javalibs.bioformats.pedigree.io.readers.PedDataReader;
-import org.opencb.javalibs.bioformats.pedigree.io.writers.PedDataWriter;
-import org.opencb.javalibs.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfFilter;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.index.VariantIndexDataWriter;
+import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.commons.bioformats.pedigree.io.writers.PedDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
+import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
+import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantIndexDataWriter;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,6 +39,12 @@ public class VariantIndexRunner {
     }
 
 
+    public VariantIndexRunner(VariantDataReader vcfReader, VariantIndexDataWriter vcfWriter) {
+        this();
+        this.vcfReader = vcfReader;
+        this.vcfWriter = vcfWriter;
+    }
+
     public VariantIndexRunner reader(VariantDataReader reader) {
         this.vcfReader = reader;
         return this;
@@ -49,18 +55,10 @@ public class VariantIndexRunner {
         return this;
     }
 
-
-    public VariantIndexRunner(VariantDataReader vcfReader, VariantIndexDataWriter vcfWriter) {
-        this();
-        this.vcfReader = vcfReader;
-        this.vcfWriter = vcfWriter;
-    }
-
     public VariantIndexRunner filter(List<VcfFilter> filterList) {
         this.filters = filterList;
         return this;
     }
-
 
     public VariantIndexRunner parallel(int numThreads) {
         this.numThreads = numThreads;

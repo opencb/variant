@@ -6,15 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import org.apache.commons.lang.StringUtils;
-import org.opencb.javalibs.bioformats.variant.vcf4.VariantEffect;
-import org.opencb.javalibs.bioformats.variant.vcf4.stats.VcfVariantStat;
+import org.opencb.commons.bioformats.variant.vcf4.VariantEffect;
+import org.opencb.commons.bioformats.variant.vcf4.stats.VcfVariantStat;
 import org.opencb.variant.lib.core.json.VariantAnalysisInfo;
 import org.opencb.variant.lib.core.json.VariantControl;
 import org.opencb.variant.lib.core.json.VariantInfo;
 
 import java.io.IOException;
 import java.sql.*;
-import java.sql.ResultSet;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

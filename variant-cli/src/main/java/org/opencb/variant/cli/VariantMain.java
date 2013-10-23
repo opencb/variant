@@ -4,12 +4,12 @@ import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.cli.*;
-import org.opencb.javalibs.bioformats.variant.vcf4.annotators.VcfAnnotator;
-import org.opencb.javalibs.bioformats.variant.vcf4.annotators.VcfConsequenceTypeAnnotator;
-import org.opencb.javalibs.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.index.VariantIndexSqliteDataWriter;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.stats.VariantStatsFileDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfConsequenceTypeAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantIndexSqliteDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsFileDataWriter;
 import org.opencb.variant.cli.servlets.GetFoldersServlet;
 import org.opencb.variant.cli.servlets.HelloServlet;
 import org.opencb.variant.lib.runners.VariantAnnotRunner;
@@ -36,7 +36,6 @@ public class VariantMain {
     private static CommandLine commandLine;
     private static CommandLineParser parser;
     private static HelpFormatter help;
-
     private Logger logger;
 
     static {

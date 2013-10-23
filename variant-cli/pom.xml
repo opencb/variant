@@ -122,7 +122,18 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>appassembler-maven-plugin</artifactId>
                 <version>1.5</version>
+
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
+                    <!--<assembleDirectory>target/variant</assembleDirectory>-->
+                    <repositoryName>libs</repositoryName>
                     <programs>
                         <program>
                             <mainClass>org.opencb.variant.cli.VariantMain</mainClass>

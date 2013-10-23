@@ -5,9 +5,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.opencb.javalibs.bioformats.pedigree.Pedigree;
-import org.opencb.javalibs.bioformats.pedigree.io.readers.PedDataReader;
-import org.opencb.javalibs.bioformats.pedigree.io.readers.PedFileDataReader;
+import org.opencb.commons.bioformats.pedigree.Pedigree;
+import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.commons.bioformats.pedigree.io.readers.PedFileDataReader;
 
 /**
  * Created with IntelliJ IDEA.

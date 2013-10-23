@@ -3,8 +3,8 @@ package org.opencb.variant.lib.filters.customfilters;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfFilter;
-import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfGeneFilter;
+import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
+import org.opencb.commons.bioformats.variant.vcf4.filters.VcfGeneFilter;
 import org.opencb.variant.lib.runners.VariantFilterRunner;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class VcfGeneFilterTest {
     }
 
     @Test
-    public void test(){
+    public void test() {
 
         String fileIn = "/home/aleman/tmp/file.gz";
         String fileOut = "/home/aleman/tmp/file-out.vcf";
@@ -38,9 +38,7 @@ public class VcfGeneFilterTest {
         VariantFilterRunner vr = new VariantFilterRunner(fileIn, fileOut);
         List<VcfFilter> list = new ArrayList<>();
 
-
         list.add(new VcfGeneFilter(geneList));
-
 
         vr.filters(list);
 

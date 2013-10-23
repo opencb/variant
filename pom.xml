@@ -27,11 +27,11 @@
                 <version>14.0.1</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.opencb.opencb-commons</groupId>
-                <artifactId>bioformats</artifactId>
-                <version>0.1.0</version>
-            </dependency>
+            <!--<dependency>-->
+            <!--<groupId>org.opencb.commons</groupId>-->
+            <!--<artifactId>bioformats</artifactId>-->
+            <!--<version>1.0.0</version>-->
+            <!--</dependency>-->
 
             <dependency>
                 <groupId>junit</groupId>
@@ -109,15 +109,15 @@
             </dependency>
 
             <dependency>
-                <groupId>org.opencb.java-libs</groupId>
+                <groupId>org.opencb.commons</groupId>
                 <artifactId>bioformats</artifactId>
-                <version>0.1.0</version>
+                <version>1.0.0</version>
             </dependency>
 
             <dependency>
-                <groupId>org.opencb.java-libs</groupId>
-                <artifactId>commons</artifactId>
-                <version>0.1.0</version>
+                <groupId>org.opencb.commons</groupId>
+                <artifactId>commons-lib</artifactId>
+                <version>1.0.0</version>
             </dependency>
 
 

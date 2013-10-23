@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.stats.VariantStatsFileDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsFileDataWriter;
 import org.opencb.variant.lib.runners.VariantStatsRunner;
 
 /**
@@ -16,6 +16,8 @@ import org.opencb.variant.lib.runners.VariantStatsRunner;
  * To change this template use File | Settings | File Templates.
  */
 public class CalculateStatsTest {
+    @Rule
+    public TestName name = new TestName();
     private Long start, end;
     private String path = "/opt/data/";
     private String vcfFileName;
@@ -23,11 +25,6 @@ public class CalculateStatsTest {
     private String pathStats;
     private String dbFilename;
     private String dbFilters;
-
-
-    @Rule
-    public TestName name = new TestName();
-
 
     @Before
     public void setUp() throws Exception {

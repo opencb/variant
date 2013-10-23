@@ -1,8 +1,8 @@
 package org.opencb.variant.lib.core.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.opencb.javalibs.bioformats.variant.vcf4.VariantEffect;
-import org.opencb.javalibs.bioformats.variant.vcf4.stats.VcfVariantStat;
+import org.opencb.commons.bioformats.variant.vcf4.VariantEffect;
+import org.opencb.commons.bioformats.variant.vcf4.stats.VcfVariantStat;
 
 import java.util.*;
 
@@ -16,6 +16,8 @@ import java.util.*;
 public class VariantInfo {
 
     @JsonProperty
+    HashMap<String, VariantControl> controls;
+    @JsonProperty
     private String chromosome;
     @JsonProperty
     private int position;
@@ -23,10 +25,8 @@ public class VariantInfo {
     private String ref;
     @JsonProperty
     private String alt;
-
     @JsonProperty
     private String gene_name;
-
     @JsonProperty
     private double stats_maf;
     @JsonProperty
@@ -53,20 +53,12 @@ public class VariantInfo {
     private double stats_controls_percent_recessive;
     @JsonProperty
     private String stats_id_snp;
-
     @JsonProperty
     private HashMap<String, String> genes;
-
-
-    @JsonProperty
-    HashMap<String, VariantControl> controls;
-
     @JsonProperty
     private Set<VariantEffect> effect;
-
     @JsonProperty
     private HashMap<String, String> sampleGenotypes;
-
     @JsonProperty
     private Map<String, Integer> genotypes;
 
@@ -81,7 +73,6 @@ public class VariantInfo {
         this.sampleGenotypes = new LinkedHashMap<>();
         this.controls = new LinkedHashMap<>();
         this.genotypes = new LinkedHashMap<>();
-
 
 
     }
@@ -266,7 +257,7 @@ public class VariantInfo {
 
     public void addControl(String key, String value) {
 
-        if(!key.contains("_")){
+        if (!key.contains("_")) {
             return;
         }
         String[] fields = key.split("_");

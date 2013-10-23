@@ -17,22 +17,14 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.opencb.opencb-commons</groupId>
-            <artifactId>bioformats</artifactId>
-            <version>0.1.0</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
-
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -58,15 +50,14 @@
             <artifactId>picard</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opencb.java-libs</groupId>
+            <groupId>org.opencb.commons</groupId>
             <artifactId>bioformats</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opencb.java-libs</groupId>
-            <artifactId>commons</artifactId>
+            <groupId>org.opencb.commons</groupId>
+            <artifactId>commons-lib</artifactId>
         </dependency>
     </dependencies>
-
 
 
 </project>

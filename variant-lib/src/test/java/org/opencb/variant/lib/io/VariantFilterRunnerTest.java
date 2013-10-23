@@ -3,8 +3,8 @@ package org.opencb.variant.lib.io;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfConsequenceTypeFilter;
-import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfFilter;
+import org.opencb.commons.bioformats.variant.vcf4.filters.VcfConsequenceTypeFilter;
+import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
 import org.opencb.variant.lib.runners.VariantFilterRunner;
 
 import java.util.ArrayList;

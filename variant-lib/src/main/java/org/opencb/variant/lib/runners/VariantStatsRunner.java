@@ -1,18 +1,18 @@
 package org.opencb.variant.lib.runners;
 
-import org.opencb.javalibs.bioformats.commons.filters.FilterApplicator;
-import org.opencb.javalibs.bioformats.pedigree.Pedigree;
-import org.opencb.javalibs.bioformats.pedigree.io.readers.PedDataReader;
-import org.opencb.javalibs.bioformats.pedigree.io.readers.PedFileDataReader;
-import org.opencb.javalibs.bioformats.pedigree.io.writers.PedDataWriter;
-import org.opencb.javalibs.bioformats.variant.vcf4.VariantEffect;
-import org.opencb.javalibs.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.javalibs.bioformats.variant.vcf4.filters.VcfFilter;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.stats.VariantStatsDataWriter;
-import org.opencb.javalibs.bioformats.variant.vcf4.io.writers.stats.VariantStatsSqliteDataWriter;
-import org.opencb.javalibs.bioformats.variant.vcf4.stats.*;
+import org.opencb.commons.bioformats.commons.filters.FilterApplicator;
+import org.opencb.commons.bioformats.pedigree.Pedigree;
+import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.commons.bioformats.pedigree.io.readers.PedFileDataReader;
+import org.opencb.commons.bioformats.pedigree.io.writers.PedDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.VariantEffect;
+import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
+import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
+import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsSqliteDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.stats.*;
 import org.opencb.variant.lib.effect.EffectCalculator;
 
 import java.io.IOException;
