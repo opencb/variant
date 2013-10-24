@@ -295,6 +295,7 @@ public class WSSqliteManager {
 
         return list;
     }
+
     public static List<VariantInfo> getRecordsES(HashMap<String, String> options) {
 
         Connection con;
@@ -832,7 +833,7 @@ public class WSSqliteManager {
 
             stmt.close();
 
-            sql = "select count(*) as count, consequence_type_obo from variant_effect group by consequence_type_obo";
+            sql = "select * from consequence_type_count";
             stmt = con.createStatement();
             rs = stmt.executeQuery(sql);
 
@@ -846,7 +847,7 @@ public class WSSqliteManager {
             stmt.close();
 
 
-            sql = "select count(*) as count, feature_biotype from variant_effect group by feature_biotype;";
+            sql = "select * from biotype_count;";
             stmt = con.createStatement();
             rs = stmt.executeQuery(sql);
 
@@ -864,7 +865,7 @@ public class WSSqliteManager {
 
             while (rs.next()) {
 
-                vi.addGlobalStats(rs.getString("name"), rs.getDouble("value"));
+                vi.addGlobalStats(rs.getString("name").toLowerCase(), rs.getDouble("value"));
 
             }
 

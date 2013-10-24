@@ -1,19 +1,13 @@
 package org.opencb.variant.lib.runners;
 
+import org.opencb.commons.bioformats.commons.DataWriter;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataWriter;
-import org.opencb.javalibs.commons.containers.DataItem;
-import org.opencb.javalibs.commons.containers.DataRW;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,11 +16,52 @@ import java.util.concurrent.Future;
  * Time: 8:01 PM
  * To change this template use File | Settings | File Templates.
  */
-public class VariantAnnotRunner {
+public class VariantAnnotRunner extends VariantRunner {
 
+    private List<VcfAnnotator> annots;
+    private boolean header = false;
+
+    public VariantAnnotRunner(VariantDataReader reader, VariantDataWriter writer, List<VcfAnnotator> annots) {
+        super(reader, writer);
+        this.annots = annots;
+    }
+
+    public VariantAnnotRunner(VariantDataReader reader, VariantDataWriter writer, List<VcfAnnotator> annots, VariantRunner prev) {
+        super(reader, writer, prev);
+        this.annots = annots;
+
+    }
+
+    @Override
+    public List<VcfRecord> apply(List<VcfRecord> batch) throws IOException {
+
+        if (!header && writer != null) {
+            ((VariantDataWriter) writer).writeVcfHeader(reader.getHeader());
+            header = true;
+        }
+
+        this.applyAnnotations(batch, annots);
+
+        if (writer != null) {
+            ((VariantDataWriter) writer).writeBatch(batch);
+        }
+
+        return batch;
+    }
+
+    private void applyAnnotations(List<VcfRecord> batch, List<VcfAnnotator> annotations) {
+
+        for (VcfAnnotator annotation : annotations) {
+            annotation.annot(batch);
+        }
+
+    }
+}
+/*
+
+    private static final Logger logger = LoggerFactory.getLogger(VariantAnnotRunner.class);
     private VariantDataReader vcfReader;
     private VariantDataWriter vcfWriter;
-    private List<VcfAnnotator> annots;
     private int batchSize = 1000;
     private int threads;
 
@@ -49,6 +84,10 @@ public class VariantAnnotRunner {
     }
 
     public void run() {
+
+
+        logger.info("HOLA");
+
 
         vcfReader.open();
         vcfWriter.open();
@@ -106,7 +145,7 @@ public class VariantAnnotRunner {
 
             batch = vcfReader.read(batchSize);
 
-            System.out.println("START READER");
+//            logger.info("START READER");
             vcfWriter.writeVcfHeader(vcfReader.getHeader());
             while (!batch.isEmpty()) {
                 data.putRead(count++, batch);
@@ -141,6 +180,9 @@ public class VariantAnnotRunner {
             while (data.isContinueProducing() || dataItem != null) {
                 batch = dataItem.getData();
                 priority = dataItem.getTokenId();
+
+                System.out.println("Annoting: " + dataItem.getTokenId());
+
 
                 applyAnnotations(batch, annots);
 
@@ -189,4 +231,5 @@ public class VariantAnnotRunner {
             System.out.println("END WRITER");
         }
     }
-}
+
+*/

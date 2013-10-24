@@ -51,12 +51,12 @@ public class CalculateStatsTest {
     public void testCalculateStatsList() throws Exception {
 
 
-        VariantStatsRunner vr = new VariantStatsRunner(vcfFileName, dbFilename, pedFileName);
-
-        vr.writer(new VariantStatsFileDataWriter(pathStats));
-        vr.setEffect(true);
-
-        vr.run();
+//        VariantStatsRunner vr = new VariantStatsRunner(vcfFileName, dbFilename, pedFileName);
+//
+//        vr.writer(new VariantStatsFileDataWriter(pathStats));
+//        vr.setEffect(true);
+//
+//        vr.run();
 
 
     }

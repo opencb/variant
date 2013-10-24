@@ -4,14 +4,10 @@ import org.opencb.commons.bioformats.commons.filters.FilterApplicator;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataWriter;
-import org.opencb.javalibs.commons.containers.DataItem;
-import org.opencb.javalibs.commons.containers.DataRW;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,11 +16,49 @@ import java.util.concurrent.*;
  * Time: 8:01 PM
  * To change this template use File | Settings | File Templates.
  */
-public class VariantFilterRunner {
+public class VariantFilterRunner extends VariantRunner {
 
+    private List<VcfFilter> filters;
+    private boolean header = false;
+
+
+    public VariantFilterRunner(VariantDataReader reader, VariantDataWriter writer, List<VcfFilter> filterList) {
+        super(reader, writer);
+        this.filters = filterList;
+    }
+
+    public VariantFilterRunner(VariantDataReader reader, VariantDataWriter writer, List<VcfFilter> filterList, VariantRunner prev) {
+        super(reader, writer, prev);
+        this.filters = filterList;
+    }
+
+    @Override
+    public List<VcfRecord> apply(List<VcfRecord> batch) throws IOException {
+
+        if (!header && writer != null) {
+            ((VariantDataWriter) writer).writeVcfHeader(reader.getHeader());
+            header = true;
+
+        }
+
+        List<VcfRecord> filteredBatch = FilterApplicator.filter(batch, filters);
+        batch.clear();
+        if (writer != null) {
+            ((VariantDataWriter) writer).writeBatch(filteredBatch);
+        }
+
+        return filteredBatch;
+    }
+
+    public void filters(List<VcfFilter> filters) {
+        this.filters = filters;
+    }
+
+}
+
+ /*
     private VariantDataReader vcfReader;
     private VariantDataWriter vcfWriter;
-    private List<VcfFilter> filters;
     private int batchSize = 1000;
     private int threads;
 
@@ -85,9 +119,6 @@ public class VariantFilterRunner {
         vcfWriter.close();
     }
 
-    public void filters(List<VcfFilter> filters) {
-        this.filters = filters;
-    }
 
     public VariantFilterRunner reader(VariantDataReader reader) {
         this.vcfReader = reader;
@@ -123,9 +154,7 @@ public class VariantFilterRunner {
                 batchAux = FilterApplicator.filter(batch, filters);
                 batch.clear();
 
-                if (batchAux.size() > 0) {
-                    data.putWrite(priority, batchAux);
-                }
+                data.putWrite(priority, batchAux);
 
                 dataItem = data.getRead();
             }
@@ -192,4 +221,4 @@ public class VariantFilterRunner {
             System.out.println("END WRITER");
         }
     }
-}
+*/

@@ -1,19 +1,12 @@
 package org.opencb.variant.lib.runners;
 
-import org.opencb.commons.bioformats.commons.filters.FilterApplicator;
 import org.opencb.commons.bioformats.pedigree.Pedigree;
 import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
 import org.opencb.commons.bioformats.pedigree.io.readers.PedFileDataReader;
-import org.opencb.commons.bioformats.pedigree.io.writers.PedDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.VariantEffect;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsSqliteDataWriter;
 import org.opencb.commons.bioformats.variant.vcf4.stats.*;
-import org.opencb.variant.lib.effect.EffectCalculator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,84 +19,34 @@ import java.util.List;
  * Time: 6:09 PM
  * To change this template use File | Settings | File Templates.
  */
-public class VariantStatsRunner {
+public class VariantStatsRunner extends VariantRunner {
 
-    private List<VcfFilter> filters;
-    private int numThreads;
-    private VariantDataReader vcfReader;
-    private VariantStatsDataWriter vcfWriter;
-    private PedDataReader pedReader;
-    private PedDataWriter pedWriter;
-    private boolean effect;
-    private boolean stats;
+    private String pedFile;
 
-
-    public VariantStatsRunner() {
-        this.filters = null;
-        this.numThreads = 1;
-        this.stats = true;
-        this.effect = true;
+    public VariantStatsRunner(VariantDataReader reader, VariantStatsDataWriter writer, String pedFile) {
+        super(reader, writer);
+        this.pedFile = pedFile;
     }
 
-    public VariantStatsRunner(String vcfFilePath, String sqliteFileName, String pedFilePath) {
-        this();
-        vcfReader = new VariantVcfDataReader(vcfFilePath);
-        vcfWriter = new VariantStatsSqliteDataWriter(sqliteFileName);
-
-        if (pedFilePath != null) {
-            pedReader = new PedFileDataReader(pedFilePath);
-        }
-
+    public VariantStatsRunner(VariantDataReader reader, VariantStatsDataWriter writer, String pedFile, VariantRunner prev) {
+        super(reader, writer, prev);
+        this.pedFile = pedFile;
     }
 
-    public VariantStatsRunner stats() {
-        this.stats = true;
-        return this;
-    }
+    @Override
+    public List<VcfRecord> apply(List<VcfRecord> batch) throws IOException {
 
-    public VariantStatsRunner effect() {
-        this.effect = true;
-        return this;
-    }
-
-    public VariantStatsRunner reader(VariantDataReader reader) {
-        this.vcfReader = reader;
-        return this;
-    }
-
-    public VariantStatsRunner writer(VariantStatsDataWriter writer) {
-        this.vcfWriter = writer;
-        return this;
-    }
-
-
-    public VariantStatsRunner(VariantDataReader vcfReader, VariantStatsDataWriter vcfWriter) {
-        this();
-        this.vcfReader = vcfReader;
-        this.vcfWriter = vcfWriter;
-    }
-
-    public VariantStatsRunner filter(List<VcfFilter> filterList) {
-        this.filters = filterList;
-        return this;
-    }
-
-
-    public VariantStatsRunner parallel(int numThreads) {
-        this.numThreads = numThreads;
-        return this;
-    }
-
-    public void run() throws IOException {
-        int batchSize = 1000;
-
+        VariantStatsDataWriter customWriter = (VariantStatsDataWriter) writer;
         Pedigree ped = null;
+        PedDataReader pedReader = null;
+
+        if (pedFile != null) {
+            pedReader = new PedFileDataReader(pedFile);
+        }
 
         VcfGlobalStat globalStat;
         VcfSampleStat vcfSampleStat;
 
-        List<VcfRecord> batch;
-        List<VariantEffect> batchEffect;
         List<VcfVariantStat> statsList;
         List<VcfGlobalStat> globalStats = new ArrayList<>(100);
         List<VcfSampleStat> sampleStats = new ArrayList<>(100);
@@ -116,14 +59,6 @@ public class VariantStatsRunner {
             pedReader.close();
         }
 
-
-        vcfReader.open();
-        vcfWriter.open();
-
-        vcfReader.pre();
-        vcfWriter.pre();
-
-
         VcfSampleGroupStat vcfSampleGroupStatPhen;
         VcfSampleGroupStat vcfSampleGroupStatFam;
 
@@ -131,73 +66,50 @@ public class VariantStatsRunner {
         VcfVariantGroupStat groupStatsBatchPhen = null;
         VcfVariantGroupStat groupStatsBatchFam = null;
 
-        batch = vcfReader.read(batchSize);
 
-        while (!batch.isEmpty()) {
+        statsList = CalculateStats.variantStats(batch, reader.getSampleNames(), ped);
+        globalStat = CalculateStats.globalStats(statsList);
+        globalStats.add(globalStat);
 
-            if (filters != null) {
-                batch = FilterApplicator.filter(batch, filters);
-            }
+        vcfSampleStat = CalculateStats.sampleStats(batch, reader.getSampleNames(), ped);
+        sampleStats.add(vcfSampleStat);
 
-            if (stats) {
-                statsList = CalculateStats.variantStats(batch, vcfReader.getSampleNames(), ped);
-                globalStat = CalculateStats.globalStats(statsList);
-                globalStats.add(globalStat);
+        if (ped != null) {
+            groupStatsBatchPhen = CalculateStats.groupStats(batch, ped, "phenotype");
+            groupStatsBatchFam = CalculateStats.groupStats(batch, ped, "family");
 
-                vcfSampleStat = CalculateStats.sampleStats(batch, vcfReader.getSampleNames(), ped);
-                sampleStats.add(vcfSampleStat);
+            vcfSampleGroupStatPhen = CalculateStats.sampleGroupStats(batch, ped, "phenotype");
+            sampleGroupPhen.add(vcfSampleGroupStatPhen);
 
-                if (ped != null) {
-                    groupStatsBatchPhen = CalculateStats.groupStats(batch, ped, "phenotype");
-                    groupStatsBatchFam = CalculateStats.groupStats(batch, ped, "family");
+            vcfSampleGroupStatFam = CalculateStats.sampleGroupStats(batch, ped, "family");
+            sampleGroupFam.add(vcfSampleGroupStatFam);
 
-                    vcfSampleGroupStatPhen = CalculateStats.sampleGroupStats(batch, ped, "phenotype");
-                    sampleGroupPhen.add(vcfSampleGroupStatPhen);
-
-                    vcfSampleGroupStatFam = CalculateStats.sampleGroupStats(batch, ped, "family");
-                    sampleGroupFam.add(vcfSampleGroupStatFam);
-
-                }
-
-                vcfWriter.writeVariantStats(statsList);
-                vcfWriter.writeVariantGroupStats(groupStatsBatchPhen);
-                vcfWriter.writeVariantGroupStats(groupStatsBatchFam);
-            }
-
-            if (effect) {
-
-
-                batchEffect = EffectCalculator.variantEffects(batch);
-                vcfWriter.writeVariantEffect(batchEffect);
-
-            }
-
-            batch = vcfReader.read(batchSize);
         }
 
-        globalStat = new VcfGlobalStat(globalStats);
-        vcfSampleStat = new VcfSampleStat(vcfReader.getSampleNames(), sampleStats);
-        vcfSampleGroupStatPhen = new VcfSampleGroupStat(sampleGroupPhen);
-        vcfSampleGroupStatFam = new VcfSampleGroupStat(sampleGroupFam);
+        customWriter.writeVariantStats(statsList);
+        customWriter.writeVariantGroupStats(groupStatsBatchPhen);
+        customWriter.writeVariantGroupStats(groupStatsBatchFam);
 
-        vcfWriter.writeGlobalStats(globalStat);
-        vcfWriter.writeSampleStats(vcfSampleStat);
 
-        vcfWriter.writeSampleGroupStats(vcfSampleGroupStatFam);
-        vcfWriter.writeSampleGroupStats(vcfSampleGroupStatPhen);
+        // FINAL WRITE
 
-        vcfReader.post();
-        vcfWriter.post();
+//        globalStat = new VcfGlobalStat(globalStats);
+//        vcfSampleStat = new VcfSampleStat(reader.getSampleNames(), sampleStats);
+//        vcfSampleGroupStatPhen = new VcfSampleGroupStat(sampleGroupPhen);
+//        vcfSampleGroupStatFam = new VcfSampleGroupStat(sampleGroupFam);
 
-        vcfReader.close();
-        vcfWriter.close();
-    }
+//        customWriter.writeGlobalStats(globalStat);
+//        customWriter.writeSampleStats(vcfSampleStat);
+//
+//        customWriter.writeSampleGroupStats(vcfSampleGroupStatFam);
+//        customWriter.writeSampleGroupStats(vcfSampleGroupStatPhen);
+//
+//        vcfReader.post();
+//        vcfWriter.post();
+//
+//        vcfReader.close();
+//        vcfWriter.close();
 
-    public boolean isEffect() {
-        return effect;
-    }
-
-    public void setEffect(boolean effect) {
-        this.effect = effect;
+        return batch;
     }
 }

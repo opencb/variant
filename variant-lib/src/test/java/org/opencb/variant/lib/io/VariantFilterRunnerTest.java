@@ -33,16 +33,16 @@ public class VariantFilterRunnerTest {
         String fileIn = "/home/javi/tmp/small_annot.vcf";
         String fileOut = "/home/javi/tmp/small_out.vcf";
 
-        VariantFilterRunner vr = new VariantFilterRunner(fileIn, fileOut);
-        List<VcfFilter> list = new ArrayList<>();
-
-
-        list.add(new VcfConsequenceTypeFilter("DNAseI_hypersensitive_site"));
-
-
-        vr.filters(list);
-
-        vr.run();
+//        VariantFilterRunner vr = new VariantFilterRunner(fileIn, fileOut);
+//        List<VcfFilter> list = new ArrayList<>();
+//
+//
+//        list.add(new VcfConsequenceTypeFilter("DNAseI_hypersensitive_site"));
+//
+//
+//        vr.filters(list);
+//
+//        vr.run();
 
 
     }
