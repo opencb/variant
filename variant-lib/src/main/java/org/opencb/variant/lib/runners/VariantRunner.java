@@ -35,10 +35,11 @@ public abstract class VariantRunner {
     }
 
     public abstract List<VcfRecord> apply(List<VcfRecord> batch) throws IOException;
-
+    
     public void run() throws IOException {
         List<VcfRecord> batch;
 
+        int cont = 0;
         reader.open();
         reader.pre();
 
@@ -48,6 +49,7 @@ public abstract class VariantRunner {
         batch = reader.read(batchSize);
         while (!batch.isEmpty()) {
 
+            logger.info("Batch: " + cont++);
             batch = this.launch(batch);
             batch.clear();
             batch = reader.read(batchSize);

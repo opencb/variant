@@ -2,23 +2,23 @@ package org.opencb.variant.cli;
 
 import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfTestAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
 import org.opencb.commons.bioformats.variant.vcf4.filters.VcfRegionFilter;
+import org.opencb.commons.bioformats.variant.vcf4.filters.VcfSnpFilter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.effect.VariantEffectSqliteDataWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantIndexSqliteDataWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsSqliteDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataWriter;
 import org.opencb.variant.lib.runners.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -50,8 +50,6 @@ public class VariantMain {
         options.addOption(OptionFactory.createOption("output-file", "Output filename", false, true));
         options.addOption(OptionFactory.createOption("ped-file", "Ped file", false, true));
 //        options.addOption(OptionFactory.createOption("control", "Control filename", false, true));
-//        options.addOption(OptionFactory.createOption("control-list", "Control filename list", false, true));
-//        options.addOption(OptionFactory.createOption("control-prefix", "Control prefix", false, true));
         options.addOption(OptionFactory.createOption("threads", "Num threads", false, true));
 
         options.addOption(OptionFactory.createOption("filter", "Filter vcf file", false, false));
@@ -62,14 +60,21 @@ public class VariantMain {
 
         options.addOption(OptionFactory.createOption("all", "Run all tools", false, false));
 
+
+        // ANNOTS
+        options.addOption(OptionFactory.createOption("annot-control-list", "Control filename list", false, true));
+        options.addOption(OptionFactory.createOption("annot-control-prefix", "Control prefix", false, true));
+
+        // FILTERS
+
+        options.addOption(OptionFactory.createOption("filter-region", "Filter Region (chr:start-end)", false, true));
+        options.addOption(OptionFactory.createOption("filter-SNP", "Filter SNP", false, false));
+//        options.addOption(OptionFactory.createOption("filter-gene", "Filter Gene", false, true));
+
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
         initOptions();
-
-
-        String in = "/home/aaleman/Documents/pruebas/index/aux.vcf";
-        String out = "/home/aaleman/Documents/pruebas/index/out.db";
 
         List<Tool> toolList = new ArrayList<>(5);
 
@@ -115,8 +120,8 @@ public class VariantMain {
         System.out.println("toolList = " + toolList);
 
         VariantDataReader reader = new VariantVcfDataReader(inputFile);
-        List<VcfFilter> filters = new ArrayList<>();
-        List<VcfAnnotator> annots = new ArrayList<>();
+        List<VcfFilter> filters = parseFilters(commandLine);
+        List<VcfAnnotator> annots = parseAnnotations(commandLine);
 
         VariantRunner vr = null;
         VariantRunner vrAux = null;
@@ -125,10 +130,17 @@ public class VariantMain {
         for (Tool t : toolList) {
             switch (t) {
                 case FILTER:
-                    vrAux = new VariantFilterRunner(reader, null, filters, vr);
+                    if (toolList.size() == 1) {
+                        vrAux = new VariantFilterRunner(reader, new VariantVcfDataWriter(outputFile), filters, vr);
+                    } else {
+                        vrAux = new VariantFilterRunner(reader, null, filters, vr);
+                    }
                     break;
                 case ANNOT:
-                    vrAux = new VariantAnnotRunner(reader, null, annots, vr);
+                    if (toolList.size() == 1) {
+                        vrAux = new VariantAnnotRunner(reader, new VariantVcfDataWriter(outputFile), annots, vr);
+                    } else
+                        vrAux = new VariantAnnotRunner(reader, null, annots, vr);
                     break;
                 case EFFECT:
                     vrAux = new VariantEffectRunner(reader, new VariantEffectSqliteDataWriter(outputFile), vr);
@@ -308,6 +320,31 @@ public class VariantMain {
 //                help.printHelp("variant", options);
 //                System.exit(-1);
 //        }
+    }
+
+    private static List<VcfAnnotator> parseAnnotations(CommandLine commandLine) {
+        List<VcfAnnotator> annots = new ArrayList<>();
+        if (commandLine.hasOption("annot-control-list")) {
+            String infoPrefix = commandLine.hasOption("control-prefix") ? commandLine.getOptionValue("control-prefix") : "CONTROL";
+            HashMap<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
+            annots.add(new VcfControlAnnotator(infoPrefix, controlList));
+
+        }
+
+        return annots;
+    }
+
+    private static List<VcfFilter> parseFilters(CommandLine commandLine) {
+        List<VcfFilter> filters = new ArrayList<>();
+
+        if (commandLine.hasOption("filter-region")) {
+            filters.add(new VcfRegionFilter(commandLine.getOptionValue("filter-region"), Integer.MAX_VALUE));
+        }
+
+        if (commandLine.hasOption("filter-SNP")) {
+            filters.add(new VcfSnpFilter());
+        }
+        return filters;
     }
 
     private static HashMap<String, String> getControlList(String filename) {
