@@ -31,4 +31,12 @@ public class VariantIndexRunner extends VariantRunner {
         return batch;
     }
 
+    @Override
+    public void pre() {
+    }
+
+    @Override
+    public void post() {
+    }
+
 }

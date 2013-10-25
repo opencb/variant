@@ -41,6 +41,14 @@ public class VariantEffectRunner extends VariantRunner {
         return batch;
     }
 
+    @Override
+    public void pre() {
+    }
+
+    @Override
+    public void post() {
+    }
+
     private List<VariantEffect> variantEffects(List<VcfRecord> batch) {
 
 

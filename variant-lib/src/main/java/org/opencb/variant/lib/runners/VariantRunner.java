@@ -35,7 +35,11 @@ public abstract class VariantRunner {
     }
 
     public abstract List<VcfRecord> apply(List<VcfRecord> batch) throws IOException;
-    
+
+    public abstract void pre() throws IOException;
+
+    public abstract void post() throws IOException;
+
     public void run() throws IOException {
         List<VcfRecord> batch;
 
@@ -46,6 +50,8 @@ public abstract class VariantRunner {
         this.writerOpen();
         this.writerPre();
 
+        this.launchPre();
+
         batch = reader.read(batchSize);
         while (!batch.isEmpty()) {
 
@@ -55,6 +61,8 @@ public abstract class VariantRunner {
             batch = reader.read(batchSize);
 
         }
+
+        this.launchPost();
 
         reader.post();
         reader.close();
@@ -72,6 +80,20 @@ public abstract class VariantRunner {
 
         batch = this.apply(batch);
         return batch;
+    }
+
+    public void launchPre() throws IOException {
+        if (prev != null) {
+            prev.launchPre();
+        }
+        this.pre();
+    }
+
+    public void launchPost() throws IOException {
+        if (prev != null) {
+            prev.launchPost();
+        }
+        this.post();
     }
 
     public void writerPre() {

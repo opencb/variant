@@ -22,15 +22,28 @@ import java.util.List;
 public class VariantStatsRunner extends VariantRunner {
 
     private String pedFile;
+    private List<VcfGlobalStat> globalStats;
+    private List<VcfSampleStat> sampleStats;
+    private List<VcfSampleGroupStat> sampleGroupPhen;
+    private List<VcfSampleGroupStat> sampleGroupFam;
+
 
     public VariantStatsRunner(VariantDataReader reader, VariantStatsDataWriter writer, String pedFile) {
         super(reader, writer);
         this.pedFile = pedFile;
+        globalStats = new ArrayList<>(100);
+        sampleStats = new ArrayList<>(100);
+        sampleGroupPhen = new ArrayList<>(100);
+        sampleGroupFam = new ArrayList<>(100);
     }
 
     public VariantStatsRunner(VariantDataReader reader, VariantStatsDataWriter writer, String pedFile, VariantRunner prev) {
         super(reader, writer, prev);
         this.pedFile = pedFile;
+        globalStats = new ArrayList<>(100);
+        sampleStats = new ArrayList<>(100);
+        sampleGroupPhen = new ArrayList<>(100);
+        sampleGroupFam = new ArrayList<>(100);
     }
 
     @Override
@@ -48,10 +61,6 @@ public class VariantStatsRunner extends VariantRunner {
         VcfSampleStat vcfSampleStat;
 
         List<VcfVariantStat> statsList;
-        List<VcfGlobalStat> globalStats = new ArrayList<>(100);
-        List<VcfSampleStat> sampleStats = new ArrayList<>(100);
-        List<VcfSampleGroupStat> sampleGroupPhen = new ArrayList<>(100);
-        List<VcfSampleGroupStat> sampleGroupFam = new ArrayList<>(100);
 
         if (pedReader != null) {
             pedReader.open();
@@ -90,26 +99,29 @@ public class VariantStatsRunner extends VariantRunner {
         customWriter.writeVariantGroupStats(groupStatsBatchPhen);
         customWriter.writeVariantGroupStats(groupStatsBatchFam);
 
-
-        // FINAL WRITE
-
-//        globalStat = new VcfGlobalStat(globalStats);
-//        vcfSampleStat = new VcfSampleStat(reader.getSampleNames(), sampleStats);
-//        vcfSampleGroupStatPhen = new VcfSampleGroupStat(sampleGroupPhen);
-//        vcfSampleGroupStatFam = new VcfSampleGroupStat(sampleGroupFam);
-
-//        customWriter.writeGlobalStats(globalStat);
-//        customWriter.writeSampleStats(vcfSampleStat);
-//
-//        customWriter.writeSampleGroupStats(vcfSampleGroupStatFam);
-//        customWriter.writeSampleGroupStats(vcfSampleGroupStatPhen);
-//
-//        vcfReader.post();
-//        vcfWriter.post();
-//
-//        vcfReader.close();
-//        vcfWriter.close();
-
         return batch;
     }
+
+    @Override
+    public void pre() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void post() throws IOException {
+        VariantStatsDataWriter customWriter = (VariantStatsDataWriter) writer;
+
+        VcfGlobalStat globalStat = new VcfGlobalStat(globalStats);
+        VcfSampleStat vcfSampleStat = new VcfSampleStat(reader.getSampleNames(), sampleStats);
+        VcfSampleGroupStat vcfSampleGroupStatPhen = new VcfSampleGroupStat(sampleGroupPhen);
+        VcfSampleGroupStat vcfSampleGroupStatFam = new VcfSampleGroupStat(sampleGroupFam);
+
+        customWriter.writeGlobalStats(globalStat);
+        customWriter.writeSampleStats(vcfSampleStat);
+
+        customWriter.writeSampleGroupStats(vcfSampleGroupStatFam);
+        customWriter.writeSampleGroupStats(vcfSampleGroupStatPhen);
+
+    }
+
 }
