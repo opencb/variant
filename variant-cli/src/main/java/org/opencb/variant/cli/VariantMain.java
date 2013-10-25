@@ -4,9 +4,7 @@ import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfTestAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
-import org.opencb.commons.bioformats.variant.vcf4.filters.VcfRegionFilter;
-import org.opencb.commons.bioformats.variant.vcf4.filters.VcfSnpFilter;
+import org.opencb.commons.bioformats.variant.vcf4.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.effect.VariantEffectSqliteDataWriter;
@@ -16,6 +14,7 @@ import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataW
 import org.opencb.variant.lib.runners.*;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -69,7 +68,10 @@ public class VariantMain {
 
         options.addOption(OptionFactory.createOption("filter-region", "Filter Region (chr:start-end)", false, true));
         options.addOption(OptionFactory.createOption("filter-SNP", "Filter SNP", false, false));
-//        options.addOption(OptionFactory.createOption("filter-gene", "Filter Gene", false, true));
+        options.addOption(OptionFactory.createOption("filter-ct", "Filter Consequence Type", false, true));
+        options.addOption(OptionFactory.createOption("filter-gene", "Filter Gene (BRCA2,PPL)", false, true));
+        options.addOption(OptionFactory.createOption("filter-gene-file", "Filter Gene gene_list.txt", false, true));
+
 
     }
 
@@ -343,6 +345,16 @@ public class VariantMain {
 
         if (commandLine.hasOption("filter-SNP")) {
             filters.add(new VcfSnpFilter());
+        }
+
+        if (commandLine.hasOption("filter-ct")) {
+            filters.add(new VcfConsequenceTypeFilter(commandLine.getOptionValue("filter-ct")));
+        }
+
+        if (commandLine.hasOption("filter-gene")) {
+            filters.add(new VcfGeneFilter(commandLine.getOptionValue("filter-gene")));
+        } else if (commandLine.hasOption("filter-gene-file")) {
+            filters.add(new VcfGeneFilter(new File(commandLine.getOptionValue("filter-gene-file"))));
         }
         return filters;
     }
