@@ -50,14 +50,6 @@ public class VariantFilterRunner extends VariantRunner {
         return filteredBatch;
     }
 
-    @Override
-    public void pre() {
-    }
-
-    @Override
-    public void post() {
-    }
-
     public void filters(List<VcfFilter> filters) {
         this.filters = filters;
     }

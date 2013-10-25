@@ -49,14 +49,6 @@ public class VariantAnnotRunner extends VariantRunner {
         return batch;
     }
 
-    @Override
-    public void pre() {
-    }
-
-    @Override
-    public void post() {
-    }
-
     private void applyAnnotations(List<VcfRecord> batch, List<VcfAnnotator> annotations) {
 
         for (VcfAnnotator annotation : annotations) {

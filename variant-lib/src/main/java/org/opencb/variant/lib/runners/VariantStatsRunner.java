@@ -103,11 +103,6 @@ public class VariantStatsRunner extends VariantRunner {
     }
 
     @Override
-    public void pre() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
     public void post() throws IOException {
         VariantStatsDataWriter customWriter = (VariantStatsDataWriter) writer;
 

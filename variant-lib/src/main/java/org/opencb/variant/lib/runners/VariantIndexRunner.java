@@ -30,13 +30,4 @@ public class VariantIndexRunner extends VariantRunner {
             ((VariantIndexDataWriter) writer).writeVariantIndex(batch);
         return batch;
     }
-
-    @Override
-    public void pre() {
-    }
-
-    @Override
-    public void post() {
-    }
-
 }

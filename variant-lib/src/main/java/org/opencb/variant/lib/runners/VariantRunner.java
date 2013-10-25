@@ -3,11 +3,13 @@ package org.opencb.variant.lib.runners;
 import org.opencb.commons.bioformats.commons.DataWriter;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,7 +20,7 @@ import java.util.List;
  */
 public abstract class VariantRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(VariantRunner.class);
+    protected org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
     protected VariantDataReader reader;
     protected DataWriter writer;
     protected VariantRunner prev;
@@ -27,6 +29,7 @@ public abstract class VariantRunner {
     public VariantRunner(VariantDataReader reader, DataWriter writer) {
         this.reader = reader;
         this.writer = writer;
+
     }
 
     public VariantRunner(VariantDataReader reader, DataWriter writer, VariantRunner prev) {
@@ -36,9 +39,13 @@ public abstract class VariantRunner {
 
     public abstract List<VcfRecord> apply(List<VcfRecord> batch) throws IOException;
 
-    public abstract void pre() throws IOException;
+    public void pre() throws IOException {
+        logger.debug(this.getClass().getSimpleName() + " Empty pre");
+    }
 
-    public abstract void post() throws IOException;
+    public void post() throws IOException {
+        logger.debug(this.getClass().getSimpleName() + " Empty post");
+    }
 
     public void run() throws IOException {
         List<VcfRecord> batch;
@@ -55,7 +62,7 @@ public abstract class VariantRunner {
         batch = reader.read(batchSize);
         while (!batch.isEmpty()) {
 
-            logger.info("Batch: " + cont++);
+            logger.debug("Batch: " + cont++);
             batch = this.launch(batch);
             batch.clear();
             batch = reader.read(batchSize);
