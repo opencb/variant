@@ -19,27 +19,37 @@
  * along with JS Common Libs. If not, see <http://www.gnu.org/licenses/>.
  */
 
-VariantIndexForm.prototype = new GenericFormPanel("variant");
+VariantStatsForm.prototype = new GenericFormPanel("hpg-variant.vcf-stats");
 
-function VariantIndexForm(webapp) {
-    this.id = Utils.genId("VariantIndexForm");
+function VariantStatsForm(webapp) {
+    this.id = Utils.genId("VariantStatsForm");
     this.headerWidget = webapp.headerWidget;
     this.opencgaBrowserWidget = webapp.headerWidget.opencgaBrowserWidget;
 
-    this.testing = true;
+//    this.testing = true;
 }
 
-VariantIndexForm.prototype.beforeRun = function () {
+VariantStatsForm.prototype.beforeRun = function () {
 
     if (this.testing) {
         console.log("Watch out!!! testing flag is on, so job will not launched.")
     }
+
+    if (this.paramsWS["ped-file"] == "") {
+        delete this.paramsWS["ped-file"];
+    }
+    this.paramsWS["db"] = "";
+    console.log("hola");
+    this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
+    console.log(this.paramsWS);
+
 };
 
 
-VariantIndexForm.prototype.getPanels = function () {
+VariantStatsForm.prototype.getPanels = function () {
     var items = [
-        this._getBrowseForm()
+        this._getBrowseInputForm(),
+        this._getBrowseOutputForm()
     ];
 
     var form = Ext.create('Ext.panel.Panel', {
@@ -57,7 +67,7 @@ VariantIndexForm.prototype.getPanels = function () {
 };
 
 
-VariantIndexForm.prototype._getExampleForm = function () {
+VariantStatsForm.prototype._getExampleForm = function () {
     var _this = this;
 
     var example1 = Ext.create('Ext.Component', {
@@ -84,24 +94,16 @@ VariantIndexForm.prototype._getExampleForm = function () {
     return exampleForm;
 };
 
-VariantIndexForm.prototype._getBrowseForm = function () {
+VariantStatsForm.prototype._getBrowseInputForm = function () {
     var _this = this;
 
-    var note1 = Ext.create('Ext.container.Container', {
-        html: '<p>Please select a VCF file from your <span class="info">server account</span> using the <span class="emph">Browse</span> button.</p>'
-    });
-    var note2 = Ext.create('Ext.container.Container', {
-        html: '<p>Please select a PED file from your <span class="info">server account</span> using the <span class="emph">Browse</span> button.</p>'
-    });
-
     var formBrowser = Ext.create('Ext.panel.Panel', {
-        title: "Select your data",
+        title: "Input",
         //cls:'panel-border-top',
         border: true,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [
-            note1,
             this.createOpencgaBrowserCmp({
                 fieldLabel: 'Input VCF file:',
                 dataParamName: 'vcf-file',
@@ -110,28 +112,59 @@ VariantIndexForm.prototype._getBrowseForm = function () {
                 allowedTypes: ['vcf'],
                 allowBlank: false
             }),
-            note2,
             this.createOpencgaBrowserCmp({
                 fieldLabel: 'Input PED file:',
                 dataParamName: 'ped-file',
                 id: this.id + 'ped-file',
                 mode: 'fileSelection',
                 allowedTypes: ['ped'],
-                allowBlank: false
+                allowBlank: true
             })]
     });
     return formBrowser;
 };
 
+VariantStatsForm.prototype._getBrowseOutputForm = function () {
+    var file = Ext.create('Ext.form.field.Text', {
+        id: this.id + "output-file",
+        fieldLabel: 'Output',
+        name: 'output-file',
+        padding: "5 0 0 5",
+        bodyPadding: 10,
+        width: 500
+    });
 
-VariantIndexForm.prototype.loadExample1 = function () {
-    Ext.getCmp(this.id + 'vcf-file').setText('<span class="emph">Example file.vcf</span>', false);
-    Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_file.vcf');
+    var formBrowser = Ext.create('Ext.panel.Panel', {
+        title: "Output",
+        //cls:'panel-border-top',
+        border: true,
+        padding: "5 0 0 0",
+        bodyPadding: 10,
+        items: [
+            file,
+            this.createOpencgaBrowserCmp({
+                fieldLabel: 'Output folder:',
+                dataParamName: 'output-folder',
+                id: this.id + 'outputFolder',
+                mode: 'fileSelection',
+//                allowedTypes: ['ped'],
+                allowBlank: true
+            })
+        ]
+    });
 
-    Ext.getCmp(this.id + 'ped-file').setText('<span class="emph">Example file.ped</span>', false);
-    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_file.ped');
+    return formBrowser;
+};
 
 
-    Ext.getCmp(this.id + 'jobname').setValue("VCF example");
-    Ext.getCmp(this.id + 'jobdescription').setValue("VCF example");
+VariantStatsForm.prototype.loadExample1 = function () {
+    Ext.getCmp(this.id + 'vcf-file').setText('<span class="emph">Example 1</span>', false);
+    Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_1000genomes_5000_variants.vcf');
+
+//    Ext.getCmp(this.id + 'ped-file').setText('<span class="emph">Example file.ped</span>', false);
+//    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_file.ped');
+
+
+    Ext.getCmp(this.id + 'jobname').setValue("VCF Stats example");
+    Ext.getCmp(this.id + 'jobdescription').setValue("VCF Stats example");
 };

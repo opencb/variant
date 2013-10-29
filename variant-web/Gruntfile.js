@@ -36,6 +36,8 @@ module.exports = function (grunt) {
                     'src/variant-filter-widget.js',
                     'src/variant-effect-form.js',
                     'src/variant-index-form.js',
+                    'src/variant-stats-form.js',
+                    'src/variant-merge-form.js',
                     'src/variant-widget.js',
                     'src/variant.js'
                 ],
@@ -138,7 +140,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-hub');
 
     grunt.registerTask('log-deploy', 'Deploy path info', function () {
-        grunt.log.writeln("DEPLOY COMMAND: scp -r build/"+grunt.config.data.meta.version+" cafetero@mem16:/httpd/bioinfo/www-apps/variant/");
+        grunt.log.writeln("DEPLOY COMMAND: scp -r build/" + grunt.config.data.meta.version + " cafetero@mem16:/httpd/bioinfo/www-apps/variant/");
     });
 
     // Default task.
