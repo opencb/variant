@@ -1,10 +1,9 @@
 package org.opencb.variant.lib.runners;
 
-import org.opencb.commons.bioformats.commons.DataWriter;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantDataWriter;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,7 +35,7 @@ public class VariantAnnotRunner extends VariantRunner {
     public List<VcfRecord> apply(List<VcfRecord> batch) throws IOException {
 
         if (!header && writer != null) {
-            ((VariantDataWriter) writer).writeVcfHeader(reader.getHeader());
+            ((VariantDataWriter) writer).writeHeader(reader.getHeader());
             header = true;
         }
 

@@ -2,7 +2,7 @@ package org.opencb.variant.lib.runners;
 
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantIndexDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantDataWriter;
 
 import java.util.List;
 
@@ -16,18 +16,18 @@ import java.util.List;
 public class VariantIndexRunner extends VariantRunner {
 
 
-    public VariantIndexRunner(VariantDataReader reader, VariantIndexDataWriter writer) {
+    public VariantIndexRunner(VariantDataReader reader, VariantDataWriter writer) {
         super(reader, writer);
     }
 
-    public VariantIndexRunner(VariantDataReader reader, VariantIndexDataWriter writer, VariantRunner prev) {
+    public VariantIndexRunner(VariantDataReader reader, VariantDataWriter writer, VariantRunner prev) {
         super(reader, writer, prev);
     }
 
     @Override
     public List<VcfRecord> apply(List<VcfRecord> batch) {
         if (writer != null)
-            ((VariantIndexDataWriter) writer).writeVariantIndex(batch);
+            ((VariantDataWriter) writer).writeBatch(batch);
         return batch;
     }
 }

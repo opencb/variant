@@ -3,21 +3,23 @@ package org.opencb.variant.cli;
 import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfTestAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.effect.VariantEffectSqliteDataWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantIndexSqliteDataWriter;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantVcfDataWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsSqliteDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.vcf.VariantVcfDataWriter;
 import org.opencb.variant.lib.runners.*;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
