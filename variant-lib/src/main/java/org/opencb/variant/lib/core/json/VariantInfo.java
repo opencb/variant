@@ -93,7 +93,7 @@ public class VariantInfo {
         this.stats_miss_allele = stat.getMissingAlleles();
         this.stats_miss_gt = stat.getMissingGenotypes();
         this.stats_mendel_err = stat.getMendelinanErrors();
-        this.stats_is_indel = stat.getIndel();
+        this.stats_is_indel = stat.isIndel();
         this.stats_cases_percent_dominant = stat.getCasesPercentDominant();
         this.stats_controls_percent_dominant = stat.getControlsPercentDominant();
         this.stats_cases_percent_recessive = stat.getCasesPercentRecessive();

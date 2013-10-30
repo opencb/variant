@@ -46,6 +46,8 @@ public class VariantStatsRunner extends VariantRunner {
         sampleGroupFam = new ArrayList<>(100);
     }
 
+    // TODO aaleman: Override the "pre" (write file stats)
+
     @Override
     public List<VcfRecord> apply(List<VcfRecord> batch) throws IOException {
 
@@ -92,7 +94,6 @@ public class VariantStatsRunner extends VariantRunner {
 
             vcfSampleGroupStatFam = CalculateStats.sampleGroupStats(batch, ped, "family");
             sampleGroupFam.add(vcfSampleGroupStatFam);
-
         }
 
         customWriter.writeVariantStats(statsList);
