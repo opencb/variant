@@ -39,6 +39,7 @@ module.exports = function (grunt) {
                     'src/variant-stats-form.js',
                     'src/variant-merge-form.js',
                     'src/variant-widget.js',
+                    'src/variant-stats-widget.js',
                     'src/variant.js'
                 ],
                 dest: 'build/<%= meta.version %>/variant-<%= meta.version %>.js'

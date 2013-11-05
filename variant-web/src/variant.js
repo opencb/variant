@@ -439,6 +439,15 @@ Variant.prototype.jobItemClick = function (record) {
                 autoRender: true
             });
             variantWidget.draw();
+        } else if (toolName == "hpg-variant.vcf-stats") {
+            record.raw.command = Utils.parseJobCommand(record.raw);
+            var variantStatsWidget = new VariantStatsWidget({
+                targetId: this.panel,
+                title: record.raw.name,
+                job: record.raw,
+                autoRender: true
+            });
+            variantStatsWidget.draw();
         } else {
             var resultWidget = new ResultWidget({
                 targetId: this.panel.getId(),
