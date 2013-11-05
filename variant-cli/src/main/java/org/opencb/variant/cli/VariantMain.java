@@ -4,12 +4,11 @@ import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.filters.*;
+import org.opencb.commons.bioformats.variant.vcf4.io.VariantDBWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.effect.VariantEffectSqliteDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantIndexSqliteDataWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantVcfDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsSqliteDataWriter;
+import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 import org.opencb.variant.lib.runners.*;
 
 import java.io.BufferedReader;
@@ -17,9 +16,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -50,7 +49,6 @@ public class VariantMain {
         options.addOption(OptionFactory.createOption("outdir", "o", "Output dir", true, true));
         options.addOption(OptionFactory.createOption("output-file", "Output filename", false, true));
         options.addOption(OptionFactory.createOption("ped-file", "Ped file", false, true));
-//        options.addOption(OptionFactory.createOption("control", "Control filename", false, true));
         options.addOption(OptionFactory.createOption("threads", "Num threads", false, true));
 
         options.addOption(OptionFactory.createOption("filter", "Filter vcf file", false, false));
@@ -60,7 +58,6 @@ public class VariantMain {
         options.addOption(OptionFactory.createOption("index", "Generate Index", false, false));
 
         options.addOption(OptionFactory.createOption("all", "Run all tools", false, false));
-
 
         // ANNOTS
         options.addOption(OptionFactory.createOption("annot-control-list", "Control filename list", false, true));
@@ -124,6 +121,7 @@ public class VariantMain {
         System.out.println("toolList = " + toolList);
 
         VariantDataReader reader = new VariantVcfDataReader(inputFile);
+        VariantDBWriter writer = new VariantVcfSqliteWriter(outputFile);
         List<VcfFilter> filters = parseFilters(commandLine);
         List<VcfAnnotator> annots = parseAnnotations(commandLine);
 
@@ -147,13 +145,13 @@ public class VariantMain {
                         vrAux = new VariantAnnotRunner(reader, null, annots, vr);
                     break;
                 case EFFECT:
-                    vrAux = new VariantEffectRunner(reader, new VariantEffectSqliteDataWriter(outputFile), vr);
+                    vrAux = new VariantEffectRunner(reader, writer, vr);
                     break;
                 case STATS:
-                    vrAux = new VariantStatsRunner(reader, new VariantStatsSqliteDataWriter(outputFile), pedFile, vr);
+                    vrAux = new VariantStatsRunner(reader, writer, pedFile, vr);
                     break;
                 case INDEX:
-                    vrAux = new VariantIndexRunner(reader, new VariantIndexSqliteDataWriter(outputFile), vr);
+                    vrAux = new VariantIndexRunner(reader, writer, vr);
                     break;
             }
             vr = vrAux;
@@ -330,7 +328,7 @@ public class VariantMain {
         List<VcfAnnotator> annots = new ArrayList<>();
         if (commandLine.hasOption("annot-control-list")) {
             String infoPrefix = commandLine.hasOption("control-prefix") ? commandLine.getOptionValue("control-prefix") : "CONTROL";
-            HashMap<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
+            Map<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
             annots.add(new VcfControlAnnotator(infoPrefix, controlList));
 
         }
@@ -361,9 +359,9 @@ public class VariantMain {
         return filters;
     }
 
-    private static HashMap<String, String> getControlList(String filename) {
+    private static Map<String, String> getControlList(String filename) {
         String line;
-        HashMap<String, String> map = new LinkedHashMap<>();
+        Map<String, String> map = new LinkedHashMap<>();
         try {
 
             BufferedReader reader = new BufferedReader(new FileReader(filename));

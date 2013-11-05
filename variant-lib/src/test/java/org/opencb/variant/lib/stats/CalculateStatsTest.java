@@ -6,8 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsFileDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsSqliteDataWriter;
+import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 import org.opencb.variant.lib.runners.VariantRunner;
 import org.opencb.variant.lib.runners.VariantStatsRunner;
 
@@ -53,17 +52,8 @@ public class CalculateStatsTest {
     @Test
     public void testCalculateStatsList() throws Exception {
 
-
-//        VariantStatsRunner vr = new VariantStatsRunner(vcfFileName, dbFilename, pedFileName);
-//
-//        vr.writer(new VariantStatsFileDataWriter(pathStats));
-//        vr.setEffect(true);
-//
-//        vr.run();
-
-        VariantRunner vr = new VariantStatsRunner(new VariantVcfDataReader(vcfFileName), new VariantStatsSqliteDataWriter(dbFilename), pedFileName);
+        VariantRunner vr = new VariantStatsRunner(new VariantVcfDataReader(vcfFileName), new VariantVcfSqliteWriter(dbFilename), pedFileName);
         vr.run();
-
 
     }
 }
