@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Logger;
+import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.commons.bioformats.variant.VariantStudy;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,22 +22,36 @@ import java.util.logging.Logger;
 public abstract class VariantRunner {
 
     protected org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     protected VariantDataReader reader;
+    protected PedDataReader pedReader;
     protected DataWriter writer;
+    
     protected VariantRunner prev;
+    protected VariantStudy study;
     protected int batchSize = 1000;
 
-    public VariantRunner(VariantDataReader reader, DataWriter writer) {
+    public VariantRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, DataWriter writer) {
+        this.study = study;
         this.reader = reader;
+        this.pedReader = pedReader;
         this.writer = writer;
-
     }
 
-    public VariantRunner(VariantDataReader reader, DataWriter writer, VariantRunner prev) {
-        this(reader, writer);
+    public VariantRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, DataWriter writer, VariantRunner prev) {
+        this(study, reader, pedReader, writer);
         this.prev = prev;
     }
 
+    public VariantStudy getStudy() {
+        return study;
+    }
+
+    public void setStudy(VariantStudy study) {
+        this.study = study;
+    }
+
+    
     public abstract List<VcfRecord> apply(List<VcfRecord> batch) throws IOException;
 
     public void pre() throws IOException {
@@ -54,6 +69,12 @@ public abstract class VariantRunner {
         reader.open();
         reader.pre();
 
+        if (pedReader != null) {
+            pedReader.open();
+            study.setPedigree(pedReader.read());
+            pedReader.close();
+        }
+        
         this.writerOpen();
         this.writerPre();
 

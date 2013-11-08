@@ -15,11 +15,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
+import org.opencb.commons.bioformats.variant.VariantStudy;
 
 /**
  * Created with IntelliJ IDEA.
@@ -120,38 +118,39 @@ public class VariantMain {
 
         System.out.println("toolList = " + toolList);
 
+        VariantRunner vr = null;
+        VariantRunner vrAux = null;
+        String pedFile = null;
+
+        VariantStudy study = new VariantStudy("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
         VariantDataReader reader = new VariantVcfDataReader(inputFile);
         VariantDBWriter writer = new VariantVcfSqliteWriter(outputFile);
         List<VcfFilter> filters = parseFilters(commandLine);
         List<VcfAnnotator> annots = parseAnnotations(commandLine);
 
-        VariantRunner vr = null;
-        VariantRunner vrAux = null;
-        String pedFile = null;
-
         for (Tool t : toolList) {
             switch (t) {
                 case FILTER:
                     if (toolList.size() == 1) {
-                        vrAux = new VariantFilterRunner(reader, new VariantVcfDataWriter(outputFile), filters, vr);
+                        vrAux = new VariantFilterRunner(study, reader, null, new VariantVcfDataWriter(outputFile), filters, vr);
                     } else {
-                        vrAux = new VariantFilterRunner(reader, null, filters, vr);
+                        vrAux = new VariantFilterRunner(study, reader, null, null, filters, vr);
                     }
                     break;
                 case ANNOT:
                     if (toolList.size() == 1) {
-                        vrAux = new VariantAnnotRunner(reader, new VariantVcfDataWriter(outputFile), annots, vr);
+                        vrAux = new VariantAnnotRunner(study, reader, null, new VariantVcfDataWriter(outputFile), annots, vr);
                     } else
-                        vrAux = new VariantAnnotRunner(reader, null, annots, vr);
+                        vrAux = new VariantAnnotRunner(study, reader, null, null, annots, vr);
                     break;
                 case EFFECT:
-                    vrAux = new VariantEffectRunner(reader, writer, vr);
+                    vrAux = new VariantEffectRunner(study, reader, null, writer, vr);
                     break;
                 case STATS:
-                    vrAux = new VariantStatsRunner(reader, writer, pedFile, vr);
+                    vrAux = new VariantStatsRunner(study, reader, null, writer, vr);
                     break;
                 case INDEX:
-                    vrAux = new VariantIndexRunner(reader, writer, vr);
+                    vrAux = new VariantIndexRunner(study, reader, null, writer, vr);
                     break;
             }
             vr = vrAux;

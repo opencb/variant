@@ -8,6 +8,8 @@ import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantDataWr
 
 import java.io.IOException;
 import java.util.List;
+import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.commons.bioformats.variant.VariantStudy;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,13 +24,13 @@ public class VariantFilterRunner extends VariantRunner {
     private boolean header = false;
 
 
-    public VariantFilterRunner(VariantDataReader reader, VariantDataWriter writer, List<VcfFilter> filterList) {
-        super(reader, writer);
+    public VariantFilterRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantDataWriter writer, List<VcfFilter> filterList) {
+        super(study, reader, pedReader, writer);
         this.filters = filterList;
     }
 
-    public VariantFilterRunner(VariantDataReader reader, VariantDataWriter writer, List<VcfFilter> filterList, VariantRunner prev) {
-        super(reader, writer, prev);
+    public VariantFilterRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantDataWriter writer, List<VcfFilter> filterList, VariantRunner prev) {
+        super(study, reader, pedReader, writer, prev);
         this.filters = filterList;
     }
 

@@ -7,6 +7,8 @@ import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantDataWr
 
 import java.io.IOException;
 import java.util.List;
+import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.commons.bioformats.variant.VariantStudy;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,15 +22,15 @@ public class VariantAnnotRunner extends VariantRunner {
     private List<VcfAnnotator> annots;
     private boolean header = false;
 
-    public VariantAnnotRunner(VariantDataReader reader, VariantDataWriter writer, List<VcfAnnotator> annots) {
-        super(reader, writer);
+    public VariantAnnotRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, 
+            VariantDataWriter writer, List<VcfAnnotator> annots) {
+        super(study, reader, pedReader, writer);
         this.annots = annots;
     }
 
-    public VariantAnnotRunner(VariantDataReader reader, VariantDataWriter writer, List<VcfAnnotator> annots, VariantRunner prev) {
-        super(reader, writer, prev);
-        this.annots = annots;
-
+    public VariantAnnotRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, 
+            VariantDataWriter writer, List<VcfAnnotator> annots, VariantRunner prev) {
+        this(study, reader, pedReader, writer, annots);
     }
 
     @Override
