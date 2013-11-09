@@ -1810,6 +1810,7 @@ VariantWidget.prototype = {
             jobId: this.job.id,
             formData: formParams,
             success: function (response, textStatus, jqXHR) {
+                console.log(response);
                 if (response.length) {
                     var data = _this._prepareData(response);
 

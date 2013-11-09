@@ -5,7 +5,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         // Metadata.
         meta: {
-            version: '2.0.2',
+            version: '2.0.3',
             jsorolla: {
                 dir: '/lib/jsorolla/',
                 //genome viewer contains cellbse and utils
@@ -37,9 +37,11 @@ module.exports = function (grunt) {
                     'src/variant-effect-form.js',
                     'src/variant-index-form.js',
                     'src/variant-stats-form.js',
+                    'src/variant-gwas-form.js',
                     'src/variant-merge-form.js',
                     'src/variant-widget.js',
                     'src/variant-stats-widget.js',
+                    'src/variant-gwas-widget.js',
                     'src/variant.js'
                 ],
                 dest: 'build/<%= meta.version %>/variant-<%= meta.version %>.js'

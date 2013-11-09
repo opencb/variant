@@ -19,26 +19,44 @@
  * along with JS Common Libs. If not, see <http://www.gnu.org/licenses/>.
  */
 
-VariantStatsForm.prototype = new GenericFormPanel("hpg-variant.vcf-stats");
+VariantGwasForm.prototype = new GenericFormPanel("hpg-variant.gwas-assoc");
 
-function VariantStatsForm(webapp) {
-    this.id = Utils.genId("VariantStatsForm");
+function VariantGwasForm(webapp) {
+    this.id = Utils.genId("VariantGwasForm");
     this.headerWidget = webapp.headerWidget;
     this.opencgaBrowserWidget = webapp.headerWidget.opencgaBrowserWidget;
-
 //    this.testing = true;
 }
 
-VariantStatsForm.prototype.beforeRun = function () {
+VariantGwasForm.prototype.beforeRun = function () {
 
     if (this.testing) {
         console.log("Watch out!!! testing flag is on, so job will not launched.")
     }
 
-    if (this.paramsWS["ped-file"] == "") {
-        delete this.paramsWS["ped-file"];
+//    switch (this.paramsWS["function_test"]) {
+//        case "fisher":
+//            this.paramsWS["fisher"] = "";
+//            if (this.paramsWS["chisq"]) {
+//                delete this.paramsWS["chisq"];
+//            }
+//            break;
+//        case "chisq":
+//            this.paramsWS["chisq"] = "";
+//            if (this.paramsWS["fisher"]) {
+//                delete this.paramsWS["fisher"];
+//            }
+//            break;
+//
+//    }
+
+    if (this.paramsWS["test"] == "assoc") {
+        delete this.paramsWS["chisq"];
+        delete this.paramsWS["fisher"];
+
+        this.paramsWS[this.paramsWS["function_test"]] = "";
     }
-    this.paramsWS["db"] = "";
+
     this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
     console.log(this.paramsWS);
     console.log(this.analysis);
@@ -46,10 +64,11 @@ VariantStatsForm.prototype.beforeRun = function () {
 };
 
 
-VariantStatsForm.prototype.getPanels = function () {
+VariantGwasForm.prototype.getPanels = function () {
     var items = [
         this._getBrowseInputForm(),
-        this._getBrowseOutputForm()
+        this._getBrowseOutputForm(), ,
+        this._getTestForm()
     ];
 
     var form = Ext.create('Ext.panel.Panel', {
@@ -67,7 +86,7 @@ VariantStatsForm.prototype.getPanels = function () {
 };
 
 
-VariantStatsForm.prototype._getExampleForm = function () {
+VariantGwasForm.prototype._getExampleForm = function () {
     var _this = this;
 
     var example1 = Ext.create('Ext.Component', {
@@ -94,7 +113,7 @@ VariantStatsForm.prototype._getExampleForm = function () {
     return exampleForm;
 };
 
-VariantStatsForm.prototype._getBrowseInputForm = function () {
+VariantGwasForm.prototype._getBrowseInputForm = function () {
     var _this = this;
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
@@ -118,13 +137,13 @@ VariantStatsForm.prototype._getBrowseInputForm = function () {
                 id: this.id + 'ped-file',
                 mode: 'fileSelection',
                 allowedTypes: ['ped'],
-                allowBlank: true
+                allowBlank: false
             })]
     });
     return formBrowser;
 };
 
-VariantStatsForm.prototype._getBrowseOutputForm = function () {
+VariantGwasForm.prototype._getBrowseOutputForm = function () {
     var file = Ext.create('Ext.form.field.Text', {
         id: this.id + "output-file",
         fieldLabel: 'Output',
@@ -156,15 +175,93 @@ VariantStatsForm.prototype._getBrowseOutputForm = function () {
     return formBrowser;
 };
 
+VariantGwasForm.prototype._getTestForm = function () {
+    var _this = this;
+    var assoc = Ext.create('Ext.form.field.Radio', {
+        id: "assoc" + "_" + this.id,
+        boxLabel: 'Assoc',
+        inputValue: 'assoc',
+        checked: true,
+        name: 'test',
+        handler: function (field, value) {
+            if (value) {
+                var radio = Ext.getCmp(_this.id + "_radioGroupFunctionGwas");
+                radio.enable();
+                _this.analysis = "hpg-variant.gwas-assoc";
+                console.log(radio)
+            } else {
+                var radio = Ext.getCmp(_this.id + "_radioGroupFunctionGwas");
+                radio.disable();
+                _this.analysis = "hpg-variant.gwas-tdt";
 
-VariantStatsForm.prototype.loadExample1 = function () {
+            }
+        }
+    });
+
+    var tdt = Ext.create('Ext.form.field.Radio', {
+        id: "tdt" + "_" + this.id,
+        boxLabel: 'TDT',
+        inputValue: 'tdt',
+        name: 'test'
+
+    });
+
+    var radioGroupTest = Ext.create('Ext.form.RadioGroup', {
+        fieldLabel: 'Test',
+        width: 500,
+        items: [
+            assoc,
+            tdt]
+    });
+
+    var chisq = Ext.create('Ext.form.field.Radio', {
+        id: "chisq" + "_" + this.id,
+        boxLabel: 'Chisq',
+        inputValue: 'chisq',
+        checked: true,
+        name: 'function_test'
+    });
+
+    var fisher = Ext.create('Ext.form.field.Radio', {
+        id: "fisher" + "_" + this.id,
+        boxLabel: 'Fisher',
+        inputValue: 'fisher',
+        name: 'function_test'
+    });
+
+    var radioGroupFunction = Ext.create('Ext.form.RadioGroup', {
+        id: this.id + "_radioGroupFunctionGwas",
+        fieldLabel: 'Test',
+        width: 500,
+        items: [
+            chisq,
+            fisher]
+    });
+
+
+    var formBrowser = Ext.create('Ext.panel.Panel', {
+        title: "Test",
+        //cls:'panel-border-top',
+        border: true,
+        padding: "5 0 0 0",
+        bodyPadding: 10,
+        items: [radioGroupTest, radioGroupFunction]
+    });
+
+    return formBrowser;
+
+}
+;
+
+
+VariantGwasForm.prototype.loadExample1 = function () {
     Ext.getCmp(this.id + 'vcf-file').setText('<span class="emph">Example 1</span>', false);
-    Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_1000genomes_5000_variants.vcf');
+    Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_4K_variants_147_samples.vcf');
 
-//    Ext.getCmp(this.id + 'ped-file').setText('<span class="emph">Example file.ped</span>', false);
-//    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_file.ped');
+    Ext.getCmp(this.id + 'ped-file').setText('<span class="emph">Example 1</span>', false);
+    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_4K_variants_147_samples.ped');
 
 
-    Ext.getCmp(this.id + 'jobname').setValue("VCF Stats example");
-    Ext.getCmp(this.id + 'jobdescription').setValue("VCF Stats example");
+    Ext.getCmp(this.id + 'jobname').setValue("GWAS example");
+    Ext.getCmp(this.id + 'jobdescription').setValue("GWAS example");
 };

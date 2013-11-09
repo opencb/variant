@@ -1981,7 +1981,7 @@ VariantStatsWidget.prototype = {
             name: "region_list",
             emptyText: '1:1-1000000,2:1-1000000',
             margin: '0 0 0 5',
-            value: "19:1-10000000",
+            value: "19:1-1000000",
             allowBlank: false
         });
 
