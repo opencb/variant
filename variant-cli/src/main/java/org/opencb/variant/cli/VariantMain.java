@@ -62,7 +62,6 @@ public class VariantMain {
         options.addOption(OptionFactory.createOption("annot-control-prefix", "Control prefix", false, true));
 
         // FILTERS
-
         options.addOption(OptionFactory.createOption("filter-region", "Filter Region (chr:start-end)", false, true));
         options.addOption(OptionFactory.createOption("filter-SNP", "Filter SNP", false, false));
         options.addOption(OptionFactory.createOption("filter-ct", "Filter Consequence Type", false, true));
@@ -329,7 +328,6 @@ public class VariantMain {
             String infoPrefix = commandLine.hasOption("control-prefix") ? commandLine.getOptionValue("control-prefix") : "CONTROL";
             Map<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
             annots.add(new VcfControlAnnotator(infoPrefix, controlList));
-
         }
 
         return annots;

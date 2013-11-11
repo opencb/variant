@@ -1,14 +1,15 @@
 package org.opencb.variant.lib.runners;
 
-import java.io.IOException;
-import java.util.List;
 import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
 import org.opencb.commons.bioformats.variant.VariantStudy;
-import org.opencb.commons.bioformats.variant.vcf4.VariantEffect;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.effect.EffectCalculator;
+import org.opencb.commons.bioformats.variant.vcf4.effect.VariantEffect;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.effect.VariantEffectDataWriter;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
