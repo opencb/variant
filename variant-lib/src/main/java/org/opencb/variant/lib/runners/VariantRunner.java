@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+
 import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
 import org.opencb.commons.bioformats.variant.VariantStudy;
 
@@ -22,11 +23,9 @@ import org.opencb.commons.bioformats.variant.VariantStudy;
 public abstract class VariantRunner {
 
     protected org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
-    
     protected VariantDataReader reader;
     protected PedDataReader pedReader;
     protected DataWriter writer;
-    
     protected VariantRunner prev;
     protected VariantStudy study;
     protected int batchSize = 1000;
@@ -51,7 +50,6 @@ public abstract class VariantRunner {
         this.study = study;
     }
 
-    
     public abstract List<VcfRecord> apply(List<VcfRecord> batch) throws IOException;
 
     public void pre() throws IOException {
@@ -74,7 +72,7 @@ public abstract class VariantRunner {
             study.setPedigree(pedReader.read());
             pedReader.close();
         }
-        
+
         this.writerOpen();
         this.writerPre();
 
