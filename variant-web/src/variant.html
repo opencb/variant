@@ -4,14 +4,16 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Variant</title>
 
-    <link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext/gpl/4.2.1/resources/css/ext-all-gray.css">
 
     <!-- CSS from vendors -->
     <!-- build:style vendor -->
     <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/ChemDoodleWeb.css"/>
     <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/jquery.qtip.min.css"/>
-    <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/jquery-ui-1.10.3.custom/css/smoothgray/jquery-ui-1.10.3.custom.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/bootstrap-3.0.2-dist/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/typeahead.js-bootstrap.css">
+
     <!-- /build -->
+    <link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext/gpl/4.2.1/resources/css/ext-all-gray.css">
 
     <!-- CSS from Styles -->
     <!-- build:style css -->
@@ -36,6 +38,8 @@
     <script type="text/javascript" src="../lib/jsorolla/vendor/rawdeflate.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/vendor/jquery.min.js"></script>
 
+    <script type="text/javascript" src="../lib/jsorolla/vendor/bootstrap-3.0.2-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/vendor/typeahead.min.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/vendor/jquery.qtip.min.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/vendor/jquery.cookie.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/vendor/jquery.sha1.js"></script>
@@ -43,7 +47,7 @@
     <script type="text/javascript" src="../lib/jsorolla/vendor/jquery.mousewheel.min.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/vendor/gl-matrix-min.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/vendor/ChemDoodleWeb.js"></script>
-    <script type="text/javascript" src="../lib/jsorolla/vendor/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+
 
 
     <!--<script type="text/javascript" src="../vendor/genome-viewer-1.0.2.js"></script>-->
@@ -93,7 +97,9 @@
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/data-source/string-data-source.js"></script>
 
     <script type="text/javascript" src="../lib/jsorolla/src/lib/region.js"></script>
-    <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/feature-binary-search-tree.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/feature-binary-search-tree.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/cache/memory-store.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/cache/feature-chunk-cache.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/cache/feature-cache.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/cache/bam-cache.js"></script>
 
@@ -118,6 +124,7 @@
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/feature-renderer.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/sequence-renderer.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/histogram-renderer.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/feature-cluster-renderer.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/gene-renderer.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/bam-renderer.js"></script>
 

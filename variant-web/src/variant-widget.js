@@ -690,7 +690,7 @@ VariantWidget.prototype = {
                             resizable: true,
                             region: region,
                             trackListTitle: '',
-                            drawNavigationBar: false,
+                            drawNavigationBar: true,
                             drawKaryotypePanel: false,
                             drawChromosomePanel: false,
                             drawRegionOverviewPanel: false
