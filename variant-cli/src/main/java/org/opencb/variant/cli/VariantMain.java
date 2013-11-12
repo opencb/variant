@@ -3,6 +3,7 @@ package org.opencb.variant.cli;
 import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfEVSControlAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.VariantDBWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
@@ -17,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
+
 import org.opencb.commons.bioformats.variant.VariantStudy;
 
 /**
@@ -59,7 +61,10 @@ public class VariantMain {
 
         // ANNOTS
         options.addOption(OptionFactory.createOption("annot-control-list", "Control filename list", false, true));
+        options.addOption(OptionFactory.createOption("annot-control-file", "Control filename", false, true));
         options.addOption(OptionFactory.createOption("annot-control-prefix", "Control prefix", false, true));
+        options.addOption(OptionFactory.createOption("annot-control-evs", "Control EVS", false, true));
+
 
         // FILTERS
         options.addOption(OptionFactory.createOption("filter-region", "Filter Region (chr:start-end)", false, true));
@@ -325,9 +330,14 @@ public class VariantMain {
     private static List<VcfAnnotator> parseAnnotations(CommandLine commandLine) {
         List<VcfAnnotator> annots = new ArrayList<>();
         if (commandLine.hasOption("annot-control-list")) {
-            String infoPrefix = commandLine.hasOption("control-prefix") ? commandLine.getOptionValue("control-prefix") : "CONTROL";
+            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
             Map<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
             annots.add(new VcfControlAnnotator(infoPrefix, controlList));
+        }
+
+        if (commandLine.hasOption("annot-control-evs")) {
+            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
+            annots.add(new VcfEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
         }
 
         return annots;
