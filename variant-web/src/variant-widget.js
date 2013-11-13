@@ -67,13 +67,12 @@ VariantWidget.prototype = {
         this.panel = this._createPanel(this.targetId);
 
         this.summaryPanel = this._createSummaryPanel(this.variantInfo);
-//        this.panel.add(this.summaryPanel);
+        this.panel.add(this.summaryPanel);
 
         this.variantPanel = this._createVariantPanel();
-        this.panel.add(this.variantPanel);
+//        this.panel.add(this.variantPanel);
 
         this.genomeViewerPanel = this._createGenomeViewerPanel();
-
 
         this._updateInfo();
         /* form */
@@ -95,7 +94,6 @@ VariantWidget.prototype = {
                     pressed: true,
                     toggleGroup: 'options',
                     handler: function () {
-                        //TODO
                         _this.panel.removeAll(false);
                         _this.panel.add(_this.summaryPanel);
                     }
@@ -106,24 +104,8 @@ VariantWidget.prototype = {
                     pressed: false,
                     toggleGroup: 'options',
                     handler: function () {
-                        //TODO
                         _this.panel.removeAll(false);
                         _this.panel.add(_this.variantPanel);
-                    }
-                },
-                {
-                    text: 'Effect',
-                    hidden: true,
-                    enableToggle: true,
-                    pressed: false,
-                    handler: function () {
-                        //TODO
-                        _this.panel.removeAll(false);
-                        _this.effectPanel.removeAll(false);
-                        _this.effectPanel.add(_this.variantGridMini);
-                        _this.effectPanel.add(_this.gridEffect);
-
-                        _this.panel.add(_this.effectPanel);
                     }
                 },
                 {
@@ -134,9 +116,6 @@ VariantWidget.prototype = {
                     handler: function () {
                         //TODO
                         _this.panel.removeAll(false);
-//                        _this.genomeViewerPanel.removeAll(false);
-//                        _this.genomeViewerPanel.add(_this.variantGridMini);
-//                        _this.genomeViewerPanel.add(_this.genomeViewer);
                         _this.panel.add(_this.genomeViewerPanel);
                     }
                 }
@@ -147,7 +126,6 @@ VariantWidget.prototype = {
         targetId.setActiveTab(panel);
         return panel;
     },
-
     _createVariantPanel: function () {
 
         this.form = this._createForm();
@@ -202,7 +180,6 @@ VariantWidget.prototype = {
         });
         return tabPanel;
     },
-
     _updateInfo: function () {
         var _this = this;
         _this.panel.setLoading(true);
@@ -357,9 +334,9 @@ VariantWidget.prototype = {
                 checked: !col["hidden"],
                 handler: function (field, value) {
                     var colName = field.inputValue;
-                    for (var i = 0; i < _this.grid.columns.length; i++) {
-                        if (_this.grid.columns[i].text == colName) {
-                            _this.grid.columns[i].setVisible(value);
+                    for (var i = 0; i < _this.grid.headerCt.items.items.length; i++) {
+                        if (_this.grid.headerCt.items.items[i].text == colName) {
+                            _this.grid.headerCt.items.items[i].setVisible(value);
                         }
                     }
                 }
