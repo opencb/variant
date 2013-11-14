@@ -75,8 +75,10 @@ public class VariantStatsRunner extends VariantRunner {
             customWriter.writeGlobalStats(finalGlobalStats);
             customWriter.writeSampleStats(stats.getFinalSampleStats());
 
-            customWriter.writeSampleGroupStats(stats.getFinalSampleGroupStat("phenotype"));
-            customWriter.writeSampleGroupStats(stats.getFinalSampleGroupStat("family"));
+            if (study.getPedigree() != null) {
+                customWriter.writeSampleGroupStats(stats.getFinalSampleGroupStat("phenotype"));
+                customWriter.writeSampleGroupStats(stats.getFinalSampleGroupStat("family"));
+            }
         }
     }
 

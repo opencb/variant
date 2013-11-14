@@ -3,7 +3,7 @@ package org.opencb.variant.cli;
 import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfEVSControlAnnotator;
+//import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfEVSControlAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.VariantDBWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
@@ -335,10 +335,10 @@ public class VariantMain {
             annots.add(new VcfControlAnnotator(infoPrefix, controlList));
         }
 
-        if (commandLine.hasOption("annot-control-evs")) {
-            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
-            annots.add(new VcfEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
-        }
+//        if (commandLine.hasOption("annot-control-evs")) {
+//            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
+//            annots.add(new VcfEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
+//        }
 
         return annots;
     }
