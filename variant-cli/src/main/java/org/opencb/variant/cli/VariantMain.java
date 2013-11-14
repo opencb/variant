@@ -4,6 +4,7 @@ import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfEVSControlAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfSNPAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.VariantDBWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
@@ -64,11 +65,12 @@ public class VariantMain {
         options.addOption(OptionFactory.createOption("annot-control-file", "Control filename", false, true));
         options.addOption(OptionFactory.createOption("annot-control-prefix", "Control prefix", false, true));
         options.addOption(OptionFactory.createOption("annot-control-evs", "Control EVS", false, true));
+        options.addOption(OptionFactory.createOption("annot-snp", "SNP", false, false));
 
 
         // FILTERS
         options.addOption(OptionFactory.createOption("filter-region", "Filter Region (chr:start-end)", false, true));
-        options.addOption(OptionFactory.createOption("filter-SNP", "Filter SNP", false, false));
+        options.addOption(OptionFactory.createOption("filter-snp", "Filter SNP", false, false));
         options.addOption(OptionFactory.createOption("filter-ct", "Filter Consequence Type", false, true));
         options.addOption(OptionFactory.createOption("filter-gene", "Filter Gene (BRCA2,PPL)", false, true));
         options.addOption(OptionFactory.createOption("filter-gene-file", "Filter Gene gene_list.txt", false, true));
@@ -164,167 +166,6 @@ public class VariantMain {
         vr.run();
         System.out.println("END");
 
-
-//        switch (command) {
-//            case "index":
-//                System.out.println("===== INDEX =====");
-////                Runtime r = Runtime.getRuntime();
-////                Process p;
-////
-////                String indexDir = commandLine.getOptionValue("outdir") + "/index";
-////                File indexFileDir = new File(indexDir);
-////                if (!indexFileDir.exists()) {
-////                    indexFileDir.mkdir();
-////                }
-////
-////                String cmd = "python bin/indexerManager.py -t vcf -i " + commandLine.getOptionValue("vcf-file") + " --outdir " + indexDir;
-////
-////                p = r.exec(cmd);
-////                p.waitFor();
-//
-//                outputFile = "index.db";
-//                if (commandLine.hasOption("output-file")) {
-//                    outputFile = commandLine.getOptionValue("output-file");
-//                }
-//
-//                VariantDataReader dr = new VariantVcfDataReader(commandLine.getOptionValue("vcf-file"));
-//                VariantDataWriter f = new VariantVcfDataWriter(commandLine.getOptionValue("outdir") + "/" + outputFile + ".out");
-//
-//                List<VcfFilter> filterList = new ArrayList<>();
-//                List<VcfAnnotator> annots = new ArrayList<>();
-//
-//                filterList.add(new VcfRegionFilter("1", 0, 1000000));
-//
-//                annots.add(new VcfTestAnnotator("hola"));
-//                annots.add(new VcfTestAnnotator("adios"));
-//
-//                VariantRunner vfilter = new VariantFilterRunner(dr, f, filterList);
-//                VariantRunner vannot = new VariantAnnotRunner(dr, null, annots, vfilter);
-//                VariantRunner veffect = new VariantEffectRunner(dr, new VariantEffectSqliteDataWriter(commandLine.getOptionValue("outdir") + "/" + outputFile), vannot);
-//                VariantRunner vstatsrunner = new VariantStatsRunner(dr, new VariantStatsSqliteDataWriter(commandLine.getOptionValue("outdir") + "/" + outputFile), commandLine.getOptionValue("ped-file"), veffect);
-//                VariantRunner vrunner = new VariantIndexRunner(dr, new VariantIndexSqliteDataWriter(commandLine.getOptionValue("outdir") + "/" + outputFile), vstatsrunner);
-//
-//                vrunner.run();
-//
-//                break;
-//
-//            case "stats":
-//                System.out.println("===== STATS =====");
-//
-//                outputFile = "stats.db";
-//
-//                if (commandLine.hasOption("output-file")) {
-//                    outputFile = commandLine.getOptionValue("output-file");
-//                }
-//
-////                vr = new VariantStatsRunner(commandLine.getOptionValue("vcf-file"), commandLine.getOptionValue("outdir") + "/" + outputFile, commandLine.getOptionValue("ped-file"));
-////
-////                if (commandLine.hasOption("out-file")) {
-////                    vr.writer(new VariantStatsFileDataWriter(commandLine.getOptionValue("outdir")));
-////
-////                }
-////
-////                vr.run();
-//                break;
-//
-//            case "filter":
-//                System.out.println("===== FILTER =====");
-//
-//                outputFile = "filter.vcf";
-//
-//                if (commandLine.hasOption("output-file")) {
-//                    outputFile = commandLine.getOptionValue("output-file");
-//                }
-//
-////                List<VcfFilter> filterList = new ArrayList<>();
-//////                filterList.add(new VcfSnpFilter());
-////                filterList.add(new VcfRegionFilter("1", 0, 1000000000));
-////                vf = new VariantFilterRunner(new VariantVcfDataReader(commandLine.getOptionValue("vcf-file")), new VariantVcfDataWriter(commandLine.getOptionValue("outdir") + "/" + outputFile));
-////
-////                vf.parallel(numThreads);
-////                vf.filters(filterList);
-////                vf.run();
-//
-//
-//                break;
-//
-//            case "test":
-//                System.out.println("===== TEST =====");
-//                List<VcfAnnotator> test = new ArrayList<>();
-////                test.add(new VcfTestAnnotator());
-////                test.add(new VcfConsequenceTypeAnnotator());
-////                var = new VariantAnnotRunner(commandLine.getOptionValue("vcf-file"), commandLine.getOptionValue("outdir") + "/" + "file_annot.vcf");
-////                var.annotations(test);
-////                var.parallel(numThreads);
-////                var.run();
-//
-//
-//                break;
-//
-//            case "annot":
-//                System.out.println("===== ANNOT =====");
-//
-////
-////                outputFile = "annot.vcf";
-////
-////                if (commandLine.hasOption("output-file")) {
-////                    outputFile = commandLine.getOptionValue("output-file");
-////                }
-////
-////                List<VcfAnnotator> listAnnots = new ArrayList<>();
-////                VcfAnnotator control = null;
-////                String infoPrefix = commandLine.hasOption("control-prefix") ? commandLine.getOptionValue("control-prefix") : "CONTROL";
-////
-////                var = new VariantAnnotRunner(commandLine.getOptionValue("vcf-file"), commandLine.getOptionValue("outdir") + "/" + outputFile);
-////
-////                if (commandLine.hasOption("control-list")) {
-////                    HashMap<String, String> controlList = getControlList(commandLine.getOptionValue("control-list"));
-////                    control = new VcfControlAnnotator(infoPrefix, controlList);
-////
-////                } else if (commandLine.hasOption("control")) {
-////                    control = new VcfControlAnnotator(infoPrefix, commandLine.getOptionValue("control"));
-////
-////                }
-////
-////                listAnnots.add(control);
-////                var.annotations(listAnnots);
-////                var.parallel(numThreads).run();
-////
-//
-//                break;
-//
-//            case "server":
-//                System.out.println("===== SERVER =====");
-//
-//                Tomcat tomcat;
-//
-//                tomcat = new Tomcat();
-//                tomcat.setPort(31415);
-//
-//                Context ctx = tomcat.addContext("/variant/rest", new File(".").getAbsolutePath());
-//
-//                Tomcat.addServlet(ctx, "hello", new HelloServlet());
-//                ctx.addServletMapping("/hello", "hello");
-//
-//                Tomcat.addServlet(ctx, "getdirs", new GetFoldersServlet());
-//                ctx.addServletMapping("/getdirs", "getdirs");
-//
-//
-//                try {
-//                    tomcat.start();
-//                    tomcat.getServer().await();
-//
-//                } catch (LifecycleException e) {
-//                    e.printStackTrace();
-//                }
-//
-//
-//                break;
-//
-//            default:
-//                help.printHelp("variant", options);
-//                System.exit(-1);
-//        }
     }
 
     private static List<VcfAnnotator> parseAnnotations(CommandLine commandLine) {
@@ -338,6 +179,10 @@ public class VariantMain {
         if (commandLine.hasOption("annot-control-evs")) {
             String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
             annots.add(new VcfEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
+        }
+
+        if (commandLine.hasOption("annot-snp")) {
+            annots.add(new VcfSNPAnnotator());
         }
 
         return annots;
