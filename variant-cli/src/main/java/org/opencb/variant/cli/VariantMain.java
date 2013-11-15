@@ -4,6 +4,7 @@ import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.VariantStudy;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfEVSControlAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfSNPAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.VariantDBWriter;
@@ -172,15 +173,15 @@ public class VariantMain {
             String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
             Map<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
             annots.add(new VcfControlAnnotator(infoPrefix, controlList));
-        }else if(commandLine.hasOption("annot-control-file")){
+        } else if (commandLine.hasOption("annot-control-file")) {
             String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
             annots.add(new VcfControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-file")));
         }
 
-//        if (commandLine.hasOption("annot-control-evs")) {
-//            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
-//            annots.add(new VcfEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
-//        }
+        if (commandLine.hasOption("annot-control-evs")) {
+            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
+            annots.add(new VcfEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
+        }
 
         if (commandLine.hasOption("annot-snp")) {
             annots.add(new VcfSNPAnnotator());
