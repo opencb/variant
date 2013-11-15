@@ -1,9 +1,9 @@
 package org.opencb.variant.cli;
 
 import org.apache.commons.cli.*;
+import org.opencb.commons.bioformats.variant.VariantStudy;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfEVSControlAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfSNPAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.VariantDBWriter;
@@ -19,8 +19,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
-
-import org.opencb.commons.bioformats.variant.VariantStudy;
 
 /**
  * Created with IntelliJ IDEA.
@@ -179,10 +177,10 @@ public class VariantMain {
             annots.add(new VcfControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-file")));
         }
 
-        if (commandLine.hasOption("annot-control-evs")) {
-            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
-            annots.add(new VcfEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
-        }
+//        if (commandLine.hasOption("annot-control-evs")) {
+//            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
+//            annots.add(new VcfEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
+//        }
 
         if (commandLine.hasOption("annot-snp")) {
             annots.add(new VcfSNPAnnotator());
