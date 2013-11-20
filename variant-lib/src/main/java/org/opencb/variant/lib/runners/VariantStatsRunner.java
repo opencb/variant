@@ -2,8 +2,8 @@ package org.opencb.variant.lib.runners;
 
 import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
 import org.opencb.commons.bioformats.variant.VariantStudy;
-import org.opencb.commons.bioformats.variant.utils.stats.GlobalStat;
-import org.opencb.commons.bioformats.variant.utils.stats.VariantStats;
+import org.opencb.commons.bioformats.variant.utils.stats.VariantGlobalStats;
+import org.opencb.commons.bioformats.variant.utils.stats.VariantStatsWrapper;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsDataWriter;
@@ -21,18 +21,18 @@ import java.util.List;
  */
 public class VariantStatsRunner extends VariantRunner {
 
-    private VariantStats stats;
+    private VariantStatsWrapper stats;
 
 
     public VariantStatsRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantStatsDataWriter writer) {
         super(study, reader, pedReader, writer);
 
-        stats = new VariantStats();
+        stats = new VariantStatsWrapper();
     }
 
     public VariantStatsRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantStatsDataWriter writer, VariantRunner prev) {
         super(study, reader, pedReader, writer, prev);
-        stats = new VariantStats();
+        stats = new VariantStatsWrapper();
 
     }
 
@@ -66,7 +66,7 @@ public class VariantStatsRunner extends VariantRunner {
     @Override
     public void post() throws IOException {
 
-        GlobalStat finalGlobalStats = stats.getFinalGlobalStats();
+        VariantGlobalStats finalGlobalStats = stats.getFinalGlobalStats();
 
         study.setStats(finalGlobalStats);
 
