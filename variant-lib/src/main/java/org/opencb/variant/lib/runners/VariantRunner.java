@@ -72,6 +72,8 @@ public abstract class VariantRunner {
             study.setPedigree(pedReader.read());
             pedReader.close();
         }
+        study.addMetadata("variant_file_header", reader.getHeader());
+        study.setSamples(reader.getSampleNames());
 
         this.writerOpen();
         this.writerPre();
