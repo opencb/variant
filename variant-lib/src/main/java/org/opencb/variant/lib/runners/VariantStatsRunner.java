@@ -2,12 +2,12 @@ package org.opencb.variant.lib.runners;
 
 import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
 import org.opencb.commons.bioformats.variant.VariantStudy;
+import org.opencb.commons.bioformats.variant.utils.stats.GlobalStat;
+import org.opencb.commons.bioformats.variant.utils.stats.VariantStats;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.stats.CalculateStats;
-import org.opencb.commons.bioformats.variant.vcf4.stats.VcfGlobalStat;
-import org.opencb.commons.bioformats.variant.vcf4.stats.VcfStats;
+import org.opencb.commons.bioformats.variant.vcf4.stats.StatsCalculator;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,18 +21,18 @@ import java.util.List;
  */
 public class VariantStatsRunner extends VariantRunner {
 
-    private VcfStats stats;
+    private VariantStats stats;
 
 
     public VariantStatsRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantStatsDataWriter writer) {
         super(study, reader, pedReader, writer);
 
-        stats = new VcfStats();
+        stats = new VariantStats();
     }
 
     public VariantStatsRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantStatsDataWriter writer, VariantRunner prev) {
         super(study, reader, pedReader, writer, prev);
-        stats = new VcfStats();
+        stats = new VariantStats();
 
     }
 
@@ -42,15 +42,15 @@ public class VariantStatsRunner extends VariantRunner {
     public List<VcfRecord> apply(List<VcfRecord> batch) throws IOException {
 
         stats.setSampleNames(reader.getSampleNames());
-        stats.setVariantStats(CalculateStats.variantStats(batch, reader.getSampleNames(), study.getPedigree()));
-        stats.addGlobalStats(CalculateStats.globalStats(stats.getVariantStats()));
-        stats.addSampleStats(CalculateStats.sampleStats(batch, reader.getSampleNames(), study.getPedigree()));
+        stats.setVariantStats(StatsCalculator.variantStats(batch, reader.getSampleNames(), study.getPedigree()));
+        stats.addGlobalStats(StatsCalculator.globalStats(stats.getVariantStats()));
+        stats.addSampleStats(StatsCalculator.sampleStats(batch, reader.getSampleNames(), study.getPedigree()));
 
         if (study.getPedigree() != null) {
-            stats.addGroupStats("phenotype", CalculateStats.groupStats(batch, study.getPedigree(), "phenotype"));
-            stats.addGroupStats("family", CalculateStats.groupStats(batch, study.getPedigree(), "family"));
-            stats.addSampleGroupStats("phenotype", CalculateStats.sampleGroupStats(batch, study.getPedigree(), "phenotype"));
-            stats.addSampleGroupStats("family", CalculateStats.sampleGroupStats(batch, study.getPedigree(), "family"));
+            stats.addGroupStats("phenotype", StatsCalculator.groupStats(batch, study.getPedigree(), "phenotype"));
+            stats.addGroupStats("family", StatsCalculator.groupStats(batch, study.getPedigree(), "family"));
+            stats.addSampleGroupStats("phenotype", StatsCalculator.sampleGroupStats(batch, study.getPedigree(), "phenotype"));
+            stats.addSampleGroupStats("family", StatsCalculator.sampleGroupStats(batch, study.getPedigree(), "family"));
         }
 
         if (writer != null) {
@@ -66,7 +66,7 @@ public class VariantStatsRunner extends VariantRunner {
     @Override
     public void post() throws IOException {
 
-        VcfGlobalStat finalGlobalStats = stats.getFinalGlobalStats();
+        GlobalStat finalGlobalStats = stats.getFinalGlobalStats();
 
         study.setStats(finalGlobalStats);
 
