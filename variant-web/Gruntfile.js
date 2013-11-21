@@ -5,7 +5,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         // Metadata.
         meta: {
-            version: '2.0.3',
+            version: '2.0.4',
             jsorolla: {
                 dir: '/lib/jsorolla/',
                 //genome viewer contains cellbse and utils
@@ -85,6 +85,9 @@ module.exports = function (grunt) {
                             'build/<%= meta.version %>/vendor/jquery.min.js',
                             'build/<%= meta.version %>/vendor/underscore*.js',
                             'build/<%= meta.version %>/vendor/backbone*.js',
+                            'build/<%= meta.version %>/vendor/bootstrap-scoped-dist/js/bootstrap.min.js',
+                            'build/<%= meta.version %>/vendor/typeahead.min.js',
+
                             'build/<%= meta.version %>/vendor/jquery.mousewheel*.js',
                             'build/<%= meta.version %>/vendor/gl-matrix-min*.js',
                             'build/<%= meta.version %>/vendor/ChemDoodleWeb*.js',
@@ -92,8 +95,7 @@ module.exports = function (grunt) {
                             'build/<%= meta.version %>/vendor/purl*.js',
                             'build/<%= meta.version %>/vendor/jquery.sha1*.js',
                             'build/<%= meta.version %>/vendor/jquery.qtip*.js',
-                            'build/<%= meta.version %>/vendor/rawdeflate*.js',
-                            'build/<%= meta.version %>/vendor/jquery-ui-1.10.3*/js/jquery-ui*min.js'
+                            'build/<%= meta.version %>/vendor/rawdeflate*.js'
 
                         ],
                         gv: [
@@ -109,7 +111,9 @@ module.exports = function (grunt) {
                         'vendor': [
                             'build/<%= meta.version %>/vendor/ChemDoodleWeb*.css',
                             'build/<%= meta.version %>/vendor/jquery.qtip*.css',
-                            'build/<%= meta.version %>/vendor/jquery-ui-1.10.3*/css/**/jquery-ui*min.css'
+                            'build/<%= meta.version %>/vendor/bootstrap-scoped-dist/css/bootstrap.min.css',
+                            'build/<%= meta.version %>/vendor/typeahead.js-bootstrap.css'
+
                         ]
                     }
                 }

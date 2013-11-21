@@ -8,7 +8,7 @@ function Variant(args) {
     this.suiteId = 6;
     this.title = '<span class="emph">Vari</span>ant <span class="emph">an</span>alysis <span class="emph">t</span>ool';
     this.description = 'beta';
-    this.version = '2.0.2';
+    this.version = '2.0.4';
     this.tools = ["hpg-variant.effect", "variant", "hpg-variant.vcf-stats", "hpg-variant.gwas-assoc", "hpg-variant.gwas-tdt"];
     this.border = true;
     this.targetId;

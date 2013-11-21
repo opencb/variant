@@ -35,10 +35,11 @@ VariantWidget.prototype = {
     },
     draw: function () {
         var _this = this;
-        OpencgaManager.poll({
+        console.log(this.dbName);
+        OpencgaManager.variantInfo({
             accountId: $.cookie("bioinfo_account"),
             sessionId: $.cookie("bioinfo_sid"),
-            filename: this.statsName,
+            filename: this.dbName,
             jobId: this.job.id,
             success: function (data, textStatus, jqXHR) {
                 _this.variantInfo = JSON.parse(data);
@@ -115,8 +116,25 @@ VariantWidget.prototype = {
                     toggleGroup: 'options',
                     handler: function () {
                         //TODO
+//                        _this.panel.removeAll(false);
+//                        _this.panel.add(_this.genomeViewerPanel);
+
+                        var row = _this.grid.getView().getSelectionModel().getSelection()[0].raw;
+
+                        _this.region = new Region({
+                            chromosome: row.chromosome,
+                            start: row.position - 200,
+                            end: row.position + 200
+                        });
+
                         _this.panel.removeAll(false);
                         _this.panel.add(_this.genomeViewerPanel);
+
+
+                        if (!_.isUndefined(_this.gv)) {
+                            _this.gv.setRegion(_this.region);
+                        }
+
                     }
                 }
             ]},
@@ -252,6 +270,7 @@ VariantWidget.prototype = {
                 xtype: 'tbtext', text: '<span class="info">Select one or multiple conseq. type</span>'
             },
             _this._createDynCombobox("conseq_type", "Consequence Type", this.variantInfo.consequenceTypes, "non_synonymous_codon")
+//            _this._createDynCombobox("conseq_type", "Consequence Type", this.variantInfo.consequenceTypes, "")
         ]);
 //
         var biotypeForm = Ext.getCmp(this.id + "biotype_panel");
@@ -835,46 +854,60 @@ VariantWidget.prototype = {
             if (selectedRecord.length) {
 
                 var row = selectedRecord[0].data;
-                console.log(row);
                 var chr = row.chr;
                 var pos = row.pos;
-                var ref = row.ref;
-                var alt = row.alt;
 
-
-                _this.gridEffect.setLoading(true);
-                CellBaseManager.get({
-                    host: 'http://ws.bioinfo.cipf.es/cellbase/rest',
-                    version: 'latest',
-                    species: 'hsa', //TODO multiples species
-                    category: 'genomic',
-                    subCategory: 'variant',
-                    query: chr + ':' + pos + ':' + ref + ':' + alt,
-                    resource: 'consequence_type',
-                    success: function (response, textStatus, jqXHR) {
-                        console.log(response);
-                        if (response.length > 0) {
-//                            _this.gridEffect.getStore().loadData(response);
-//                            Ext.getCmp(_this.id + "numRowsLabelEffect").setText(response.length + " effects");
-
-                            var region = new Region({
-                                chromosome: chr,
-                                start: pos,
-                                end: pos
-                            });
-                            console.log(region);
-                            if (!_.isUndefined(_this.gv)) {
-                                _this.gv.setRegion(region);
-                            }
-                        }
-//                        _this.gridEffect.setLoading(false);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log('Error loading Effect');
-//                        _this.gridEffect.se>tLoading(false);
-
-                    }
+                var region = new Region({
+                    chromosome: chr,
+                    start: pos,
+                    end: pos
                 });
+
+                if (!_.isUndefined(_this.gv)) {
+                    _this.gv.setRegion(region);
+                }
+
+//                var row = selectedRecord[0].data;
+//                console.log(row);
+//                var chr = row.chr;
+//                var pos = row.pos;
+//                var ref = row.ref;
+//                var alt = row.alt;
+//
+//
+//                _this.gridEffect.setLoading(true);
+//                CellBaseManager.get({
+//                    host: 'http://ws.bioinfo.cipf.es/cellbase/rest',
+//                    version: 'latest',
+//                    species: 'hsa', //TODO multiples species
+//                    category: 'genomic',
+//                    subCategory: 'variant',
+//                    query: chr + ':' + pos + ':' + ref + ':' + alt,
+//                    resource: 'consequence_type',
+//                    success: function (response, textStatus, jqXHR) {
+//                        console.log(response);
+//                        if (response.length > 0) {
+////                            _this.gridEffect.getStore().loadData(response);
+////                            Ext.getCmp(_this.id + "numRowsLabelEffect").setText(response.length + " effects");
+//
+//                            var region = new Region({
+//                                chromosome: chr,
+//                                start: pos,
+//                                end: pos
+//                            });
+//                            console.log(region);
+//                            if (!_.isUndefined(_this.gv)) {
+//                                _this.gv.setRegion(region);
+//                            }
+//                        }
+////                        _this.gridEffect.setLoading(false);
+//                    },
+//                    error: function (jqXHR, textStatus, errorThrown) {
+//                        console.log('Error loading Effect');
+////                        _this.gridEffect.se>tLoading(false);
+//
+//                    }
+//                });
 
             }
         });
@@ -1162,7 +1195,7 @@ VariantWidget.prototype = {
             },
             {
                 text: "SNP id",
-                dataIndex: 'stats_id_snp.',
+                dataIndex: 'stats_id_snp',
                 flex: 1,
                 sortable: true
             },
@@ -1193,8 +1226,16 @@ VariantWidget.prototype = {
                         }
                     },
                     {
-                        text: 'ESP'
-                    }
+                        text: "EVS",
+                        renderer: function (val, meta, record) {
+                            if (record.data.controls["EVS"]) {
+
+                                return record.data.controls["EVS"].maf + " (" + record.data.controls["EVS"].allele + ")";
+                            } else {
+                                return ".";
+                            }
+                        }
+                    },
                 ]
             },
             {
@@ -1525,15 +1566,23 @@ VariantWidget.prototype = {
 
         var _this = this;
 
+        var formParams = {};
+        formParams['chr'] = chr;
+        formParams['pos'] = pos;
+        formParams['ref'] = ref;
+        formParams['alt'] = alt;
+
+        console.log(formParams);
+
+
         _this.gridEffect.setLoading(true);
-        CellBaseManager.get({
-            host: 'http://ws.bioinfo.cipf.es/cellbase/rest',
-            version: 'latest',
-            species: 'hsa', //TODO multiples species
-            category: 'genomic',
-            subCategory: 'variant',
-            query: chr + ':' + pos + ':' + ref + ':' + alt,
-            resource: 'consequence_type',
+
+        OpencgaManager.variant_effects({
+            accountId: $.cookie("bioinfo_account"),
+            sessionId: $.cookie("bioinfo_sid"),
+            filename: this.dbName,
+            jobId: this.job.id,
+            formData: formParams,
             success: function (response, textStatus, jqXHR) {
                 console.log(response);
                 if (response.length > 0) {
@@ -1552,6 +1601,34 @@ VariantWidget.prototype = {
 
             }
         });
+
+
+//        CellBaseManager.get({
+//            host: 'http://ws.bioinfo.cipf.es/cellbase/rest',
+//            version: 'latest',
+//            species: 'hsa', //TODO multiples species
+//            category: 'genomic',
+//            subCategory: 'variant',
+//            query: chr + ':' + pos + ':' + ref + ':' + alt,
+//            resource: 'consequence_type',
+//            success: function (response, textStatus, jqXHR) {
+//                console.log(response);
+//                if (response.length > 0) {
+//                    _this.gridEffect.getStore().loadData(response);
+//                    _this.gridEffect.setTitle('<span class="ssel">Effect</span> - <spap class="info">' + chr + ':' + pos + ' ' + ref + '>' + alt + '</spap>');
+//                    Ext.getCmp(_this.id + "numRowsLabelEffect").setText(response.length + " effects");
+//
+//                } else {
+//                    _this.gridEffect.getStore().removeAll();
+//                }
+//                _this.gridEffect.setLoading(false);
+//            },
+//            error: function (jqXHR, textStatus, errorThrown) {
+//                console.log('Error loading Effect');
+//                _this.gridEffect.setLoading(false);
+//
+//            }
+//        });
 
 
     },
@@ -1713,7 +1790,7 @@ VariantWidget.prototype = {
 
         var colNames = [];
         for (var i = 0; i < _this.columnsGrid.length; i++) {
-            var col = _this.columnsGrid[i];
+            var col = _this.columvnsGrid[i];
             colNames.push(col.text);
         }
         return colNames;
@@ -1721,38 +1798,51 @@ VariantWidget.prototype = {
     _prepareData: function (data) {
 
         var finalData = [];
+        var cont = 0;
+
         for (var i = 0; i < data.length; i++) {
             var v = data[i];
 
-            for (var key in v.genotypes) {
-                v[key] = v.genotypes[key];
+            for (var key in v.sampleGenotypes) {
+                v[key] = v.sampleGenotypes[key];
             }
-            delete v.genotypes;
 
-            if (v.genes.length <= 1) {
+            delete v.sampleGenotypes;
 
+            var ct = "";
+            if (v.consequence_types != null) {
+                for (var key in v.consequence_types) {
+                    ct += v.consequence_types[key];
+                    ct += ",";
+                }
+                v.ct = ct;
+            }
+
+            if (v.genes.length < 1) {
+                cont++;
+                v.gene_name = "unknown";
+                finalData.push(v);
                 continue;
             } else {
-                //                v.genes = v.genes.filter(function (e) {
-                //                    return e
-                //                });
                 delete v.genes[''];
             }
 
-            for (var key in v.genes) {
+            for (var j = 0; j < v.genes.length; j++) {
                 var copy = {};
                 _.extend(copy, v);
+                if (v.genes[j] == "") {
+                    copy.gene_name = "unknown";
+                } else {
 
-                copy.gene_name = key;
-                copy.ct = v.genes[key];
+                    copy.gene_name = v.genes[j];
+                }
                 delete copy.genes;
                 finalData.push(copy);
-
-
+                cont++;
             }
 
-
         }
+        console.log("Total: " + cont);
         return finalData;
     },
     _getResult: function () {
@@ -1777,8 +1867,8 @@ VariantWidget.prototype = {
         _this.grid.setLoading(true);
 
         // Remove all elements from grids
-        _this.grid.store.removeAll();
-        _this.gridEffect.store.removeAll();
+        // _this.grid.store.removeAll();
+        // _this.gridEffect.store.removeAll();
 
         OpencgaManager.variants({
             accountId: $.cookie("bioinfo_account"),
@@ -1791,13 +1881,16 @@ VariantWidget.prototype = {
                 if (response.length) {
                     var data = _this._prepareData(response);
 
+                    console.log("prepared data");
+                    console.log(data);
                     _this.st.loadData(data);
+
 
                     _this.grid.getView().refresh();
 
                     _this.grid.getSelectionModel().select(0);
 
-                    Ext.getCmp(_this.id + "numRowsLabel").setText(data.length + " variants");
+                    Ext.getCmp(_this.id + "numRowsLabel").setText(response.length + " variants");
 
                     _this._updateInfoVariantMini(response);
 
@@ -2282,23 +2375,7 @@ VariantWidget.prototype = {
                     width: "100%",
                     items: [
                         {
-                            xtype: 'tbtext', margin: '5 0 0 0', text: '<span class="emph">Exclude 1000G Controls</span>'
-                        },
-                        {
-                            xtype: 'checkboxfield',
-                            margin: '0 0 0 10',
-                            name: 'exc_1000g_controls'
-                        }
-                    ]
-                },
-                {
-                    xtype: 'fieldcontainer',
-                    layout: 'hbox',
-                    border: false,
-                    width: "100%",
-                    items: [
-                        {
-                            xtype: 'tbtext', margin: '5 0 0 0', text: '<span class="emph">or MAF</span>'
+                            xtype: 'tbtext', margin: '5 0 0 0', text: '<span class="emph">1000G MAF <</span>'
                         },
                         {
                             xtype: 'textfield',
@@ -2306,7 +2383,7 @@ VariantWidget.prototype = {
                             margin: '0 0 0 5',
                             labelWidth: '50%',
                             width: "50%",
-                            value: '0.1'
+                            //value: '0.1'
                         }
                     ]
                 },
@@ -2320,24 +2397,7 @@ VariantWidget.prototype = {
                     items: [
 
                         {
-                            xtype: 'tbtext', margin: '5 0 0 0', text: '<span class="emph">Exclude BIER Controls</span>'
-                        },
-                        {
-                            xtype: 'checkboxfield',
-                            margin: '0 0 0 10',
-                            name: 'exc_bier_controls'
-                        }
-                    ]
-                },
-                {
-                    xtype: 'fieldcontainer',
-                    //fieldLabel: '% Controls recessive',
-                    layout: 'hbox',
-                    border: false,
-                    width: "100%",
-                    items: [
-                        {
-                            xtype: 'tbtext', margin: '5 0 0 0', text: '<span class="emph">or MAF</span>'
+                            xtype: 'tbtext', margin: '5 0 0 0', text: '<span class="emph">BIER MAF<</span>'
                         },
                         {
                             xtype: 'textfield',
@@ -2347,7 +2407,26 @@ VariantWidget.prototype = {
                             width: "50%"
                         }
                     ]
-                }
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    layout: 'hbox',
+                    border: false,
+                    width: "100%",
+                    items: [
+                        {
+                            xtype: 'tbtext', margin: '5 0 0 0', text: '<span class="emph">EVS MAF <</span>'
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'maf_evs_controls',
+                            margin: '0 0 0 5',
+                            labelWidth: '50%',
+                            width: "50%",
+                            //value: '0.1'
+                        }
+                    ]
+                },
             ]
         });
     },

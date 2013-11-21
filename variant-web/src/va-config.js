@@ -1,4 +1,5 @@
 CELLBASE_HOST = "http://ws.bioinfo.cipf.es/cellbase/rest";
+CELLBASE_VERSION = "v3";
 OPENCGA_HOST = "http://ws-beta.bioinfo.cipf.es/opencga/rest";
 
 if (
@@ -12,7 +13,7 @@ if (
     ) {
 
     CELLBASE_HOST = "http://ws-beta.bioinfo.cipf.es/cellbase/rest";
-    OPENCGA_HOST = "http://ws-beta.bioinfo.cipf.es/opencga-server-aleman/rest";
+    OPENCGA_HOST = "http://ws-beta.bioinfo.cipf.es/opencga-server-aleman2/rest";
 }
 
 
