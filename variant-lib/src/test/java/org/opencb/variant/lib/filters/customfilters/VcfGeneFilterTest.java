@@ -35,14 +35,14 @@ public class VcfGeneFilterTest {
         String fileOut = "/home/aleman/tmp/file-out.vcf";
         String geneList = "/home/aleman/tmp/gene_list.txt";
 
-        VariantFilterRunner vr = new VariantFilterRunner(fileIn, fileOut);
-        List<VcfFilter> list = new ArrayList<>();
-
-        list.add(new VcfGeneFilter(geneList));
-
-        vr.filters(list);
-
-        vr.run();
+//        VariantFilterRunner vr = new VariantFilterRunner(fileIn, fileOut);
+//        List<VcfFilter> list = new ArrayList<>();
+//
+//        list.add(new VcfGeneFilter(geneList));
+//
+//        vr.filters(list);
+//
+//        vr.run();
 
     }
 }

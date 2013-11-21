@@ -1,14 +1,14 @@
 package org.opencb.variant.lib.runners;
 
-import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
-import org.opencb.commons.bioformats.pedigree.io.writers.PedDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantIndexDataWriter;
-
 import java.io.IOException;
+import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
+import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantDataWriter;
+
 import java.util.List;
+import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.commons.bioformats.variant.VariantStudy;
+import org.opencb.commons.bioformats.variant.vcf4.io.VariantDBWriter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,78 +17,31 @@ import java.util.List;
  * Time: 6:09 PM
  * To change this template use File | Settings | File Templates.
  */
-public class VariantIndexRunner {
-
-    private List<VcfFilter> filters;
-    private int numThreads;
-    private VariantDataReader vcfReader;
-    private VariantIndexDataWriter vcfWriter;
-    private PedDataReader pedReader;
-    private PedDataWriter pedWriter;
-    private boolean effect;
-    private boolean stats;
-    private boolean index;
+public class VariantIndexRunner extends VariantRunner {
 
 
-    public VariantIndexRunner() {
-        this.filters = null;
-        this.numThreads = 1;
-        this.stats = true;
-        this.index = true;
-        this.effect = true;
+    public VariantIndexRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantDataWriter writer) {
+        super(study, reader, pedReader, writer);
     }
 
-
-    public VariantIndexRunner(VariantDataReader vcfReader, VariantIndexDataWriter vcfWriter) {
-        this();
-        this.vcfReader = vcfReader;
-        this.vcfWriter = vcfWriter;
+    public VariantIndexRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantDataWriter writer, VariantRunner prev) {
+        super(study, reader, pedReader, writer, prev);
     }
 
-    public VariantIndexRunner reader(VariantDataReader reader) {
-        this.vcfReader = reader;
-        return this;
-    }
-
-    public VariantIndexRunner writer(VariantIndexDataWriter writer) {
-        this.vcfWriter = writer;
-        return this;
-    }
-
-    public VariantIndexRunner filter(List<VcfFilter> filterList) {
-        this.filters = filterList;
-        return this;
-    }
-
-    public VariantIndexRunner parallel(int numThreads) {
-        this.numThreads = numThreads;
-        return this;
-    }
-
-    public void run() throws IOException {
-        int batchSize = 1000;
-
-        List<VcfRecord> batch;
-
-        vcfReader.open();
-        vcfWriter.open();
-
-        vcfReader.pre();
-        vcfWriter.pre();
-
-        batch = vcfReader.read(batchSize);
-
-        while (!batch.isEmpty()) {
-            vcfWriter.writeVariantIndex(batch);
-            batch.clear();
-            batch = vcfReader.read(batchSize);
+    @Override
+    public List<VcfRecord> apply(List<VcfRecord> batch) {
+        if (writer != null) {
+            ((VariantDataWriter) writer).writeBatch(batch);
         }
-
-
-        vcfReader.post();
-        vcfWriter.post();
-
-        vcfReader.close();
-        vcfWriter.close();
+        return batch;
     }
+
+    @Override
+    public void post() throws IOException {
+        if (writer instanceof VariantDBWriter) {
+            ((VariantDBWriter) writer).writeStudy(study);
+        }
+    }
+    
+    
 }

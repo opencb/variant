@@ -48,16 +48,16 @@ public class VariantAnnotRunnerTest {
     @Test
     public void annot() {
 
-        VariantAnnotRunner vr = new VariantAnnotRunner(fileIn, fileOut);
-
-        List<VcfAnnotator> list = new ArrayList<>();
-        try {
-            list.add(new VcfControlAnnotator("BIER", controlBIER));
-            vr.annotations(list);
-            vr.parallel(4).run();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        VariantAnnotRunner vr = new VariantAnnotRunner(fileIn, fileOut);
+//
+//        List<VcfAnnotator> list = new ArrayList<>();
+//        try {
+//            list.add(new VcfControlAnnotator("BIER", controlBIER));
+//            vr.annotations(list);
+//            vr.parallel(4).run();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 

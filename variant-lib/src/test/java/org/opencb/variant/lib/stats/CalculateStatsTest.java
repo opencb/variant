@@ -1,12 +1,17 @@
-package org.opencb.variant.lib.stats;
+package java.org.opencb.variant.lib.stats;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsFileDataWriter;
+import org.opencb.commons.bioformats.variant.VariantStudy;
+import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
+import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
+import org.opencb.variant.lib.runners.VariantRunner;
 import org.opencb.variant.lib.runners.VariantStatsRunner;
+
+import java.util.Arrays;
 
 /**
  * Created with IntelliJ IDEA.
@@ -50,14 +55,10 @@ public class CalculateStatsTest {
     @Test
     public void testCalculateStatsList() throws Exception {
 
+        VariantStudy study = new VariantStudy("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList("hola", "adios"));
 
-        VariantStatsRunner vr = new VariantStatsRunner(vcfFileName, dbFilename, pedFileName);
-
-        vr.writer(new VariantStatsFileDataWriter(pathStats));
-        vr.setEffect(true);
-
+        VariantRunner vr = new VariantStatsRunner(study, new VariantVcfDataReader(vcfFileName), null, new VariantVcfSqliteWriter(dbFilename));
         vr.run();
-
 
     }
 }
