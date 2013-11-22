@@ -10,7 +10,8 @@ function VariantStatsWidget(args) {
     this.autoRender = false;
     this.targetId;
     this.width;
-    this.height;
+    this.height = '100%';
+    this.closable = false;
 
     //set instantiation args, must be last
     _.extend(this, args);
@@ -86,10 +87,10 @@ VariantStatsWidget.prototype = {
         var panel = Ext.create('Ext.panel.Panel', {
             title: this.title,
             width: '100%',
-            height: '100%',
-            border: 0,
+            height: this.height,
+            border: this.border,
             layout: 'hbox',
-            closable: true,
+            closable: this.closable,
             cls: 'ocb-border-top-lightgrey',
             tbar: {items: [
                 {
@@ -147,7 +148,7 @@ VariantStatsWidget.prototype = {
             items: []
         });
         targetId.add(panel);
-        targetId.setActiveTab(panel);
+//        targetId.setActiveTab(panel);
         return panel;
     },
 
