@@ -55,7 +55,9 @@ Variant.prototype = {
         this.sidePanelDiv = $('<div id="right-side-panel" style="position:absolute; z-index:50;right:0px;"></div>')[0];
         $(this.wrapDiv).append(this.sidePanelDiv);
 
-        this.contentDiv = $('<div id="content" style="height: 100%;"></div>')[0];
+        this.leftDiv = $('<div id="left" style="position:absolute;height: 100%;width:100px;"></div>')[0];
+        this.contentDiv = $('<div id="content" style="position:absolute;height: 100%;left:100px;width:calc( 100% - 100px)"></div>')[0];
+        $(this.wrapDiv).append(this.leftDiv);
         $(this.wrapDiv).append(this.contentDiv);
 
         this.width = ($(this.div).width());
@@ -235,14 +237,14 @@ Variant.prototype = {
                     text: '<span style="color: white;font-size: 12px;font-weight: bold">Analysis</span>',
                     handler: function () {
 //                        _this.showIndexForm();
-                    var showForm = function () {
-                        if (!_this.panel.contains(_this.variantMenuAnalysisFormPanel)) {
-                            _this.panel.add(_this.variantMenuAnalysisFormPanel);
-                        }
-                        _this.panel.setActiveTab(_this.variantMenuAnalysisFormPanel);
-                    };
-                    _this._checkLogin(showForm);
-                }
+                        var showForm = function () {
+                            if (!_this.panel.contains(_this.variantMenuAnalysisFormPanel)) {
+                                _this.panel.add(_this.variantMenuAnalysisFormPanel);
+                            }
+                            _this.panel.setActiveTab(_this.variantMenuAnalysisFormPanel);
+                        };
+                        _this._checkLogin(showForm);
+                    }
                 },
                 {
                     id: this.id + "btnVisualization",
@@ -252,14 +254,14 @@ Variant.prototype = {
                     text: '<span style="color: white;font-size: 12px;font-weight: bold">Visualization</span>',
                     handler: function () {
 //                        _this.showIndexForm();
-                    var showForm = function () {
-                        if (!_this.panel.contains(_this.variantMenuVisualizationFormPanel)) {
-                            _this.panel.add(_this.variantMenuVisualizationFormPanel);
-                        }
-                        _this.panel.setActiveTab(_this.variantMenuVisualizationFormPanel);
-                    };
-                    _this._checkLogin(showForm);
-                }
+                        var showForm = function () {
+                            if (!_this.panel.contains(_this.variantMenuVisualizationFormPanel)) {
+                                _this.panel.add(_this.variantMenuVisualizationFormPanel);
+                            }
+                            _this.panel.setActiveTab(_this.variantMenuVisualizationFormPanel);
+                        };
+                        _this._checkLogin(showForm);
+                    }
                 },
                 '->'
                 ,
