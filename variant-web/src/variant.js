@@ -109,22 +109,34 @@ Variant.prototype = {
 
 
         this.variantEffectForm = new VariantEffectForm(this);
-        this.variantEffectForm.draw({title: "Effect", tabpanel: this.panel});
+        this.variantEffectForm.closable = false;
+        this.variantEffectForm.width = '50%';
+//        this.variantEffectForm.testing = true;
+        this.variantEffectForm.draw({tabpanel: this.panel});
 
         this.variantIndexForm = new VariantIndexForm(this);
-        this.variantIndexForm.draw({title: "Index VCF", tabpanel: this.panel});
+        this.variantIndexForm.closable = false;
+        this.variantIndexForm.width = '50%';
+        this.variantIndexForm.testing = true;
+        this.variantIndexForm.draw({tabpanel: this.panel});
 
         this.variantStatsForm = new VariantStatsForm(this);
         this.variantStatsForm.closable = false;
+        this.variantStatsForm.width = '50%';
         this.variantStatsForm.testing = true;
         this.variantStatsForm.draw({tabpanel: this.panel, testing: true});
 
         this.variantMergeForm = new VariantMergeForm(this);
         this.variantMergeForm.closable = false;
+        this.variantMergeForm.width = '50%';
+        this.variantMergeForm.testing = true;
         this.variantMergeForm.draw({tabpanel: this.panel});
 
         this.variantGwasForm = new VariantGwasForm(this);
-        this.variantGwasForm.draw({title: "GWAS", tabpanel: this.panel});
+        this.variantGwasForm.closable = false;
+        this.variantGwasForm.width = '50%';
+        this.variantGwasForm.testing = true;
+        this.variantGwasForm.draw({tabpanel: this.panel});
 
 
         /*check login*/
@@ -177,15 +189,35 @@ Variant.prototype = {
             cls: 'gm-navigation-bar bootstrap',
             region: "north",
             width: '100%',
+            height: 40,
             border: false,
             items: [
+                {
+                    id: this.id + "btnUpload",
+//                    disabled: true,
+//                    overCls: '',
+//                    pressedCls: 'active',
+                    margin: '0 2 0 5',
+                    cls: 'btn btn-success btn-sm',
+                    text: '<span style="color: white;font-size: 12px;font-weight: bold">Upload</span>',
+                    handler: function () {
+                        _this.headerWidget.opencgaBrowserWidget.show({mode: 'manager'});
+//                        var showForm = function () {
+//                            if (!_this.panel.contains(_this.variantMenuPreToolsFormPanel)) {
+//                                _this.panel.add(_this.variantMenuPreToolsFormPanel);
+//                            }
+//                            _this.panel.setActiveTab(_this.variantMenuPreToolsFormPanel);
+//                        };
+//                        _this._checkLogin(showForm);
+                    }
+                },
                 {
                     id: this.id + "btnPreTools",
 //                    disabled: true,
 //                    overCls: '',
 //                    pressedCls: 'active',
-                    cls: 'btn btn-default btn-xs',
-                    text: 'Preprocess',
+                    cls: 'btn btn-primary btn-sm',
+                    text: '<span style="color: white;font-size: 12px;font-weight: bold">Preprocess</span>',
                     handler: function () {
                         var showForm = function () {
                             if (!_this.panel.contains(_this.variantMenuPreToolsFormPanel)) {
@@ -198,36 +230,36 @@ Variant.prototype = {
                 },
                 {
                     id: this.id + "btnAnalysis",
-                    cls: 'btn btn-default btn-xs',
+                    cls: 'btn btn-warning btn-sm',
 
-                    text: 'Analysis',
+                    text: '<span style="color: white;font-size: 12px;font-weight: bold">Analysis</span>',
                     handler: function () {
 //                        _this.showIndexForm();
-                        var showForm = function () {
-                            if (!_this.panel.contains(_this.variantMenuAnalysisFormPanel)) {
-                                _this.panel.add(_this.variantMenuAnalysisFormPanel);
-                            }
-                            _this.panel.setActiveTab(_this.variantMenuAnalysisFormPanel);
-                        };
-                        _this._checkLogin(showForm);
-                    }
+                    var showForm = function () {
+                        if (!_this.panel.contains(_this.variantMenuAnalysisFormPanel)) {
+                            _this.panel.add(_this.variantMenuAnalysisFormPanel);
+                        }
+                        _this.panel.setActiveTab(_this.variantMenuAnalysisFormPanel);
+                    };
+                    _this._checkLogin(showForm);
+                }
                 },
                 {
                     id: this.id + "btnVisualization",
-                    cls: 'btn btn-default btn-xs',
+                    cls: 'btn btn-danger btn-sm',
 
 //                    disabled: true,
-                    text: 'Visualization',
+                    text: '<span style="color: white;font-size: 12px;font-weight: bold">Visualization</span>',
                     handler: function () {
 //                        _this.showIndexForm();
-                        var showForm = function () {
-                            if (!_this.panel.contains(_this.variantMenuVisualizationFormPanel)) {
-                                _this.panel.add(_this.variantMenuVisualizationFormPanel);
-                            }
-                            _this.panel.setActiveTab(_this.variantMenuVisualizationFormPanel);
-                        };
-                        _this._checkLogin(showForm);
-                    }
+                    var showForm = function () {
+                        if (!_this.panel.contains(_this.variantMenuVisualizationFormPanel)) {
+                            _this.panel.add(_this.variantMenuVisualizationFormPanel);
+                        }
+                        _this.panel.setActiveTab(_this.variantMenuVisualizationFormPanel);
+                    };
+                    _this._checkLogin(showForm);
+                }
                 },
                 '->'
                 ,
@@ -332,9 +364,9 @@ Variant.prototype = {
             ],
             data: [
                 {name: "Stats", form: "stats"},
-                {name: "Filter", form: "filter"},
-                {name: "Annot", form: "annot"},
-                {name: "Merge", form: "merge"}
+                {name: "Merge", form: "merge"},
+                {name: "<span class=''>Filter</span>", form: "filter"},
+                {name: "<span class=''>Annot</span>", form: "annot"}
 
             ]
         });
@@ -343,7 +375,7 @@ Variant.prototype = {
             '<div class="" style="margin: 15px; 0 0 10px;">',
             '<tpl for=".">',
 //            '<div style="margin: 10px; border: 1px solid lightgray; padding: 10px" class="menu-list-item">',
-            '<div class="btn btn-default menu-list-item" style="display: block;margin: 10px;">',
+            '<div class="btn btn-primary menu-list-item" style="display: block;margin: 10px;">',
             '{name}',
             '</div>',
             '</tpl>',
@@ -355,7 +387,7 @@ Variant.prototype = {
             tpl: menuTpl,
             trackOver: true,
             autoScroll: true,
-            selectedItemCls:'active',
+            selectedItemCls: 'active',
             cls: 'bootstrap',
             overItemCls: 'list-item-hover',
             itemSelector: '.menu-list-item',
@@ -435,11 +467,14 @@ Variant.prototype = {
         });
 
         var menuTpl = new Ext.XTemplate(
+            '<div class="" style="margin: 15px; 0 0 10px;">',
             '<tpl for=".">',
-            '<div class="menu-list-item" style="margin: 10px; border: 1px solid lightgray; padding: 10px" >',
+//            '<div style="margin: 10px; border: 1px solid lightgray; padding: 10px" class="menu-list-item">',
+            '<div class="btn btn-danger menu-list-item" style="display: block;margin: 10px;">',
             '{name}',
-            '</a>',
-            '</tpl>'
+            '</div>',
+            '</tpl>',
+            '</div>'
         );
 
         var view = Ext.create('Ext.view.View', {
@@ -447,11 +482,11 @@ Variant.prototype = {
             tpl: menuTpl,
             trackOver: true,
             autoScroll: true,
-//            height: this.height
-//            itemSelector
+            selectedItemCls: 'active',
+            cls: 'bootstrap',
             overItemCls: 'list-item-hover',
             itemSelector: '.menu-list-item',
-                listeners: {
+            listeners: {
                 itemclick: function (este, record) {
                     console.log(este);
                     console.log(record);
@@ -476,26 +511,26 @@ Variant.prototype = {
             }
         });
 
-        var panel = Ext.create('Ext.panel.Panel', {
+        var panel = Ext.create('Ext.container.Container', {
                 title: 'Visualization',
                 layout: 'hbox',
-                margin: 10,
                 border: 0,
                 items: [
                     {
-                        xtype: 'panel',
-                        title: 'Visualization',
-                        flex: 1,
+                        xtype: 'container',
+//                        title: 'Visualization',
+//                        flex: 1,
+                        width: 120,
                         margin: '0 5 0 0',
                         items: [view]
                     },
                     {
-                        xtype: 'panel',
+                        xtype: 'container',
                         height: "100%",
                         id: _this.id + "variantCustomIndexFormPanel",
 //                        title: 'FORM',
                         autoScroll: true,
-                        flex: 8
+                        flex: 1
                     }
                 ]
             }
@@ -528,7 +563,7 @@ Variant.prototype = {
             '<div class="" style="margin: 15px; 0 0 10px;">',
             '<tpl for=".">',
 //            '<div style="margin: 10px; border: 1px solid lightgray; padding: 10px" class="menu-list-item">',
-            '<div class="btn btn-default menu-list-item" style="display: block;margin: 10px;">',
+            '<div class="btn btn-warning menu-list-item" style="display: block;margin: 10px;">',
             '{name}',
             '</div>',
             '</tpl>',
@@ -540,7 +575,7 @@ Variant.prototype = {
             tpl: menuTpl,
             trackOver: true,
             autoScroll: true,
-            selectedItemCls:'active',
+            selectedItemCls: 'active',
             cls: 'bootstrap',
             overItemCls: 'list-item-hover',
             itemSelector: '.menu-list-item',
@@ -587,13 +622,13 @@ Variant.prototype = {
                         items: [view]
                     },
                     {
-                        xtype: 'panel',
+                        xtype: 'container',
                         height: "100%",
                         margin: 10,
                         id: _this.id + "variantCustomAnalysisFormPanel",
 //                        title: 'FORM',
                         autoScroll: true,
-                        flex: 8
+                        flex: 1
                     }
                 ]
             }
