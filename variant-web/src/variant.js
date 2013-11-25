@@ -185,6 +185,7 @@ Variant.prototype = {
     },
     _createMenu: function (targetId) {
         var _this = this;
+
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             id: this.id + "navToolbar",
             renderTo: targetId,

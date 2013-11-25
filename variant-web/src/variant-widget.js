@@ -43,6 +43,7 @@ VariantWidget.prototype = {
             filename: this.dbName,
             jobId: this.job.id,
             success: function (data, textStatus, jqXHR) {
+                console.log(data);
                 _this.variantInfo = JSON.parse(data);
 
                 console.log(_this.variantInfo);
@@ -64,7 +65,6 @@ VariantWidget.prototype = {
             pageSize: 20
         });
 
-
         /* main panel */
         this.panel = this._createPanel(this.targetId);
 
@@ -72,7 +72,6 @@ VariantWidget.prototype = {
         this.panel.add(this.summaryPanel);
 
         this.variantPanel = this._createVariantPanel();
-//        this.panel.add(this.variantPanel);
 
         this.genomeViewerPanel = this._createGenomeViewerPanel();
 
@@ -87,7 +86,7 @@ VariantWidget.prototype = {
             height: this.height,
             border: this.border,
             layout: 'hbox',
-            closable: true,
+            closable: this.closable,
             cls: 'ocb-border-top-lightgrey',
             tbar: {items: [
                 {
@@ -236,19 +235,16 @@ VariantWidget.prototype = {
                             {
                                 boxLabel: '0/0',
                                 name: "sampleGT_" + sName,
-                                // checked:true,
                                 inputValue: '0/0'
                             },
                             {
                                 boxLabel: '0/1',
                                 name: "sampleGT_" + sName,
-                                // checked:true,
                                 inputValue: '0/1,1/0'
                             },
                             {
                                 boxLabel: '1/1',
                                 name: "sampleGT_" + sName,
-                                // checked:true,
                                 inputValue: '1/1'
                             }
                         ]
@@ -257,12 +253,10 @@ VariantWidget.prototype = {
                 ]
             };
 
-
             fcItems.push(fc);
         }
 
         _this.grid.reconfigure(null, _this.columnsGrid);
-
 
         var ctForm = Ext.getCmp(this.id + "conseq_type_panel");
         ctForm.removeAll();
@@ -271,9 +265,8 @@ VariantWidget.prototype = {
                 xtype: 'tbtext', text: '<span class="info">Select one or multiple conseq. type</span>'
             },
             _this._createDynCombobox("conseq_type", "Consequence Type", this.variantInfo.consequenceTypes, "non_synonymous_codon")
-//            _this._createDynCombobox("conseq_type", "Consequence Type", this.variantInfo.consequenceTypes, "")
         ]);
-//
+
         var biotypeForm = Ext.getCmp(this.id + "biotype_panel");
         biotypeForm.removeAll();
         biotypeForm.add(
@@ -281,11 +274,10 @@ VariantWidget.prototype = {
                 xtype: 'tbtext', text: '<span class="info">Select one or multiple gene biotype</span>'
             },
             _this._createDynCombobox("biotype", "Gene Biotype", this.variantInfo.biotypes, null));
-//
+
         var samples = Ext.getCmp(this.id + "samples_form_panel");
         samples.removeAll();
         samples.add(fcItems);
-
 
         _this.panel.setLoading(false);
 
@@ -352,6 +344,8 @@ VariantWidget.prototype = {
                 fieldLabel: col["text"],
                 inputValue: col["text"],
                 checked: !col["hidden"],
+                cls: "checkbox",
+
                 handler: function (field, value) {
                     var colName = field.inputValue;
                     for (var i = 0; i < _this.grid.headerCt.items.items.length; i++) {
@@ -365,6 +359,7 @@ VariantWidget.prototype = {
 
         }
         var panel = Ext.create('Ext.container.Container', {
+                cls: "bootstrap",
                 items: items
             }
         );
@@ -379,7 +374,7 @@ VariantWidget.prototype = {
 
         for (var key in data.consequenceTypes) {
             cts.push({
-                name: key,
+                name: Utils.formatText(key, "_"),
                 count: data.consequenceTypes[key]
             });
         }
@@ -396,13 +391,12 @@ VariantWidget.prototype = {
         _this.ctStore = Ext.create('Ext.data.Store', {
             fields: ['name', 'count'],
             data: cts
-            // autoload: false
+
         });
 
         _this.ssStore = Ext.create('Ext.data.Store', {
             fields: ['sampleName', 'homozygotesNumber', 'mendelianErrors', 'missingGenotypes'],
             data: ss
-            // autoload: false
         });
 
         var chartCT = Ext.create('Ext.chart.Chart', {
@@ -1236,7 +1230,7 @@ VariantWidget.prototype = {
                                 return ".";
                             }
                         }
-                    },
+                    }
                 ]
             },
             {
@@ -1441,6 +1435,18 @@ VariantWidget.prototype = {
                                 id: this.id + "numRowsLabel"
                             },
                             '->',
+                            {
+                                text: 'Collapse All',
+                                handler: function () {
+                                    if (this.text == "Collapse All") {
+                                        groupingFeature.collapseAll();
+                                        this.setText("Expand All");
+                                    } else {
+                                        groupingFeature.expandAll();
+                                        this.setText("Collapse All");
+                                    }
+                                }
+                            },
                             {
                                 xtype: 'button',
                                 text: 'Columns',
@@ -1868,8 +1874,8 @@ VariantWidget.prototype = {
         _this.grid.setLoading(true);
 
         // Remove all elements from grids
-        // _this.grid.store.removeAll();
-        // _this.gridEffect.store.removeAll();
+        _this.grid.store.removeAll();
+        _this.gridEffect.store.removeAll();
 
         OpencgaManager.variants({
             accountId: $.cookie("bioinfo_account"),
@@ -2383,8 +2389,7 @@ VariantWidget.prototype = {
                             name: 'maf_1000g_controls',
                             margin: '0 0 0 5',
                             labelWidth: '50%',
-                            width: "50%",
-                            //value: '0.1'
+                            width: "50%"
                         }
                     ]
                 },
@@ -2423,11 +2428,11 @@ VariantWidget.prototype = {
                             name: 'maf_evs_controls',
                             margin: '0 0 0 5',
                             labelWidth: '50%',
-                            width: "50%",
+                            width: "50%"
                             //value: '0.1'
                         }
                     ]
-                },
+                }
             ]
         });
     },
