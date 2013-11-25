@@ -26,7 +26,7 @@ function VariantIndexForm(webapp) {
     this.headerWidget = webapp.headerWidget;
     this.opencgaBrowserWidget = webapp.headerWidget.opencgaBrowserWidget;
 
-//    this.testing = true;
+    this.testing = true;
 }
 
 VariantIndexForm.prototype.beforeRun = function () {

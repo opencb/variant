@@ -148,8 +148,8 @@ Variant.prototype = {
             this.sessionFinished();
         }
 
-        this.panel.add(this.variantMenuPreToolsFormPanel);
-        this.panel.setActiveTab(this.variantMenuPreToolsFormPanel);
+        this.panel.add(this.variantMenuVisualizationFormPanel);
+        this.panel.setActiveTab(this.variantMenuVisualizationFormPanel);
 
 
     },
@@ -683,15 +683,15 @@ Variant.prototype.jobItemClick = function (record) {
         Ext.getCmp(this.id + 'jobsButton').toggle(false);
 
         var toolName = record.raw.toolName;
-        if (toolName == 'variant') {
-            record.raw.command = Utils.parseJobCommand(record.raw);
-            var variantWidget = new VariantWidget({
-                targetId: this.panel,
-                title: record.raw.name,
-                job: record.raw,
-                autoRender: true
-            });
-            variantWidget.draw();
+//        if (toolName == 'variant') {
+//            record.raw.command = Utils.parseJobCommand(record.raw);
+//            var variantWidget = new VariantWidget({
+//                targetId: this.panel,
+//                title: record.raw.name,
+//                job: record.raw,
+//                autoRender: true
+//            });
+//            variantWidget.draw();
 //        } else if (toolName == "hpg-variant.vcf-stats") {
 //            record.raw.command = Utils.parseJobCommand(record.raw);
 //            var variantStatsWidget = new VariantStatsWidget({
@@ -701,7 +701,8 @@ Variant.prototype.jobItemClick = function (record) {
 //                autoRender: true
 //            });
 //            variantStatsWidget.draw();
-        } else if (toolName == "hpg-variant.gwas-tdt" || toolName == "hpg-variant.gwas-assoc") {
+//        } else
+    if (toolName == "hpg-variant.gwas-tdt" || toolName == "hpg-variant.gwas-assoc") {
             record.raw.command = Utils.parseJobCommand(record.raw);
 
             var variantGwasWidget = new VariantGwasWidget({
@@ -722,7 +723,6 @@ Variant.prototype.jobItemClick = function (record) {
             resultWidget.draw($.cookie('bioinfo_sid'), record);
 
             console.log(this.jobId)
-            console.log(record.raw);
 
             /* result widget parses the commandLine on record and adds the command key */
             var command = resultWidget.job.command.data;

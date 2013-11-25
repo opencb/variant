@@ -9,7 +9,8 @@ function VariantWidget(args) {
     this.autoRender = false;
     this.targetId;
     this.width;
-    this.height;
+    this.height = '100%';
+    this.closable = false;
 
     //set instantiation args, must be last
     _.extend(this, args);
@@ -83,8 +84,8 @@ VariantWidget.prototype = {
         var panel = Ext.create('Ext.panel.Panel', {
             title: this.title,
             width: '100%',
-            height: '100%',
-            border: 0,
+            height: this.height,
+            border: this.border,
             layout: 'hbox',
             closable: true,
             cls: 'ocb-border-top-lightgrey',
@@ -141,7 +142,7 @@ VariantWidget.prototype = {
             items: []
         });
         targetId.add(panel);
-        targetId.setActiveTab(panel);
+//        targetId.setActiveTab(panel);
         return panel;
     },
     _createVariantPanel: function () {
