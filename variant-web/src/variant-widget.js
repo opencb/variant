@@ -187,17 +187,6 @@ VariantWidget.prototype = {
 
         return panel;
     },
-    _createTabPanel: function () {
-        var tabPanel = Ext.create('Ext.tab.Panel', {
-            title: 'Additional Info',
-            width: '100%',
-            flex: 1,
-            titleCollapse: true,
-            collapsible: true,
-            items: []
-        });
-        return tabPanel;
-    },
     _updateInfo: function () {
         var _this = this;
         _this.panel.setLoading(true);
@@ -628,7 +617,6 @@ VariantWidget.prototype = {
 
         return panel;
     },
-
     _createEffectPanel: function () {
 
         var _this = this;
@@ -1639,8 +1627,6 @@ VariantWidget.prototype = {
 
 
     },
-
-
     _getSubColumn: function (colName) {
         var _this = this;
         var subCols = [];
