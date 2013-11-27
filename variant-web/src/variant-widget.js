@@ -115,25 +115,30 @@ VariantWidget.prototype = {
                     pressed: false,
                     toggleGroup: 'options',
                     handler: function () {
-                        //TODO
-//                        _this.panel.removeAll(false);
-//                        _this.panel.add(_this.genomeViewerPanel);
 
-                        var row = _this.grid.getView().getSelectionModel().getSelection()[0].raw;
+                        // TODO aaleman: Check this code
 
-                        _this.region = new Region({
-                            chromosome: row.chromosome,
-                            start: row.position - 200,
-                            end: row.position + 200
-                        });
+                        if (_this.grid.getStore().count() == 0) {
+                            Ext.example.msg('Genove Viewer', 'You must apply some filters first!!')
+                        }else{
+                            var row = _this.grid.getView().getSelectionModel().getSelection()[0].raw;
 
-                        _this.panel.removeAll(false);
-                        _this.panel.add(_this.genomeViewerPanel);
+                            _this.region = new Region({
+                                chromosome: row.chromosome,
+                                start: row.position - 200,
+                                end: row.position + 200
+                            });
+
+                            _this.panel.removeAll(false);
+                            _this.panel.add(_this.genomeViewerPanel);
 
 
-                        if (!_.isUndefined(_this.gv)) {
-                            _this.gv.setRegion(_this.region);
+                            if (!_.isUndefined(_this.gv)) {
+                                _this.gv.setRegion(_this.region);
+                            }
+
                         }
+
 
                     }
                 }
@@ -911,7 +916,6 @@ VariantWidget.prototype = {
                         xtype: 'button',
                         text: 'Clear',
                         handler: function () {
-                            Ext.example.msg('Clear', 'Sucessfully')
                         }
                     },
                     '->',
@@ -1061,7 +1065,7 @@ VariantWidget.prototype = {
                 },
                 {
                     text: "Consequence Type",
-                    dataIndex: "consequenceType",
+                    dataIndex: "consequenceTypeObo",
                     xtype: "templatecolumn",
                     tpl: '{consequenceTypeObo} (<a href="http://www.sequenceontology.org/browser/current_svn/term/{consequenceType}" target="_blank">{consequenceType}</a>)',
                     flex: 1
