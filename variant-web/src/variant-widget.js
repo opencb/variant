@@ -681,13 +681,8 @@ VariantWidget.prototype = {
                             targetId: null,
                             id: 1,
                             title: 'Sequence',
-                            histogramZoom: 20,
-                            transcriptZoom: 50,
                             height: 30,
-                            visibleRange: {
-                                start: 99,
-                                end: 100
-                            },
+                            visibleRange: 200,
                             featureTypes: FEATURE_TYPES,
 
                             renderer: new SequenceRenderer(),
@@ -709,13 +704,10 @@ VariantWidget.prototype = {
                             targetId: null,
                             id: 2,
                             title: 'Gene',
-                            histogramZoom: 20,
-                            transcriptZoom: 50,
                             height: 140,
-                            visibleRange: {
-                                start: 0,
-                                end: 100
-                            },
+                            minHistogramRegionSize: 20000000,
+                            maxLabelRegionSize: 10000000,
+                            minTranscriptRegionSize: 200000,
                             featureTypes: FEATURE_TYPES,
 
                             renderer: new GeneRenderer(),
@@ -725,8 +717,7 @@ VariantWidget.prototype = {
                                 subCategory: "region",
                                 resource: "gene",
                                 species: genomeViewer.species,
-                                featureCache: {
-                                    gzip: true,
+                                cacheConfig: {
                                     chunkSize: 50000
                                 },
                                 filters: {},
@@ -739,13 +730,9 @@ VariantWidget.prototype = {
                             targetId: null,
                             id: 4,
                             title: 'SNP',
-                            histogramZoom: 70,
-                            labelZoom: 80,
+                            minHistogramRegionSize: 12000,
+                            maxLabelRegionSize: 3000,
                             height: 100,
-                            visibleRange: {
-                                start: 0,
-                                end: 100
-                            },
                             featureTypes: FEATURE_TYPES,
 
                             renderer: new FeatureRenderer('snp'),
@@ -758,8 +745,7 @@ VariantWidget.prototype = {
                                     exclude: 'transcriptVariations,xrefs,samples'
                                 },
                                 species: genomeViewer.species,
-                                featureCache: {
-                                    gzip: true,
+                                cacheConfig: {
                                     chunkSize: 10000
                                 },
                                 filters: {},
