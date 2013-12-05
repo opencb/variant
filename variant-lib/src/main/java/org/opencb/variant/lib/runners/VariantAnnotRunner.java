@@ -31,6 +31,7 @@ public class VariantAnnotRunner extends VariantRunner {
     public VariantAnnotRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, 
             VariantDataWriter writer, List<VcfAnnotator> annots, VariantRunner prev) {
         this(study, reader, pedReader, writer, annots);
+        this.prev = prev;
     }
 
     @Override

@@ -30,8 +30,8 @@ public class VariantFilterRunner extends VariantRunner {
     }
 
     public VariantFilterRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantDataWriter writer, List<VcfFilter> filterList, VariantRunner prev) {
-        super(study, reader, pedReader, writer, prev);
-        this.filters = filterList;
+        this(study, reader, pedReader, writer, filterList);
+        this.prev= prev;
     }
 
     @Override
@@ -40,7 +40,6 @@ public class VariantFilterRunner extends VariantRunner {
         if (!header && writer != null) {
             ((VariantDataWriter) writer).writeHeader(reader.getHeader());
             header = true;
-
         }
 
         List<VcfRecord> filteredBatch = FilterApplicator.filter(batch, filters);
