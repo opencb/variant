@@ -1,15 +1,15 @@
 package org.opencb.variant.lib.runners;
 
-import org.opencb.commons.bioformats.commons.filters.FilterApplicator;
+import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.commons.bioformats.variant.VariantStudy;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantDataWriter;
+import org.opencb.commons.filters.FilterApplicator;
 
 import java.io.IOException;
 import java.util.List;
-import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
-import org.opencb.commons.bioformats.variant.VariantStudy;
 
 /**
  * Created with IntelliJ IDEA.
@@ -44,6 +44,7 @@ public class VariantFilterRunner extends VariantRunner {
         }
 
         List<VcfRecord> filteredBatch = FilterApplicator.filter(batch, filters);
+
         batch.clear();
         if (writer != null) {
             ((VariantDataWriter) writer).writeBatch(filteredBatch);

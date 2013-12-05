@@ -2,6 +2,7 @@ package org.opencb.variant.cli;
 
 import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.VariantStudy;
+import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfEVSControlAnnotator;
