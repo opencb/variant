@@ -2,7 +2,6 @@ package org.opencb.variant.cli;
 
 import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.VariantStudy;
-import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfEVSControlAnnotator;
@@ -12,6 +11,7 @@ import org.opencb.commons.bioformats.variant.vcf4.io.VariantDBWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantVcfDataWriter;
+//import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 import org.opencb.variant.lib.runners.*;
 
