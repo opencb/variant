@@ -982,7 +982,13 @@ VariantWidget.prototype = {
                 {name: "consequenceTypeType", type: "String"},
                 {name: "aaPosition", type: "int"},
                 {name: "aminoacidChange", type: "String"},
-                {name: "codonChange", type: "String"}
+                {name: "codonChange", type: "String"},
+                {name: "polyphenScore", type: "float"},
+                {name: "polyphenEffect", type: "float"},
+                {name: "siftScore", type: "float"},
+                {name: "siftEffect", type: "float"},
+
+
             ],
             data: [],
             autoLoad: false,
@@ -1028,6 +1034,20 @@ VariantWidget.prototype = {
                     text: "Aminoacid Change",
                     xtype: "templatecolumn",
                     tpl: '<tpl if="aminoacidChange">{aminoacidChange} - {codonChange} ({aaPosition}) <tpl else>.</tpl>  ',
+                    flex: 1
+                },
+                {
+                    text: "Polyphen",
+                    xtype: "templatecolumn",
+                    dataIndex: "polyphenScore",
+                    tpl: '<tpl if="aminoacidChange">{polyphenScore} - {polyphenEffect} <tpl else>.</tpl>  ',
+                    flex: 1
+                },
+                {
+                    text: "Sift",
+                    xtype: "templatecolumn",
+                    dataIndex: "siftScore",
+                    tpl: '<tpl if="aminoacidChange">{siftScore} - {siftEffect} <tpl else>.</tpl>  ',
                     flex: 1
                 },
                 {
@@ -1530,6 +1550,8 @@ VariantWidget.prototype = {
             formData: formParams,
             success: function (response, textStatus, jqXHR) {
                 if (response.length > 0) {
+                    console.log("EFFECT");
+                    console.log(response);
                     _this.gridEffect.getStore().loadData(response);
                     _this.gridEffect.setTitle('<span class="ssel">Effect</span> - <spap class="info">' + chr + ':' + pos + ' ' + ref + '>' + alt + '</spap>');
                     Ext.getCmp(_this.id + "numRowsLabelEffect").setText(response.length + " effects");
