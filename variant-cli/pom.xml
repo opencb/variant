@@ -61,7 +61,6 @@
             <groupId>org.opencb.opencga</groupId>
             <artifactId>opencga-storage</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>

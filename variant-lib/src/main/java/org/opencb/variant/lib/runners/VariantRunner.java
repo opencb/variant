@@ -11,9 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 /**
  * Created with IntelliJ IDEA.
  * User: aaleman
@@ -26,7 +23,6 @@ public abstract class VariantRunner extends Runner<VariantDataReader, DataWriter
     protected org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
     protected PedDataReader pedReader;
     protected VariantStudy study;
-    protected int batchSize = 1000;
 
     public VariantRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, DataWriter writer) {
         super(reader, writer);
@@ -52,7 +48,6 @@ public abstract class VariantRunner extends Runner<VariantDataReader, DataWriter
     public void run() throws IOException {
         List<VcfRecord> batch;
 
-        int cont = 0;
         reader.open();
         reader.pre();
 
@@ -72,7 +67,6 @@ public abstract class VariantRunner extends Runner<VariantDataReader, DataWriter
         batch = reader.read(batchSize);
         while (!batch.isEmpty()) {
 
-            System.out.println("Batch: " + cont++);
             batch = this.launch(batch);
             batch.clear();
             batch = reader.read(batchSize);

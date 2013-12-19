@@ -11,7 +11,6 @@ import org.opencb.commons.bioformats.variant.vcf4.io.VariantDBWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantVcfDataWriter;
-//import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 import org.opencb.variant.lib.runners.*;
 
@@ -21,6 +20,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
+
+//import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -70,6 +71,7 @@ public class VariantMain {
 
         // FILTERS
         options.addOption(OptionFactory.createOption("filter-region", "Filter Region (chr:start-end)", false, true));
+        options.addOption(OptionFactory.createOption("filter-bed", "Filter Bed ", false, true));
         options.addOption(OptionFactory.createOption("filter-snp", "Filter SNP", false, false));
         options.addOption(OptionFactory.createOption("filter-ct", "Filter Consequence Type", false, true));
         options.addOption(OptionFactory.createOption("filter-gene", "Filter Gene (BRCA2,PPL)", false, true));
@@ -197,6 +199,10 @@ public class VariantMain {
 
         if (commandLine.hasOption("filter-region")) {
             filters.add(new VcfRegionFilter(commandLine.getOptionValue("filter-region"), Integer.MAX_VALUE));
+        }
+
+        if (commandLine.hasOption("filter-bed")) {
+            filters.add(new VcfBedFilter(commandLine.getOptionValue("filter-bed"), Integer.MAX_VALUE));
         }
 
         if (commandLine.hasOption("filter-snp")) {
