@@ -682,13 +682,14 @@ VariantWidget.prototype = {
 
                         genomeViewer.draw();
 
+
+
                         this.sequence = new SequenceTrack({
                             targetId: null,
                             id: 1,
                             title: 'Sequence',
                             height: 30,
-                            visibleRange: 200,
-                            featureTypes: FEATURE_TYPES,
+                            visibleRegionSize: 200,
 
                             renderer: new SequenceRenderer(),
 
@@ -696,13 +697,10 @@ VariantWidget.prototype = {
                                 category: "genomic",
                                 subCategory: "region",
                                 resource: "sequence",
-                                species: genomeViewer.species,
-                                featureCache: {
-                                    gzip: true,
-                                    chunkSize: 1000
-                                }
+                                species: genomeViewer.species
                             })
                         });
+
 
 
                         this.gene = new GeneTrack({
@@ -916,6 +914,7 @@ VariantWidget.prototype = {
                         xtype: 'button',
                         text: 'Clear',
                         handler: function () {
+                            Ext.example.msg('Clear', 'Sucessfully')
                         }
                     },
                     '->',
@@ -1059,10 +1058,10 @@ VariantWidget.prototype = {
                     dataIndex: "snpId",
                     flex: 1
                 },
-                {
-                    text: "Samples",
-                    flex: 1
-                },
+                //{
+                    //text: "Samples",
+                    //flex: 1
+                //},
                 {
                     text: "Consequence Type",
                     dataIndex: "consequenceTypeObo",
@@ -1128,6 +1127,9 @@ VariantWidget.prototype = {
                 }
             ],
             features: [groupingFeature, {ftype: 'summary'}],
+            viewConfig:{
+                emptyText: 'No records to display'
+            },
             dockedItems: [
                 {
                     xtype: 'toolbar',
@@ -1403,6 +1405,9 @@ VariantWidget.prototype = {
                 plugins: 'bufferedrenderer',
                 loadMask: true,
                 features: [groupingFeature, {ftype: 'summary'}],
+                viewConfig:{
+                    emptyText: 'No records to display'
+                },
                 dockedItems: [
                     {
                         xtype: 'toolbar',
@@ -1503,6 +1508,8 @@ VariantWidget.prototype = {
                                                             href: 'data:text/csv,' + encodeURIComponent(content),
                                                             download: fileName + ".txt"
                                                         });
+
+                                                        this.up(".window").hide();
                                                     }
                                                 }
                                             ]
@@ -1773,7 +1780,7 @@ VariantWidget.prototype = {
 
         var colNames = [];
         for (var i = 0; i < _this.columnsGrid.length; i++) {
-            var col = _this.columvnsGrid[i];
+            var col = _this.columnsGrid[i];
             colNames.push(col.text);
         }
         return colNames;
@@ -1793,9 +1800,9 @@ VariantWidget.prototype = {
             delete v.sampleGenotypes;
 
             var ct = "";
-            if (v.consequence_types != null) {
-                for (var key in v.consequence_types) {
-                    ct += v.consequence_types[key];
+            if (v.consequenceTypes != null) {
+                for (var key in v.consequenceTypes) {
+                    ct += v.consequenceTypes[key];
                     ct += ",";
                 }
                 v.ct = ct;
@@ -2436,14 +2443,22 @@ VariantWidget.prototype = {
         var dataAux = [];
         for (var key in data) {
             if (key != '.') {
-                dataAux.push(key);
+                dataAux.push({
+                    name: Utils.formatText(key, "_"),
+                    value: key
+                });
             }
         }
+        var storeAux = Ext.create('Ext.data.Store', {
+            fields: ['value', 'name'],
+            data: dataAux
+        });
+        console.log(dataAux);
 
         return Ext.create('Ext.form.field.ComboBox', {
             name: name,
             emptyText: label,
-            store: dataAux,
+            store: storeAux,
             queryMode: 'local',
             displayField: 'name',
             valueField: 'value',
