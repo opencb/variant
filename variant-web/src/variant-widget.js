@@ -36,17 +36,14 @@ VariantWidget.prototype = {
     },
     draw: function () {
         var _this = this;
-        console.log(this.dbName);
         OpencgaManager.variantInfo({
             accountId: $.cookie("bioinfo_account"),
             sessionId: $.cookie("bioinfo_sid"),
             filename: this.dbName,
             jobId: this.job.id,
             success: function (data, textStatus, jqXHR) {
-                console.log(data);
                 _this.variantInfo = JSON.parse(data);
 
-                console.log(_this.variantInfo);
                 _this._draw();
             }
         });
@@ -839,48 +836,6 @@ VariantWidget.prototype = {
                     _this.gv.setRegion(region);
                 }
 
-//                var row = selectedRecord[0].data;
-//                console.log(row);
-//                var chr = row.chr;
-//                var pos = row.pos;
-//                var ref = row.ref;
-//                var alt = row.alt;
-//
-//
-//                _this.gridEffect.setLoading(true);
-//                CellBaseManager.get({
-//                    host: 'http://ws.bioinfo.cipf.es/cellbase/rest',
-//                    version: 'latest',
-//                    species: 'hsa', //TODO multiples species
-//                    category: 'genomic',
-//                    subCategory: 'variant',
-//                    query: chr + ':' + pos + ':' + ref + ':' + alt,
-//                    resource: 'consequence_type',
-//                    success: function (response, textStatus, jqXHR) {
-//                        console.log(response);
-//                        if (response.length > 0) {
-////                            _this.gridEffect.getStore().loadData(response);
-////                            Ext.getCmp(_this.id + "numRowsLabelEffect").setText(response.length + " effects");
-//
-//                            var region = new Region({
-//                                chromosome: chr,
-//                                start: pos,
-//                                end: pos
-//                            });
-//                            console.log(region);
-//                            if (!_.isUndefined(_this.gv)) {
-//                                _this.gv.setRegion(region);
-//                            }
-//                        }
-////                        _this.gridEffect.setLoading(false);
-//                    },
-//                    error: function (jqXHR, textStatus, errorThrown) {
-//                        console.log('Error loading Effect');
-////                        _this.gridEffect.se>tLoading(false);
-//
-//                    }
-//                });
-
             }
         });
 
@@ -1221,7 +1176,7 @@ VariantWidget.prototype = {
             },
             {
                 text: "Consq. Type",
-                dataIndex: "ct",
+                dataIndex: "consequence_types",
                 flex: 1,
                 sortable: true
             },
@@ -1368,7 +1323,7 @@ VariantWidget.prototype = {
             {name: 'stats_cases_percent_recessive', type: 'double'},
             {name: 'stats_controls_percent_recessive', type: 'double'},
             {name: 'gene_name', type: 'string'},
-            {name: 'ct', type: 'string'},
+            {name: 'consequence_types', type: 'string'},
             {name: "genotypes", type: 'auto'},
             {name: "effect", type: 'auto'},
             {name: "controls", type: 'auto'}
@@ -1539,7 +1494,6 @@ VariantWidget.prototype = {
             if (selectedRecord.length) {
 
                 var row = selectedRecord[0].data;
-                console.log(row);
                 var chr = row.chromosome;
                 var pos = row.position;
                 var ref = row.ref;
@@ -1564,7 +1518,6 @@ VariantWidget.prototype = {
         formParams['ref'] = ref;
         formParams['alt'] = alt;
 
-        console.log(formParams);
 
 
         _this.gridEffect.setLoading(true);
@@ -1576,7 +1529,6 @@ VariantWidget.prototype = {
             jobId: this.job.id,
             formData: formParams,
             success: function (response, textStatus, jqXHR) {
-                console.log(response);
                 if (response.length > 0) {
                     _this.gridEffect.getStore().loadData(response);
                     _this.gridEffect.setTitle('<span class="ssel">Effect</span> - <spap class="info">' + chr + ':' + pos + ' ' + ref + '>' + alt + '</spap>');
@@ -1593,36 +1545,6 @@ VariantWidget.prototype = {
 
             }
         });
-
-
-//        CellBaseManager.get({
-//            host: 'http://ws.bioinfo.cipf.es/cellbase/rest',
-//            version: 'latest',
-//            species: 'hsa', //TODO multiples species
-//            category: 'genomic',
-//            subCategory: 'variant',
-//            query: chr + ':' + pos + ':' + ref + ':' + alt,
-//            resource: 'consequence_type',
-//            success: function (response, textStatus, jqXHR) {
-//                console.log(response);
-//                if (response.length > 0) {
-//                    _this.gridEffect.getStore().loadData(response);
-//                    _this.gridEffect.setTitle('<span class="ssel">Effect</span> - <spap class="info">' + chr + ':' + pos + ' ' + ref + '>' + alt + '</spap>');
-//                    Ext.getCmp(_this.id + "numRowsLabelEffect").setText(response.length + " effects");
-//
-//                } else {
-//                    _this.gridEffect.getStore().removeAll();
-//                }
-//                _this.gridEffect.setLoading(false);
-//            },
-//            error: function (jqXHR, textStatus, errorThrown) {
-//                console.log('Error loading Effect');
-//                _this.gridEffect.setLoading(false);
-//
-//            }
-//        });
-
-
     },
     _getSubColumn: function (colName) {
         var _this = this;
@@ -1832,15 +1754,12 @@ VariantWidget.prototype = {
             }
 
         }
-        console.log("Total: " + cont);
         return finalData;
     },
     _getResult: function () {
         var _this = this;
 
         var values = this.form.getForm().getValues();
-
-        console.log(values);
 
         var formParams = {};
         for (var param in values) {
@@ -1867,14 +1786,12 @@ VariantWidget.prototype = {
             jobId: this.job.id,
             formData: formParams,
             success: function (response, textStatus, jqXHR) {
-                console.log(response);
                 if (response.length) {
                     var data = _this._prepareData(response);
 
-                    console.log("prepared data");
                     console.log(data);
-                    _this.st.loadData(data);
 
+                    _this.st.loadData(data);
 
                     _this.grid.getView().refresh();
 
@@ -1892,7 +1809,6 @@ VariantWidget.prototype = {
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log('no va');
                 _this.grid.setLoading(false);
             }
         });
@@ -2453,7 +2369,6 @@ VariantWidget.prototype = {
             fields: ['value', 'name'],
             data: dataAux
         });
-        console.log(dataAux);
 
         return Ext.create('Ext.form.field.ComboBox', {
             name: name,
