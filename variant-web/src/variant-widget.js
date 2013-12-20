@@ -1200,8 +1200,20 @@ VariantWidget.prototype = {
                 flex: 1,
                 sortable: true
             },
-            {text: 'Polyphen', flex: 1},
-            {text: 'Sift', flex: 1},
+            {
+                text: 'Polyphen', 
+                flex: 1,
+                data_index: 'polyphen_score',
+                xtype: "templatecolumn",
+                tpl: "{polyphen_score} ({polyphen_effect})",
+            },
+            {
+                text: 'Sift', 
+                flex: 1,
+                data_index: 'sift_score',
+                xtype: "templatecolumn",
+                tpl: "{sift_score} ({sift_effect})",
+            },
             {text: 'Conservation', flex: 1},
             {
                 text: "Alleles & Genotypes",
@@ -1346,7 +1358,12 @@ VariantWidget.prototype = {
             {name: 'consequence_types', type: 'string'},
             {name: "genotypes", type: 'auto'},
             {name: "effect", type: 'auto'},
-            {name: "controls", type: 'auto'}
+            {name: "controls", type: 'auto'},
+            {name: "polyphen_score", type: 'float'},
+            {name: "polyphen_effect", type: 'int'},
+            {name: "sift_score", type: 'float'},
+            {name: "sift_effect", type: 'int'},
+
         ];
         _this.model = Ext.define('Variant', {
             extend: 'Ext.data.Model',
