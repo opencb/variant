@@ -959,6 +959,66 @@ VariantWidget.prototype = {
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping', {
             groupHeaderTpl: '{groupField}: {groupValue} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
         });
+
+        var xtmplPoly = new Ext.XTemplate(
+            '<tpl if="aminoacidChange">{[this.parseEffect(values)]}<tpl else>.</tpl>  ',
+            {
+                parseEffect: function(value){
+
+                    if(value.polyphenScore == 0 && value.polyphenEffect == 0){
+                        return ".";
+                    }
+
+                    var score = value.polyphenScore;
+                    var effect="";
+                    switch (value.polyphenEffect) {
+                        case 0:
+                            effect = "probably damaging";
+                            break;
+                        case 1:
+                            effect = "possibly damaging";
+                            break;
+                        case 2:
+                            effect = "benign";
+                            break;
+                        case 3:
+                            effect = "unknown";
+                            break;
+                        
+                        default:
+                            return ".";
+                            
+                    }
+                    return(score + " - (" + effect + ")");
+                }
+            }
+        );
+        var xtmplSift = new Ext.XTemplate(
+            '<tpl if="aminoacidChange">{[this.parseEffect(values)]}<tpl else>.</tpl>  ',
+            {
+                parseEffect: function(value){
+
+                    if(value.siftScore == 0 && value.siftEffect == 0){
+                        return ".";
+                    }
+
+                    var score = value.siftScore;
+                    var effect="";
+                    switch (value.siftEffect) {
+                        case 0:
+                            effect = "tolerated";
+                            break;
+                        case 1:
+                            effect = "deleterious";
+                            break;
+                        default:
+                            return ".";
+                            
+                    }
+                    return(score + " - (" + effect + ")");
+                }
+            }
+        );
         this.stEffect = Ext.create("Ext.data.Store", {
             groupField: 'featureId',
             fields: [
@@ -1040,14 +1100,14 @@ VariantWidget.prototype = {
                     text: "Polyphen",
                     xtype: "templatecolumn",
                     dataIndex: "polyphenScore",
-                    tpl: '<tpl if="aminoacidChange">{polyphenScore} - {polyphenEffect} <tpl else>.</tpl>  ',
+                    tpl: xtmplPoly,
                     flex: 1
                 },
                 {
                     text: "Sift",
                     xtype: "templatecolumn",
                     dataIndex: "siftScore",
-                    tpl: '<tpl if="aminoacidChange">{siftScore} - {siftEffect} <tpl else>.</tpl>  ',
+                    tpl: xtmplSift,
                     flex: 1
                 },
                 {
@@ -1123,6 +1183,67 @@ VariantWidget.prototype = {
     _createGrid: function () {
 
         var _this = this;
+
+        var xtmplPoly = new Ext.XTemplate(
+            '{[this.parseEffect(values)]}',
+            {
+                parseEffect: function(value){
+
+                    if(value.polyphen_score == 0 && value.polyphen_effect == 0){
+                        return ".";
+                    }
+
+                    var score = value.polyphen_score;
+                    var effect="";
+                    switch (value.polyphen_effect) {
+                        case 0:
+                            effect = "probably damaging";
+                            break;
+                        case 1:
+                            effect = "possibly damaging";
+                            break;
+                        case 2:
+                            effect = "benign";
+                            break;
+                        case 3:
+                            effect = "unknown";
+                            break;
+                        
+                        default:
+                            return ".";
+                            
+                    }
+                    return(score + " - (" + effect + ")");
+                }
+            }
+        );
+        var xtmplSift = new Ext.XTemplate(
+            '{[this.parseEffect(values)]}',
+            {
+                parseEffect: function(value){
+
+                    if(value.sift_score == 0 && value.sift_effect == 0){
+                        return ".";
+                    }
+
+                    var score = value.sift_score;
+                    var effect="";
+                    switch (value.sift_effect) {
+                        case 0:
+                            effect = "tolerated";
+                            break;
+                        case 1:
+                            effect = "deleterious";
+                            break;
+                        default:
+                            return ".";
+                            
+                    }
+                    return(score + " - (" + effect + ")");
+                }
+            }
+        );
+
         _this.columnsGrid = [
 //            new Ext.grid.RowNumberer({width: 30}),
             {
@@ -1204,15 +1325,15 @@ VariantWidget.prototype = {
                 text: 'Polyphen', 
                 flex: 1,
                 data_index: 'polyphen_score',
-                xtype: "templatecolumn",
-                tpl: "{polyphen_score} ({polyphen_effect})",
+                xtype: 'templatecolumn',
+                tpl: xtmplPoly
             },
             {
                 text: 'Sift', 
                 flex: 1,
                 data_index: 'sift_score',
                 xtype: "templatecolumn",
-                tpl: "{sift_score} ({sift_effect})",
+                tpl: xtmplSift
             },
             {text: 'Conservation', flex: 1},
             {
