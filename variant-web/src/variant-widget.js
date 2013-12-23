@@ -1075,7 +1075,7 @@ VariantWidget.prototype = {
                     flex: 1
                 },
                 {
-                    text: "snp Id",
+                    text: "SNP Id",
                     dataIndex: "snpId",
                     flex: 1
                 },
@@ -1084,7 +1084,7 @@ VariantWidget.prototype = {
                     //flex: 1
                 //},
                 {
-                    text: "Consequence Type",
+                    text: "Conseq. Type",
                     dataIndex: "consequenceTypeObo",
                     xtype: "templatecolumn",
                     tpl: '{consequenceTypeObo} (<a href="http://www.sequenceontology.org/browser/current_svn/term/{consequenceType}" target="_blank">{consequenceType}</a>)',
@@ -1104,34 +1104,34 @@ VariantWidget.prototype = {
                     flex: 1
                 },
                 {
-                    text: "Sift",
+                    text: "SIFT",
                     xtype: "templatecolumn",
                     dataIndex: "siftScore",
                     tpl: xtmplSift,
                     flex: 1
                 },
                 {
-                    text: "gene (EnsemblId)",
+                    text: "Gene (EnsemblId)",
                     dataIndex: "geneName",
                     xtype: 'templatecolumn',
                     tpl: '<tpl if="geneName">{geneName} (<a href="http://www.ensembl.org/Homo_sapiens/Location/View?g={geneId}" target="_blank">{geneId}</a>)<tpl else>.</tpl>',
                     flex: 1
                 },
                 {
-                    text: "transcript Id",
+                    text: "Transcript Id",
                     dataIndex: "transcriptId",
                     xtype: 'templatecolumn',
                     tpl: '<a href="http://www.ensembl.org/Homo_sapiens/Location/View?t={transcriptId}" target="_blank">{transcriptId}</a>',
                     flex: 1
                 },
                 {
-                    text: "feature Id",
+                    text: "Feature Id",
                     dataIndex: "featureId",
                     flex: 1
 
                 },
                 {
-                    text: "feature Name",
+                    text: "Feature Name",
                     dataIndex: "featureName",
                     flex: 1
 
@@ -1143,19 +1143,19 @@ VariantWidget.prototype = {
 
                 },
                 {
-                    text: "feature Biotype",
+                    text: "Feature Biotype",
                     dataIndex: "featureBiotype",
                     flex: 1
 
                 },
                 {
-                    text: "ancestral",
+                    text: "Ancestral",
                     dataIndex: "ancestral",
                     hidden: true,
                     flex: 1
                 },
                 {
-                    text: "alternative",
+                    text: "Alternative",
                     dataIndex: "alternative",
                     hidden: true,
                     flex: 1
