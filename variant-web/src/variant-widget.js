@@ -860,14 +860,14 @@ VariantWidget.prototype = {
                 items: [
                     {
                         xtype: 'button',
-                        text: 'Reload',
+                        text: '<span style="font-weight:bold">Reload</span>',
                         handler: function () {
                             Ext.example.msg('Reload', 'Sucessfully')
                         }
                     } ,
                     {
                         xtype: 'button',
-                        text: 'Clear',
+                        text: '<span style="font-weight:bold">Clear</span>',
                         handler: function () {
                             Ext.example.msg('Clear', 'Sucessfully')
                         }
@@ -875,7 +875,7 @@ VariantWidget.prototype = {
                     '->',
                     {
                         xtype: 'button',
-                        text: 'Search',
+                        text: '<span style="font-weight:bold">Search</span>',
                         handler: function () {
                             _this._getResult();
                         }
@@ -957,7 +957,7 @@ VariantWidget.prototype = {
     _createEffectGrid: function () {
 
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping', {
-            groupHeaderTpl: '{groupField}: {groupValue} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
+            groupHeaderTpl: '{groupField}: {groupValue} ({rows.length} Effect{[values.rows.length > 1 ? "s" : ""]})'
         });
 
         var xtmplPoly = new Ext.XTemplate(
@@ -1057,7 +1057,7 @@ VariantWidget.prototype = {
         });
 
         var gridEffect = Ext.create('Ext.grid.Panel', {
-            title: '<span class="ssel">Effect</span>',
+            title: '<span class="ssel">Variant Effect</span>',
             flex: 1,
             height: '100%',
             store: this.stEffect,
@@ -1137,7 +1137,7 @@ VariantWidget.prototype = {
 
                 },
                 {
-                    text: "feature Type",
+                    text: "Feature Type",
                     dataIndex: "featureType",
                     flex: 1
 
@@ -1499,8 +1499,18 @@ VariantWidget.prototype = {
             pageSize: 5
 
         });
+        var xtmplGroup = new Ext.XTemplate(
+            '{[this.parseGroupField(values.groupField)]}: {groupValue} ({rows.length} Variant{[values.rows.length > 1 ? "s" : ""]})',
+            {
+                parseGroupField: function(value){
+
+                    return Utils.formatText(value, "_");
+                }
+            }
+        );
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping', {
-            groupHeaderTpl: '{groupField}: {groupValue} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})',
+            //groupHeaderTpl: '{groupField}: {groupValue} ({rows.length} Variant{[values.rows.length > 1 ? "s" : ""]})',
+        groupHeaderTpl: xtmplGroup,
             enableGroupingMenu: false
         });
         var grid = Ext.create('Ext.grid.Panel', {
@@ -1691,11 +1701,13 @@ VariantWidget.prototype = {
                     console.log("EFFECT");
                     console.log(response);
                     _this.gridEffect.getStore().loadData(response);
-                    _this.gridEffect.setTitle('<span class="ssel">Effect</span> - <spap class="info">' + chr + ':' + pos + ' ' + ref + '>' + alt + '</spap>');
+                    _this.gridEffect.setTitle('<span class="ssel">Variant Effect</span> - <spap class="info">' + chr + ':' + pos + ' ' + ref + '>' + alt + '</spap>');
                     Ext.getCmp(_this.id + "numRowsLabelEffect").setText(response.length + " effects");
 
                 } else {
                     _this.gridEffect.getStore().removeAll();
+                    _this.gridEffect.setTitle('<span class="ssel">Variant Effect</span>');
+                    Ext.getCmp(_this.id + "numRowsLabelEffect").setText(response.length + " effects");
                 }
                 _this.gridEffect.setLoading(false);
             },
