@@ -215,36 +215,68 @@ VariantWidget.prototype = {
 
             _this._addSampleColumn(sName);
 
-            var fc = {
-                xtype: 'fieldcontainer',
-                fieldLabel: sName,
-                items: [
-                    {
-                        xtype: 'checkboxgroup',
-                        columns: 3,
-                        items: [
-                            {
-                                boxLabel: '0/0',
-                                name: "sampleGT_" + sName,
-                                inputValue: '0/0'
-                            },
-                            {
-                                boxLabel: '0/1',
-                                name: "sampleGT_" + sName,
-                                inputValue: '0/1,1/0'
-                            },
-                            {
-                                boxLabel: '1/1',
-                                name: "sampleGT_" + sName,
-                                inputValue: '1/1'
-                            }
-                        ]
+            //var fc = {
+                //xtype: 'fieldcontainer',
+                //fieldLabel: sName,
+                //items: [
+                    //{
+                        //xtype: 'checkboxgroup',
+                        //columns: 3,
+                        //items: [
+                            //{
+                                //boxLabel: '0/0',
+                                //name: "sampleGT_" + sName,
+                                //inputValue: '0/0'
+                            //},
+                            //{
+                                //boxLabel: '0/1',
+                                //name: "sampleGT_" + sName,
+                                //inputValue: '0/1,1/0'
+                            //},
+                            //{
+                                //boxLabel: '1/1',
+                                //name: "sampleGT_" + sName,
+                                //inputValue: '1/1'
+                            //}
+                        //]
 
-                    }
-                ]
-            };
+                    //}
+                //]
+            //};
 
-            fcItems.push(fc);
+            //fcItems.push(fc);
+        }
+
+
+        var sampleTableElems = [];
+        sampleTableElems.push({html:''});
+        sampleTableElems.push({html:'0/0'});
+        sampleTableElems.push({html:'0/1'});
+        sampleTableElems.push({html:'1/1'});
+
+        for(var i in this.variantInfo.samples){
+            var sName = this.variantInfo.samples[i];
+            sampleTableElems.push({
+                html: sName                
+            });
+            sampleTableElems.push({
+                xtype:'checkbox',
+                //boxLabel: '0/0',
+                name: "sampleGT_" + sName,
+                inputValue: '0/0'
+                            });
+            sampleTableElems.push({
+                xtype:'checkbox',
+                //boxLabel: '0/1',
+                name: "sampleGT_" + sName,
+                inputValue: '0/1,1/0'
+                            });
+            sampleTableElems.push({
+                xtype:'checkbox',
+                //boxLabel: '1/1',
+                name: "sampleGT_" + sName,
+                inputValue: '1/1'
+                            });
         }
 
         _this.grid.reconfigure(null, _this.columnsGrid);
@@ -268,7 +300,8 @@ VariantWidget.prototype = {
 
         var samples = Ext.getCmp(this.id + "samples_form_panel");
         samples.removeAll();
-        samples.add(fcItems);
+        //samples.add(fcItems);
+        samples.add(sampleTableElems);
 
         _this.panel.setLoading(false);
 
@@ -857,27 +890,44 @@ VariantWidget.prototype = {
                 fill: false
             },
             tbar: {
+                width:'100%',
                 items: [
                     {
                         xtype: 'button',
+                        //width:'100%',
+                        flex:1,
                         text: '<span style="font-weight:bold">Reload</span>',
+                        tooltip:'Reload',
                         handler: function () {
                             Ext.example.msg('Reload', 'Sucessfully')
+                            _this._reloadForm();
                         }
                     } ,
                     {
                         xtype: 'button',
+                        //width:'100%',
+                        flex:1,
                         text: '<span style="font-weight:bold">Clear</span>',
+                        tooltip:'Clear',
                         handler: function () {
-                            Ext.example.msg('Clear', 'Sucessfully')
+                            Ext.example.msg('Clear', 'Sucessfully');
+                            _this._clearForm();
+                            Ext.getCmp(_this.id + "region_list").setValue("");
+                            Ext.getCmp(_this.id + "genes").setValue("");
                         }
                     },
                     '->',
                     {
                         xtype: 'button',
+                        //width:'100%',
+                        flex:1,
                         text: '<span style="font-weight:bold">Search</span>',
+                        tooltip:'Search',
                         handler: function () {
-                            _this._getResult();
+
+                            if(_this._checkForm()){
+                                _this._getResult();
+                            }
                         }
                     }
                 ]
@@ -921,9 +971,19 @@ VariantWidget.prototype = {
         var samplesInfo = [];
 
         var samples = Ext.create('Ext.panel.Panel', {
+            width:'100%',
+            layout: {
+                type: 'table',
+                columns:4
+            },
+            defaults:{
+                border:false,
+                padding: 4
+            },
             title: 'Samples',
-            items: samplesInfo,
-            id: this.id + "samples_form_panel"
+            //items: samplesInfo,
+            id: this.id + "samples_form_panel",
+            //border:0
         });
 
         var controlsItems = [
@@ -936,7 +996,8 @@ VariantWidget.prototype = {
         });
 
         var effectItems = [
-            this._getConsequenceType()
+            this._getConsequenceType(),
+            //this._getPolySIFT()
         ];
 
         var effect = Ext.create('Ext.panel.Panel', {
@@ -2109,14 +2170,16 @@ VariantWidget.prototype = {
             emptyText: '1:1-1000000,2:1-1000000',
             margin: '0 0 0 5',
             value: "1:1-10000000",
-            allowBlank: false
+            allowBlank: false,
+            width:'100%'
         });
 
         return Ext.create('Ext.form.Panel', {
             border: true,
             bodyPadding: "5",
             margin: "0 0 5 0",
-            width: "100%",
+            //width: "100%",
+            flex:1,
             border: 0,
             buttonAlign: 'center',
             layout: 'vbox',
@@ -2134,7 +2197,8 @@ VariantWidget.prototype = {
             name: "genes",
             emptyText: 'BRCA2,PPL',
             margin: '0 0 0 5',
-            allowBlank: false
+            allowBlank: false,
+            width:'100%'
         });
 
         return Ext.create('Ext.form.Panel', {
@@ -2158,7 +2222,7 @@ VariantWidget.prototype = {
             border: true,
             bodyPadding: "5",
             margin: "0 0 5 8",
-            width: "100%",
+            width: '100%',
             border: 0,
             buttonAlign: 'center',
             layout: 'vbox',
@@ -2272,7 +2336,7 @@ VariantWidget.prototype = {
                 {
                     xtype: 'fieldcontainer',
                     layout: 'hbox',
-                    border: false,
+                    border: false, 
                     items: [
                         maf_opt,
                         maf_text]
@@ -2440,6 +2504,57 @@ VariantWidget.prototype = {
 
 
     },
+    _getPolySIFT: function () {
+        return Ext.create('Ext.form.Panel', {
+            bodyPadding: "5",
+            margin: "0 0 5 0",
+            width: "100%",
+            buttonAlign: 'center',
+            layout: 'vbox',
+            border: 0,
+            items: [
+                {
+                    xtype: 'fieldcontainer',
+                    layout: 'hbox',
+                    border: false,
+                    width: "100%",
+                    items: [
+                        {
+                            xtype: 'tbtext', margin: '5 0 0 0', text: '<span class="emph">Polyphen <</span>'
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'polyphen',
+                            margin: '0 0 0 5',
+                            labelWidth: '50%',
+                            width: "50%"
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    //fieldLabel: '% Controls recessive',
+                    layout: 'hbox',
+                    margin: '10 0 0 0',
+                    border: false,
+                    width: "100%",
+                    items: [
+
+                        {
+                            xtype: 'tbtext', margin: '5 0 0 0', text: '<span class="emph">SIFT <</span>'
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'sift',
+                            margin: '0 0 0 5',
+                            labelWidth: '50%',
+                            width: "50%"
+                        }
+                    ]
+                }
+            ]
+        });
+    },
     _getControls: function () {
         return Ext.create('Ext.form.Panel', {
             bodyPadding: "5",
@@ -2556,7 +2671,8 @@ VariantWidget.prototype = {
             delimiter: ",",
             editable: false,
             allowBlank: false,
-            value: defaultValue
+            value: defaultValue,
+            width:'100%'
         });
     },
     _createComboboxDB: function (name, label, data, defaultValue, labelWidth, margin) {
@@ -2581,6 +2697,28 @@ VariantWidget.prototype = {
                 }
             }
         });
+    },
+    _clearForm: function(){
+   
+        var _this = this;
+        _this.form.getForm().reset();
+    },
+    _reloadForm: function(){
+   
+        var _this = this;
+        _this.form.getForm().reset();
+    },
+    _checkForm: function(){
+        var reg = Ext.getCmp(this.id + "region_list");
+        var genes = Ext.getCmp(this.id + "genes");
+
+        if(reg.getValue() == "" && genes.getValue() == ""){
+                Ext.example.msg('Form Error', 'You must add a region or a gene first!!');
+                return false;
+        }
+
+        return true;
+        
     }
 }
 ;
