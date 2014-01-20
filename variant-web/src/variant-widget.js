@@ -1883,12 +1883,15 @@ VariantWidget.prototype = {
 
         var finalData = [];
         var cont = 0;
+        var aux;
 
         for (var i = 0; i < data.length; i++) {
             var v = data[i];
 
             for (var key in v.sampleGenotypes) {
-                v[key] = v.sampleGenotypes[key];
+                aux = v.sampleGenotypes[key];
+                aux = aux.replace(/-1/g,".");
+                v[key] = aux;
             }
 
             delete v.sampleGenotypes;
