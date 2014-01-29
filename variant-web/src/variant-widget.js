@@ -206,77 +206,41 @@ VariantWidget.prototype = {
         }
 
         _this.sampleNames = [];
-
-        var fcItems = [];
-        for (var i in this.variantInfo.samples) {
-            var sName = this.variantInfo.samples[i];
-
-            _this.sampleNames.push(sName);
-
-            _this._addSampleColumn(sName);
-
-            //var fc = {
-                //xtype: 'fieldcontainer',
-                //fieldLabel: sName,
-                //items: [
-                    //{
-                        //xtype: 'checkboxgroup',
-                        //columns: 3,
-                        //items: [
-                            //{
-                                //boxLabel: '0/0',
-                                //name: "sampleGT_" + sName,
-                                //inputValue: '0/0'
-                            //},
-                            //{
-                                //boxLabel: '0/1',
-                                //name: "sampleGT_" + sName,
-                                //inputValue: '0/1,1/0'
-                            //},
-                            //{
-                                //boxLabel: '1/1',
-                                //name: "sampleGT_" + sName,
-                                //inputValue: '1/1'
-                            //}
-                        //]
-
-                    //}
-                //]
-            //};
-
-            //fcItems.push(fc);
-        }
-
-
+        
         var sampleTableElems = [];
         sampleTableElems.push({html:''});
         sampleTableElems.push({html:'0/0'});
         sampleTableElems.push({html:'0/1'});
         sampleTableElems.push({html:'1/1'});
 
-        for(var i in this.variantInfo.samples){
+        var fcItems = [];
+        for (var i in this.variantInfo.samples) {
             var sName = this.variantInfo.samples[i];
+            _this.sampleNames.push(sName);
+            _this._addSampleColumn(sName);
+            
             sampleTableElems.push({
                 html: sName                
             });
+           
             sampleTableElems.push({
                 xtype:'checkbox',
                 //boxLabel: '0/0',
                 name: "sampleGT_" + sName,
                 inputValue: '0/0'
-                            });
+            });
             sampleTableElems.push({
                 xtype:'checkbox',
                 //boxLabel: '0/1',
                 name: "sampleGT_" + sName,
                 inputValue: '0/1,1/0'
-                            });
+            });
             sampleTableElems.push({
                 xtype:'checkbox',
                 //boxLabel: '1/1',
                 name: "sampleGT_" + sName,
                 inputValue: '1/1'
-                            });
+            });
         }
 
         _this.grid.reconfigure(null, _this.columnsGrid);
