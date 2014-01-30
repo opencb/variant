@@ -3,10 +3,11 @@ package org.opencb.variant.lib.runners;
 import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
 import org.opencb.commons.bioformats.variant.VariantStudy;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantWriter;
 import org.opencb.commons.io.DataWriter;
 import org.opencb.commons.run.Runner;
-import org.slf4j.LoggerFactory;
+import org.opencb.commons.run.Task;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,23 +19,22 @@ import java.util.List;
  * Time: 11:50 AM
  * To change this template use File | Settings | File Templates.
  */
-public abstract class VariantRunner extends Runner<VariantDataReader, DataWriter, VcfRecord> {
+public class VariantRunner extends Runner<VcfRecord> {
 
-    protected org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
-    protected PedDataReader pedReader;
     protected VariantStudy study;
 
-    public VariantRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, DataWriter writer) {
-        super(reader, writer);
+    public VariantRunner(VariantStudy study, VariantReader reader, PedDataReader pedReader, List<VariantWriter> writer, List<Task<VcfRecord>> tasks) {
+        super(reader, writer, tasks);
         this.study = study;
-        this.reader = reader;
-        this.pedReader = pedReader;
-        this.writer = writer;
+        parsePhenotypes(pedReader);
     }
 
-    public VariantRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, DataWriter writer, VariantRunner prev) {
-        this(study, reader, pedReader, writer);
-        this.prev = prev;
+    private void parsePhenotypes(PedDataReader pedReader) {
+        if (pedReader != null) {
+            pedReader.open();
+            study.setPedigree(pedReader.read());
+            pedReader.close();
+        }
     }
 
     public VariantStudy getStudy() {
@@ -45,41 +45,10 @@ public abstract class VariantRunner extends Runner<VariantDataReader, DataWriter
         this.study = study;
     }
 
-    public void run() throws IOException {
-        List<VcfRecord> batch;
-
-        reader.open();
-        reader.pre();
-
-        if (pedReader != null) {
-            pedReader.open();
-            study.setPedigree(pedReader.read());
-            pedReader.close();
-        }
-        study.addMetadata("variant_file_header", reader.getHeader());
-        study.setSamples(reader.getSampleNames());
-
-        this.writerOpen();
-        this.writerPre();
-
-        this.launchPre();
-
-        batch = reader.read(batchSize);
-        while (!batch.isEmpty()) {
-
-            batch = this.launch(batch);
-            batch.clear();
-            batch = reader.read(batchSize);
-
-        }
-
-        this.launchPost();
-
-        reader.post();
-        reader.close();
-
-        this.writerPost();
-        this.writerClose();
-
+    protected void readerInit() {
+        super.readerInit();
+        study.addMetadata("variant_file_header", ((VariantReader) reader).getHeader());
+        study.setSamples(((VariantReader) reader).getSampleNames());
     }
+
 }
