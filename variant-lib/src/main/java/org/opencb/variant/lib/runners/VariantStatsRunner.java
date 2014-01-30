@@ -1,17 +1,5 @@
 package org.opencb.variant.lib.runners;
 
-import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
-import org.opencb.commons.bioformats.variant.VariantStudy;
-import org.opencb.commons.bioformats.variant.utils.stats.VariantGlobalStats;
-import org.opencb.commons.bioformats.variant.utils.stats.VariantStatsWrapper;
-import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.stats.VariantStatsDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.stats.StatsCalculator;
-
-import java.io.IOException;
-import java.util.List;
-
 /**
  * Created with IntelliJ IDEA.
  * User: aaleman
@@ -19,6 +7,7 @@ import java.util.List;
  * Time: 6:09 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
 public class VariantStatsRunner {
 
 //    private VariantStatsWrapper stats;

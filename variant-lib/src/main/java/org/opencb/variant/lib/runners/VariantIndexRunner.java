@@ -7,6 +7,7 @@ package org.opencb.variant.lib.runners;
  * Time: 6:09 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
 public class VariantIndexRunner {
 //
 //

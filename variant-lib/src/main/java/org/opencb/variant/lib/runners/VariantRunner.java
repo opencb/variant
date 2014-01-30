@@ -1,6 +1,7 @@
 package org.opencb.variant.lib.runners;
 
 import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
+import org.opencb.commons.bioformats.variant.Variant;
 import org.opencb.commons.bioformats.variant.VariantStudy;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
@@ -19,11 +20,11 @@ import java.util.List;
  * Time: 11:50 AM
  * To change this template use File | Settings | File Templates.
  */
-public class VariantRunner extends Runner<VcfRecord> {
+public class VariantRunner extends Runner<Variant> {
 
     protected VariantStudy study;
 
-    public VariantRunner(VariantStudy study, VariantReader reader, PedDataReader pedReader, List<VariantWriter> writer, List<Task<VcfRecord>> tasks) {
+    public VariantRunner(VariantStudy study, VariantReader reader, PedDataReader pedReader, List<VariantWriter> writer, List<Task<Variant>> tasks) {
         super(reader, writer, tasks);
         this.study = study;
         parsePhenotypes(pedReader);

@@ -1,17 +1,18 @@
 package org.opencb.variant.lib.runners.tasks;
 
+import org.opencb.commons.bioformats.variant.Variant;
 import org.opencb.commons.bioformats.variant.utils.effect.VariantEffect;
-import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.effect.EffectCalculator;
 import org.opencb.commons.run.Task;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author Alejandro Aleman Ramos <aaleman@cipf.es>
  */
-public class VariantEffectTask extends Task<VcfRecord> {
+public class VariantEffectTask extends Task<Variant> {
 
     private List<VariantEffect> batchEffect;
 
@@ -23,10 +24,17 @@ public class VariantEffectTask extends Task<VcfRecord> {
     }
 
     @Override
-    public boolean apply(List<VcfRecord> batch) throws IOException {
+    public boolean apply(List<Variant> batch) throws IOException {
 
-        batchEffect = EffectCalculator.getEffects(batch);
-        System.out.println(batchEffect.get(0));
+        List<List<VariantEffect>> batchEffect = EffectCalculator.getEffectPerVariant(batch);
+
+        Iterator<Variant> variantIterator = batch.iterator();
+        Iterator<List<VariantEffect>> effectIterator = batchEffect.iterator();
+
+        while (variantIterator.hasNext() && effectIterator.hasNext()) {
+            variantIterator.next().setEffect(effectIterator.next());
+        }
+
         return true;
     }
 }

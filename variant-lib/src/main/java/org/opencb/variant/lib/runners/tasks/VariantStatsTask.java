@@ -1,20 +1,23 @@
 package org.opencb.variant.lib.runners.tasks;
 
+import org.opencb.commons.bioformats.variant.Variant;
 import org.opencb.commons.bioformats.variant.VariantStudy;
+import org.opencb.commons.bioformats.variant.utils.effect.VariantEffect;
 import org.opencb.commons.bioformats.variant.utils.stats.VariantGlobalStats;
+import org.opencb.commons.bioformats.variant.utils.stats.VariantStats;
 import org.opencb.commons.bioformats.variant.utils.stats.VariantStatsWrapper;
-import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
 import org.opencb.commons.bioformats.variant.vcf4.stats.StatsCalculator;
 import org.opencb.commons.run.Task;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author Alejandro Aleman Ramos <aaleman@cipf.es>
  */
-public class VariantStatsTask extends Task<VcfRecord> {
+public class VariantStatsTask extends Task<Variant> {
 
     private VariantReader reader;
     private VariantStudy study;
@@ -37,7 +40,7 @@ public class VariantStatsTask extends Task<VcfRecord> {
     }
 
     @Override
-    public boolean apply(List<VcfRecord> batch) throws IOException {
+    public boolean apply(List<Variant> batch) throws IOException {
 
         stats.setSampleNames(reader.getSampleNames());
         stats.setVariantStats(StatsCalculator.variantStats(batch, reader.getSampleNames(), study.getPedigree()));
@@ -50,6 +53,14 @@ public class VariantStatsTask extends Task<VcfRecord> {
             stats.addSampleGroupStats("phenotype", StatsCalculator.sampleGroupStats(batch, study.getPedigree(), "phenotype"));
             stats.addSampleGroupStats("family", StatsCalculator.sampleGroupStats(batch, study.getPedigree(), "family"));
         }
+
+        Iterator<Variant> variantIterator = batch.iterator();
+        Iterator<VariantStats> statsIterator = stats.getVariantStats().iterator();
+
+        while (variantIterator.hasNext() && statsIterator.hasNext()) {
+            variantIterator.next().setStats(statsIterator.next());
+        }
+
 
         return true;
     }

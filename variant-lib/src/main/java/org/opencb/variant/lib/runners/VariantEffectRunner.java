@@ -7,6 +7,7 @@ package org.opencb.variant.lib.runners;
  * Time: 2:16 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
 public class VariantEffectRunner {
 //    public VariantEffectRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantEffectDataWriter writer) {
 //        super(study, reader, pedReader, writer);

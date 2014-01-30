@@ -1,12 +1,10 @@
 package org.opencb.variant.cli;
 
 import org.apache.commons.cli.*;
+import org.opencb.commons.bioformats.variant.Variant;
 import org.opencb.commons.bioformats.variant.VariantStudy;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfEVSControlAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfSNPAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.*;
 import org.opencb.commons.bioformats.variant.vcf4.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.VariantDBWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
@@ -43,7 +41,6 @@ public class VariantMain {
     private static CommandLine commandLine;
     private static CommandLineParser parser;
     private static HelpFormatter help;
-    private Logger logger;
 
     static {
         parser = new PosixParser();
@@ -133,13 +130,11 @@ public class VariantMain {
 
         System.out.println("toolList = " + toolList);
 
-        VariantRunner vr = null;
-        VariantRunner vrAux = null;
+        VariantRunner vr;
         String pedFile = null;
 
-        List<Task<VcfRecord>> taskList = new SortedList<>();
+        List<Task<Variant>> taskList = new SortedList<>();
         List<VariantWriter> writers = new ArrayList<>();
-        Task taskAux = null;
 
         VariantStudy study = new VariantStudy("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
         VariantReader reader = new VariantVcfReader(inputFile);
@@ -156,7 +151,7 @@ public class VariantMain {
 //                    } else {
 //                        vrAux = new VariantFilterRunner(study, reader, null, null, filters, vr);
 //                    }
-                    taskList.add(new VariantFilterTask(filters));
+                    taskList.add(new VariantFilterTask(filters, Integer.MAX_VALUE));
 
                     break;
                 case ANNOT:
@@ -167,18 +162,17 @@ public class VariantMain {
                     taskList.add(new VariantAnnotTask(annots));
                     break;
                 case EFFECT:
-//                    vrAux = new VariantEffectRunner(study, reader, null, writer, vr);
                     taskList.add(new VariantEffectTask());
                     break;
                 case STATS:
-//                    vrAux = new VariantStatsRunner(study, reader, null, writer, vr);
                     taskList.add(new VariantStatsTask(reader, study));
                     break;
-//                case INDEX:
-//                    vrAux = new VariantIndexRunner(study, reader, null, writer, vr);
-//                    break;
+
             }
-//            vr = vrAux;
+        }
+
+        for (Task<Variant> t : taskList) {
+            System.out.println(t.getClass().getCanonicalName());
         }
 
         System.out.println("START");

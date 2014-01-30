@@ -1,6 +1,6 @@
 package org.opencb.variant.lib.runners.tasks;
 
-import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
+import org.opencb.commons.bioformats.variant.Variant;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
 import org.opencb.commons.filters.FilterApplicator;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Alejandro Aleman Ramos <aaleman@cipf.es>
  */
-public class VariantFilterTask extends Task<VcfRecord> {
+public class VariantFilterTask extends Task<Variant> {
     private List<VcfFilter> filters;
 
     public VariantFilterTask(List<VcfFilter> filters) {
@@ -26,10 +26,9 @@ public class VariantFilterTask extends Task<VcfRecord> {
     }
 
     @Override
-    public boolean apply(List<VcfRecord> batch) throws IOException {
+    public boolean apply(List<Variant> batch) throws IOException {
 
-        System.out.println(batch.size());
-        System.out.println(FilterApplicator.filter(batch, filters).size());
+        FilterApplicator.filter(batch, filters);
 
         return true;
     }

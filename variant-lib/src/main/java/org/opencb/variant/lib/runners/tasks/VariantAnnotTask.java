@@ -1,5 +1,6 @@
 package org.opencb.variant.lib.runners.tasks;
 
+import org.opencb.commons.bioformats.variant.Variant;
 import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
 import org.opencb.commons.run.Task;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * @author Alejandro Aleman Ramos <aaleman@cipf.es>
  */
-public class VariantAnnotTask extends Task<VcfRecord> {
+public class VariantAnnotTask extends Task<Variant> {
 
     private List<VcfAnnotator> annotations;
 
@@ -25,7 +26,7 @@ public class VariantAnnotTask extends Task<VcfRecord> {
     }
 
     @Override
-    public boolean apply(List<VcfRecord> batch) throws IOException {
+    public boolean apply(List<Variant> batch) throws IOException {
 
         for (VcfAnnotator annotation : annotations) {
             annotation.annot(batch);

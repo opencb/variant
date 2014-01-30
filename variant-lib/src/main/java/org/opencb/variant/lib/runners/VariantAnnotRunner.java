@@ -7,6 +7,7 @@ package org.opencb.variant.lib.runners;
  * Time: 8:01 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
 public class VariantAnnotRunner {
 
 //    private List<VcfAnnotator> annots;
