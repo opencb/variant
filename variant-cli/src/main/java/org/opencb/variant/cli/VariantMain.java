@@ -3,10 +3,11 @@ package org.opencb.variant.cli;
 import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.Variant;
 import org.opencb.commons.bioformats.variant.VariantStudy;
-import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.*;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfEVSControlAnnotator;
+import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfSNPAnnotator;
 import org.opencb.commons.bioformats.variant.vcf4.filters.*;
-import org.opencb.commons.bioformats.variant.vcf4.io.VariantDBWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantWriter;
@@ -24,7 +25,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
 
 //import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 
@@ -138,7 +138,7 @@ public class VariantMain {
 
         VariantStudy study = new VariantStudy("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
         VariantReader reader = new VariantVcfReader(inputFile);
-        VariantDBWriter writer = new VariantVcfSqliteWriter(outputFile);
+        VariantWriter writer = new VariantVcfSqliteWriter(outputFile);
         List<VcfFilter> filters = parseFilters(commandLine);
         List<VcfAnnotator> annots = parseAnnotations(commandLine);
 
