@@ -118,7 +118,7 @@
                 <artifactId>jersey-media-multipart</artifactId>
                 <version>2.4</version>
             </dependency>
-            <dependency>
+<!--            <dependency>
                 <groupId>org.opencb.opencga</groupId>
                 <artifactId>opencga-storage</artifactId>
                 <version>0.2.0</version>
@@ -127,7 +127,7 @@
                 <groupId>org.opencb.opencga</groupId>
                 <artifactId>opencga-lib</artifactId>
                 <version>0.2.0</version>
-            </dependency>
+            </dependency>-->
         </dependencies>
     </dependencyManagement>
 
