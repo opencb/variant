@@ -684,6 +684,9 @@ VariantWidget.prototype = {
                             title: 'Sequence',
                             height: 30,
                             visibleRegionSize: 200,
+                                histogramZoom: 20,
+                                transcriptZoom: 50,
+
 
                             renderer: new SequenceRenderer(),
 
@@ -705,7 +708,7 @@ VariantWidget.prototype = {
                             minHistogramRegionSize: 20000000,
                             maxLabelRegionSize: 10000000,
                             minTranscriptRegionSize: 200000,
-                            featureTypes: FEATURE_TYPES,
+                            //featureTypes: FEATURE_TYPES,
 
                             renderer: new GeneRenderer(),
 
@@ -714,6 +717,9 @@ VariantWidget.prototype = {
                                 subCategory: "region",
                                 resource: "gene",
                                 species: genomeViewer.species,
+                                params: {
+                                    exclude: 'transcripts.tfbs,transcripts.xrefs,transcripts.exons.sequence'
+                                },
                                 cacheConfig: {
                                     chunkSize: 50000
                                 },
@@ -730,9 +736,11 @@ VariantWidget.prototype = {
                             minHistogramRegionSize: 12000,
                             maxLabelRegionSize: 3000,
                             height: 100,
-                            featureTypes: FEATURE_TYPES,
+                            //featureTypes: FEATURE_TYPES,
 
-                            renderer: new FeatureRenderer('snp'),
+                            //renderer: new FeatureRenderer('snp'),
+                                renderer: new FeatureRenderer(FEATURE_TYPES.snp),
+
 
                             dataAdapter: new CellBaseAdapter({
                                 category: "genomic",
