@@ -13,7 +13,6 @@ import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantWriter;
 import org.opencb.commons.containers.list.SortedList;
 import org.opencb.commons.run.Task;
-import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 import org.opencb.variant.lib.runners.VariantRunner;
 import org.opencb.variant.lib.runners.tasks.VariantAnnotTask;
 import org.opencb.variant.lib.runners.tasks.VariantEffectTask;
@@ -138,7 +137,7 @@ public class VariantMain {
 
         VariantStudy study = new VariantStudy("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
         VariantReader reader = new VariantVcfReader(inputFile);
-        VariantWriter writer = new VariantVcfSqliteWriter(outputFile);
+//        VariantWriter writer = new VariantVcfSqliteWriter(outputFile);
         List<VcfFilter> filters = parseFilters(commandLine);
         List<VcfAnnotator> annots = parseAnnotations(commandLine);
 
