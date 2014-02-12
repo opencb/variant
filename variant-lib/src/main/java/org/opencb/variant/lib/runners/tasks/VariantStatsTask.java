@@ -2,12 +2,11 @@ package org.opencb.variant.lib.runners.tasks;
 
 import org.opencb.commons.bioformats.variant.Variant;
 import org.opencb.commons.bioformats.variant.VariantStudy;
-import org.opencb.commons.bioformats.variant.utils.effect.VariantEffect;
+import org.opencb.commons.bioformats.variant.stats.StatsCalculator;
 import org.opencb.commons.bioformats.variant.utils.stats.VariantGlobalStats;
 import org.opencb.commons.bioformats.variant.utils.stats.VariantStats;
 import org.opencb.commons.bioformats.variant.utils.stats.VariantStatsWrapper;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
-import org.opencb.commons.bioformats.variant.vcf4.stats.StatsCalculator;
 import org.opencb.commons.run.Task;
 
 import java.io.IOException;

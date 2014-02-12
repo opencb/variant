@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import org.opencb.commons.bioformats.variant.Variant;
+import org.opencb.commons.bioformats.variant.effect.EffectCalculator;
 import org.opencb.commons.bioformats.variant.utils.effect.VariantEffect;
-import org.opencb.commons.bioformats.variant.vcf4.effect.EffectCalculator;
 import org.opencb.commons.run.Task;
 
 /**

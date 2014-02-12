@@ -3,17 +3,16 @@ package org.opencb.variant.cli;
 import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.Variant;
 import org.opencb.commons.bioformats.variant.VariantStudy;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfControlAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfEVSControlAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfSNPAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.filters.*;
+import org.opencb.commons.bioformats.variant.annotators.VariantAnnotator;
+import org.opencb.commons.bioformats.variant.annotators.VariantControlAnnotator;
+import org.opencb.commons.bioformats.variant.annotators.VariantEVSControlAnnotator;
+import org.opencb.commons.bioformats.variant.annotators.VariantSNPAnnotator;
+import org.opencb.commons.bioformats.variant.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantWriter;
 import org.opencb.commons.containers.list.SortedList;
 import org.opencb.commons.run.Task;
-import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 import org.opencb.variant.lib.runners.VariantRunner;
 import org.opencb.variant.lib.runners.tasks.VariantAnnotTask;
 import org.opencb.variant.lib.runners.tasks.VariantEffectTask;
@@ -139,8 +138,8 @@ public class VariantMain {
         VariantStudy study = new VariantStudy("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
         VariantReader reader = new VariantVcfReader(inputFile);
 //        VariantWriter writer = new VariantVcfSqliteWriter(outputFile);
-        List<VcfFilter> filters = parseFilters(commandLine);
-        List<VcfAnnotator> annots = parseAnnotations(commandLine);
+        List<VariantFilter> filters = parseFilters(commandLine);
+        List<VariantAnnotator> annots = parseAnnotations(commandLine);
 
         for (Tool t : toolList) {
             System.out.println("t = " + t);
@@ -184,52 +183,52 @@ public class VariantMain {
 
     }
 
-    private static List<VcfAnnotator> parseAnnotations(CommandLine commandLine) {
-        List<VcfAnnotator> annots = new ArrayList<>();
+    private static List<VariantAnnotator> parseAnnotations(CommandLine commandLine) {
+        List<VariantAnnotator> annots = new ArrayList<>();
         if (commandLine.hasOption("annot-control-list")) {
             String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
             Map<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
-            annots.add(new VcfControlAnnotator(infoPrefix, controlList));
+            annots.add(new VariantControlAnnotator(infoPrefix, controlList));
         } else if (commandLine.hasOption("annot-control-file")) {
             String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
-            annots.add(new VcfControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-file")));
+            annots.add(new VariantControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-file")));
         }
 
         if (commandLine.hasOption("annot-control-evs")) {
             String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
-            annots.add(new VcfEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
+            annots.add(new VariantEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
         }
 
         if (commandLine.hasOption("annot-snp")) {
-            annots.add(new VcfSNPAnnotator());
+            annots.add(new VariantSNPAnnotator());
         }
 
         return annots;
     }
 
-    private static List<VcfFilter> parseFilters(CommandLine commandLine) {
-        List<VcfFilter> filters = new ArrayList<>();
+    private static List<VariantFilter> parseFilters(CommandLine commandLine) {
+        List<VariantFilter> filters = new ArrayList<>();
 
         if (commandLine.hasOption("filter-region")) {
-            filters.add(new VcfRegionFilter(commandLine.getOptionValue("filter-region"), Integer.MAX_VALUE));
+            filters.add(new VariantRegionFilter(commandLine.getOptionValue("filter-region"), Integer.MAX_VALUE));
         }
 
         if (commandLine.hasOption("filter-bed")) {
-            filters.add(new VcfBedFilter(commandLine.getOptionValue("filter-bed"), Integer.MAX_VALUE));
+            filters.add(new VariantBedFilter(commandLine.getOptionValue("filter-bed"), Integer.MAX_VALUE));
         }
 
         if (commandLine.hasOption("filter-snp")) {
-            filters.add(new VcfSnpFilter());
+            filters.add(new VariantSnpFilter());
         }
 
         if (commandLine.hasOption("filter-ct")) {
-            filters.add(new VcfConsequenceTypeFilter(commandLine.getOptionValue("filter-ct")));
+            filters.add(new VariantConsequenceTypeFilter(commandLine.getOptionValue("filter-ct")));
         }
 
         if (commandLine.hasOption("filter-gene")) {
-            filters.add(new VcfGeneFilter(commandLine.getOptionValue("filter-gene")));
+            filters.add(new VariantGeneFilter(commandLine.getOptionValue("filter-gene")));
         } else if (commandLine.hasOption("filter-gene-file")) {
-            filters.add(new VcfGeneFilter(new File(commandLine.getOptionValue("filter-gene-file"))));
+            filters.add(new VariantGeneFilter(new File(commandLine.getOptionValue("filter-gene-file"))));
         }
         return filters;
     }
