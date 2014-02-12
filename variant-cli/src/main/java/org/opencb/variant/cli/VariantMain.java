@@ -138,7 +138,7 @@ public class VariantMain {
 
         VariantStudy study = new VariantStudy("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
         VariantReader reader = new VariantVcfReader(inputFile);
-        VariantWriter writer = new VariantVcfSqliteWriter(outputFile);
+//        VariantWriter writer = new VariantVcfSqliteWriter(outputFile);
         List<VcfFilter> filters = parseFilters(commandLine);
         List<VcfAnnotator> annots = parseAnnotations(commandLine);
 
