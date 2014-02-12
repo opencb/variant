@@ -55,6 +55,7 @@ VariantStatsForm.prototype.getPanels = function () {
     var form = Ext.create('Ext.panel.Panel', {
         margin: "15 0 5 0",
         border: false,
+        cls:'variant-menu',
 //		layout:{type:'vbox', align: 'stretch'},
         buttonAlign: 'center',
         width: "99%",
@@ -63,7 +64,16 @@ VariantStatsForm.prototype.getPanels = function () {
         items: items
     });
 
-    return [this._getExampleForm(), form];
+    return [
+        {
+            xtype: 'box',
+            html: this.title,
+            cls:'s150',
+            margin:'0 0 20px 0'
+        },
+        this._getExampleForm(),
+        form
+    ];
 };
 
 
