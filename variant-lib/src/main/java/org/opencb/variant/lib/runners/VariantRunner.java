@@ -1,24 +1,17 @@
 package org.opencb.variant.lib.runners;
 
+import java.util.List;
 import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
 import org.opencb.commons.bioformats.variant.Variant;
 import org.opencb.commons.bioformats.variant.VariantStudy;
-import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantWriter;
-import org.opencb.commons.io.DataWriter;
 import org.opencb.commons.run.Runner;
 import org.opencb.commons.run.Task;
 
-import java.io.IOException;
-import java.util.List;
-
 /**
- * Created with IntelliJ IDEA.
- * User: aaleman
- * Date: 10/24/13
- * Time: 11:50 AM
- * To change this template use File | Settings | File Templates.
+ * @author Alejandro Aleman Ramos <aaleman@cipf.es>
+ * @author Cristina Yenyxe Gonzalez Garcia <cgonzalez@cipf.es>
  */
 public class VariantRunner extends Runner<Variant> {
 
@@ -46,6 +39,7 @@ public class VariantRunner extends Runner<Variant> {
         this.study = study;
     }
 
+    @Override
     protected void readerInit() {
         super.readerInit();
         study.addMetadata("variant_file_header", ((VariantReader) reader).getHeader());
