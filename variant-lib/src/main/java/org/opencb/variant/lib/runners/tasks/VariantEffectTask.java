@@ -1,8 +1,8 @@
 package org.opencb.variant.lib.runners.tasks;
 
 import org.opencb.commons.bioformats.variant.Variant;
+import org.opencb.commons.bioformats.variant.effect.EffectCalculator;
 import org.opencb.commons.bioformats.variant.utils.effect.VariantEffect;
-import org.opencb.commons.bioformats.variant.vcf4.effect.EffectCalculator;
 import org.opencb.commons.run.Task;
 
 import java.io.IOException;
