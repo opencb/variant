@@ -1,15 +1,5 @@
 package org.opencb.variant.lib.runners;
 
-import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.commons.bioformats.variant.vcf4.annotators.VcfAnnotator;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantDataWriter;
-
-import java.io.IOException;
-import java.util.List;
-import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
-import org.opencb.commons.bioformats.variant.VariantStudy;
-
 /**
  * Created with IntelliJ IDEA.
  * User: aleman
@@ -17,47 +7,48 @@ import org.opencb.commons.bioformats.variant.VariantStudy;
  * Time: 8:01 PM
  * To change this template use File | Settings | File Templates.
  */
-public class VariantAnnotRunner extends VariantRunner {
+@Deprecated
+public class VariantAnnotRunner {
 
-    private List<VcfAnnotator> annots;
-    private boolean header = false;
-
-    public VariantAnnotRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, 
-            VariantDataWriter writer, List<VcfAnnotator> annots) {
-        super(study, reader, pedReader, writer);
-        this.annots = annots;
-    }
-
-    public VariantAnnotRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, 
-            VariantDataWriter writer, List<VcfAnnotator> annots, VariantRunner prev) {
-        this(study, reader, pedReader, writer, annots);
-        this.prev = prev;
-    }
-
-    @Override
-    public List<VcfRecord> apply(List<VcfRecord> batch) throws IOException {
-
-        if (!header && writer != null) {
-            ((VariantDataWriter) writer).writeHeader(reader.getHeader());
-            header = true;
-        }
-
-        this.applyAnnotations(batch, annots);
-
-        if (writer != null) {
-            ((VariantDataWriter) writer).writeBatch(batch);
-        }
-
-        return batch;
-    }
-
-    private void applyAnnotations(List<VcfRecord> batch, List<VcfAnnotator> annotations) {
-
-        for (VcfAnnotator annotation : annotations) {
-            annotation.annot(batch);
-        }
-
-    }
+//    private List<VcfAnnotator> annots;
+//    private boolean header = false;
+//
+//    public VariantAnnotRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader,
+//            VariantDataWriter writer, List<VcfAnnotator> annots) {
+//        super(study, reader, pedReader, writer);
+//        this.annots = annots;
+//    }
+//
+//    public VariantAnnotRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader,
+//            VariantDataWriter writer, List<VcfAnnotator> annots, VariantRunner prev) {
+//        this(study, reader, pedReader, writer, annots);
+//        this.prev = prev;
+//    }
+//
+//    @Override
+//    public List<VcfRecord> apply(List<VcfRecord> batch) throws IOException {
+//
+//        if (!header && writer != null) {
+//            ((VariantDataWriter) writer).writeHeader(reader.getHeader());
+//            header = true;
+//        }
+//
+//        this.applyAnnotations(batch, annots);
+//
+//        if (writer != null) {
+//            ((VariantDataWriter) writer).writeBatch(batch);
+//        }
+//
+//        return batch;
+//    }
+//
+//    private void applyAnnotations(List<VcfRecord> batch, List<VcfAnnotator> annotations) {
+//
+//        for (VcfAnnotator annotation : annotations) {
+//            annotation.annot(batch);
+//        }
+//
+//    }
 }
 /*
 

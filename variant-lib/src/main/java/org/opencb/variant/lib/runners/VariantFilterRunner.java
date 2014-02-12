@@ -1,16 +1,5 @@
 package org.opencb.variant.lib.runners;
 
-import org.opencb.commons.bioformats.pedigree.io.readers.PedDataReader;
-import org.opencb.commons.bioformats.variant.VariantStudy;
-import org.opencb.commons.bioformats.variant.vcf4.VcfRecord;
-import org.opencb.commons.bioformats.variant.vcf4.filters.VcfFilter;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantDataReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.index.VariantDataWriter;
-import org.opencb.commons.filters.FilterApplicator;
-
-import java.io.IOException;
-import java.util.List;
-
 /**
  * Created with IntelliJ IDEA.
  * User: aleman
@@ -18,43 +7,44 @@ import java.util.List;
  * Time: 8:01 PM
  * To change this template use File | Settings | File Templates.
  */
-public class VariantFilterRunner extends VariantRunner {
+@Deprecated
+public class VariantFilterRunner {
 
-    private List<VcfFilter> filters;
-    private boolean header = false;
-
-
-    public VariantFilterRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantDataWriter writer, List<VcfFilter> filterList) {
-        super(study, reader, pedReader, writer);
-        this.filters = filterList;
-    }
-
-    public VariantFilterRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantDataWriter writer, List<VcfFilter> filterList, VariantRunner prev) {
-        this(study, reader, pedReader, writer, filterList);
-        this.prev= prev;
-    }
-
-    @Override
-    public List<VcfRecord> apply(List<VcfRecord> batch) throws IOException {
-
-        if (!header && writer != null) {
-            ((VariantDataWriter) writer).writeHeader(reader.getHeader());
-            header = true;
-        }
-
-        List<VcfRecord> filteredBatch = FilterApplicator.filter(batch, filters);
-
-        batch.clear();
-        if (writer != null) {
-            ((VariantDataWriter) writer).writeBatch(filteredBatch);
-        }
-
-        return filteredBatch;
-    }
-
-    public void filters(List<VcfFilter> filters) {
-        this.filters = filters;
-    }
+//    private List<VcfFilter> filters;
+//    private boolean header = false;
+//
+//
+//    public VariantFilterRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantDataWriter writer, List<VcfFilter> filterList) {
+//        super(study, reader, pedReader, writer);
+//        this.filters = filterList;
+//    }
+//
+//    public VariantFilterRunner(VariantStudy study, VariantDataReader reader, PedDataReader pedReader, VariantDataWriter writer, List<VcfFilter> filterList, VariantRunner prev) {
+//        this(study, reader, pedReader, writer, filterList);
+//        this.prev= prev;
+//    }
+//
+//    @Override
+//    public List<VcfRecord> apply(List<VcfRecord> batch) throws IOException {
+//
+//        if (!header && writer != null) {
+//            ((VariantDataWriter) writer).writeHeader(reader.getHeader());
+//            header = true;
+//        }
+//
+//        List<VcfRecord> filteredBatch = FilterApplicator.filter(batch, filters);
+//
+//        batch.clear();
+//        if (writer != null) {
+//            ((VariantDataWriter) writer).writeBatch(filteredBatch);
+//        }
+//
+//        return filteredBatch;
+//    }
+//
+//    public void filters(List<VcfFilter> filters) {
+//        this.filters = filters;
+//    }
 
 }
 
