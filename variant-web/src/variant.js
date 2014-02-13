@@ -51,12 +51,29 @@ Variant.prototype = {
         this.wrapDiv = $('<div id="wrap" style="height:100%;position:relative;"></div>')[0];
         $(this.div).append(this.wrapDiv);
 
+        $(this.menuDiv).css({
+
+        });
 
         this.sidePanelDiv = $('<div id="right-side-panel" style="position:absolute; z-index:50;right:0px;"></div>')[0];
         $(this.wrapDiv).append(this.sidePanelDiv);
 
-        this.leftDiv = $('<div id="left" style="position:absolute;height: 100%;width:100px;"></div>')[0];
-        this.contentDiv = $('<div id="content" style="position:absolute;height: 100%;left:100px;width:calc( 100% - 100px)"></div>')[0];
+        var leftDivWidth = 150;
+        this.leftDiv = $('<div id="left"></div>')[0];
+        $(this.leftDiv).css({
+            position: 'absolute',
+            height: '100%',
+            width: leftDivWidth + 'px'
+        });
+
+        this.contentDiv = $('<div id="content"></div>')[0];
+        $(this.contentDiv).css({
+            position: 'absolute',
+            height: '100%',
+            left: leftDivWidth + 'px',
+            width: 'calc( 100% - ' + leftDivWidth + 'px)'
+        });
+
         $(this.wrapDiv).append(this.leftDiv);
         $(this.wrapDiv).append(this.contentDiv);
 
@@ -95,50 +112,118 @@ Variant.prototype = {
         /* Header Widget */
         this.menu = this._createMenu($(this.menuDiv).attr('id'));
 
+        this.variantMenu = this._createVariantMenu($(this.leftDiv).attr('id'));
+
         /* check height */
         var topOffset = $(this.headerWidgetDiv).height() + $(this.menuDiv).height();
         $(this.wrapDiv).css({height: 'calc(100% - ' + topOffset + 'px)'});
 
+
+        this.homePanel = this._createHomePanel();
+
+
+        this.container = Ext.create('Ext.panel.Panel', {
+            renderTo: $(this.contentDiv).attr('id'),
+            border: 0,
+            width: '100%',
+            height: '100%',
+            layout: 'fit',
+        });
+
         /* Wrap Panel */
-        this.panel = this._createPanel($(this.contentDiv).attr('id'));
+        this.panel = this._createPanel(this.container);
+
+        this.container.add(this.homePanel);
+//        this.menuFormPanel = this._createPanel($(this.contentDiv).attr('id'));
 
         /* Job List Widget */
         this.jobListWidget = this._createJobListWidget($(this.sidePanelDiv).attr('id'));
 
-        this.variantMenuPreToolsFormPanel = this._createMenuPreToolsFormPanel()
-        this.variantMenuAnalysisFormPanel = this._createMenuAnalysisFormPanel();
-        this.variantMenuVisualizationFormPanel = this._createMenuVisualizationFormPanel();
+
+//        style: {
+//            borderColor: '#428bca',
+//                borderWidth: '0px 0px 0px 1px',
+//                borderStyle: 'solid'
+//        }
+        this.variantStatsForm = new VariantStatsForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            title: 'Stats',
+            bodyPadding:'15 0 0 40',
+            headerConfig: {
+                baseCls: 'preprocess-header'
+            },
+            headerFormConfig: {
+                baseCls: 'preprocess-header-form'
+            }
+        });
+        this.variantStatsForm.draw();
+        this.variantMergeForm = new VariantMergeForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            title: 'Merge',
+            bodyPadding:'15 0 0 40',
+            headerConfig: {
+                baseCls: 'preprocess-header'
+            },
+            headerFormConfig: {
+                baseCls: 'preprocess-header-form'
+            }
+        });
+        this.variantMergeForm.draw();
 
 
-        this.variantEffectForm = new VariantEffectForm(this);
-        this.variantEffectForm.closable = false;
-        this.variantEffectForm.width = '50%';
-//        this.variantEffectForm.testing = true;
-        this.variantEffectForm.draw({tabpanel: this.panel});
+        this.variantGwasForm = new VariantGwasForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            title: 'GWAS',
+            bodyPadding:'15 0 0 40',
+            headerConfig: {
+                baseCls: 'analysis-header'
+            },
+            headerFormConfig: {
+                baseCls: 'analysis-header-form'
+            }
+        });
+        this.variantGwasForm.draw();
+        this.variantEffectForm = new VariantEffectForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            title: 'Effect',
+            bodyPadding:'15 0 0 40',
+            headerConfig: {
+                baseCls: 'analysis-header'
+            },
+            headerFormConfig: {
+                baseCls: 'analysis-header-form'
+            }
+        });
+        this.variantEffectForm.draw();
 
-        this.variantIndexForm = new VariantIndexForm(this);
-        this.variantIndexForm.closable = false;
-        this.variantIndexForm.width = '50%';
-        this.variantIndexForm.testing = true;
-        this.variantIndexForm.draw({tabpanel: this.panel});
 
-        this.variantStatsForm = new VariantStatsForm(this);
-        this.variantStatsForm.closable = false;
-        this.variantStatsForm.width = '50%';
-        this.variantStatsForm.testing = true;
-        this.variantStatsForm.draw({tabpanel: this.panel, testing: true});
-
-        this.variantMergeForm = new VariantMergeForm(this);
-        this.variantMergeForm.closable = false;
-        this.variantMergeForm.width = '50%';
-        this.variantMergeForm.testing = true;
-        this.variantMergeForm.draw({tabpanel: this.panel});
-
-        this.variantGwasForm = new VariantGwasForm(this);
-        this.variantGwasForm.closable = false;
-        this.variantGwasForm.width = '50%';
-        this.variantGwasForm.testing = true;
-        this.variantGwasForm.draw({tabpanel: this.panel});
+        this.variantIndexForm = new VariantIndexForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            title: 'Index',
+            bodyPadding:'15 0 0 40',
+            headerConfig: {
+                baseCls: 'visualization-header'
+            },
+            headerFormConfig: {
+                baseCls: 'visualization-header-form'
+            }
+        });
+        this.variantIndexForm.draw();
 
 
         /*check login*/
@@ -147,11 +232,6 @@ Variant.prototype = {
         } else {
             this.sessionFinished();
         }
-
-        this.panel.add(this.variantMenuVisualizationFormPanel);
-        this.panel.setActiveTab(this.variantMenuVisualizationFormPanel);
-
-
     },
     _createHeaderWidget: function (targetId) {
         var _this = this;
@@ -189,83 +269,12 @@ Variant.prototype = {
         var toolbar = Ext.create('Ext.toolbar.Toolbar', {
             id: this.id + "navToolbar",
             renderTo: targetId,
-            cls: 'gm-navigation-bar bootstrap',
+            cls: 'jso-white-background whiteborder bootstrap',
             region: "north",
             width: '100%',
-            height: 40,
             border: false,
             items: [
-                {
-                    id: this.id + "btnUpload",
-//                    disabled: true,
-//                    overCls: '',
-//                    pressedCls: 'active',
-                    margin: '0 2 0 5',
-                    cls: 'btn btn-success btn-sm',
-                    text: '<span style="color: white;font-size: 12px;font-weight: bold">Upload</span>',
-                    handler: function () {
-                        _this.headerWidget.opencgaBrowserWidget.show({mode: 'manager'});
-//                        var showForm = function () {
-//                            if (!_this.panel.contains(_this.variantMenuPreToolsFormPanel)) {
-//                                _this.panel.add(_this.variantMenuPreToolsFormPanel);
-//                            }
-//                            _this.panel.setActiveTab(_this.variantMenuPreToolsFormPanel);
-//                        };
-//                        _this._checkLogin(showForm);
-                    }
-                },
-                {
-                    id: this.id + "btnPreTools",
-//                    disabled: true,
-//                    overCls: '',
-//                    pressedCls: 'active',
-                    cls: 'btn btn-primary btn-sm',
-                    text: '<span style="color: white;font-size: 12px;font-weight: bold">Preprocess</span>',
-                    handler: function () {
-                        var showForm = function () {
-                            if (!_this.panel.contains(_this.variantMenuPreToolsFormPanel)) {
-                                _this.panel.add(_this.variantMenuPreToolsFormPanel);
-                            }
-                            _this.panel.setActiveTab(_this.variantMenuPreToolsFormPanel);
-                        };
-                        _this._checkLogin(showForm);
-                    }
-                },
-                {
-                    id: this.id + "btnAnalysis",
-                    cls: 'btn btn-warning btn-sm',
-
-                    text: '<span style="color: white;font-size: 12px;font-weight: bold">Analysis</span>',
-                    handler: function () {
-//                        _this.showIndexForm();
-                        var showForm = function () {
-                            if (!_this.panel.contains(_this.variantMenuAnalysisFormPanel)) {
-                                _this.panel.add(_this.variantMenuAnalysisFormPanel);
-                            }
-                            _this.panel.setActiveTab(_this.variantMenuAnalysisFormPanel);
-                        };
-                        _this._checkLogin(showForm);
-                    }
-                },
-                {
-                    id: this.id + "btnVisualization",
-                    cls: 'btn btn-danger btn-sm',
-
-//                    disabled: true,
-                    text: '<span style="color: white;font-size: 12px;font-weight: bold">Visualization</span>',
-                    handler: function () {
-//                        _this.showIndexForm();
-                        var showForm = function () {
-                            if (!_this.panel.contains(_this.variantMenuVisualizationFormPanel)) {
-                                _this.panel.add(_this.variantMenuVisualizationFormPanel);
-                            }
-                            _this.panel.setActiveTab(_this.variantMenuVisualizationFormPanel);
-                        };
-                        _this._checkLogin(showForm);
-                    }
-                },
-                '->'
-                ,
+                '->',
                 {
                     id: this.id + 'jobsButton',
                     tooltip: 'Show Jobs',
@@ -286,44 +295,143 @@ Variant.prototype = {
         });
         return toolbar;
     },
-    _createPanel: function (targetId) {
+    _createVariantMenu: function (targetId) {
         var _this = this;
 
-        homePanel = Ext.create('Ext.panel.Panel', {
-//            padding: 30,
-//            margin: "10 0 0 0",
-            title: 'Home',
-//            html: suiteInfo,
+        var toolbar = Ext.create('Ext.container.Container', {
+            renderTo: targetId,
+            cls: 'variant-menu',
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            height: '100%',
+            defaults: {
+                xtype: 'box',
+                listeners: {
+                    afterrender: function (box) {
+                        var el = this.getEl();
+                        el.on('click', function () {
+                            if (!box.hasCls('header') && !box.hasCls('data')) {
+                                var cont = box.up('container');
+                                cont.items.each(function (item) {
+                                    item.removeCls('active');
+                                });
+                                box.addCls('active');
+
+                            }
+                            var text = el.getHTML();
+                            switch (text) {
+                                case "Home":
+                                    _this.container.removeAll(false);
+                                    _this.container.add(_this.homePanel);
+                                    break;
+                                case "Results":
+                                    _this.container.removeAll(false);
+                                    _this.container.add(_this.panel);
+                                    break;
+                                case "Upload":
+                                    _this.headerWidget.opencgaBrowserWidget.show({mode: 'manager'});
+                                    break;
+                                case "Stats":
+                                    _this.container.removeAll(false);
+                                    _this.container.add(_this.variantStatsForm.panel);
+                                    break;
+                                case "Merge":
+                                    _this.container.removeAll(false);
+                                    _this.container.add(_this.variantMergeForm.panel);
+                                    break;
+                                case "Filter":
+                                    _this.container.removeAll(false);
+                                    _this.container.add();
+                                    break;
+                                case "Annot":
+                                    _this.container.removeAll(false);
+                                    _this.container.add();
+                                    break;
+
+                                case "GWAS":
+                                    _this.container.removeAll(false);
+                                    _this.container.add(_this.variantGwasForm.panel);
+                                    break;
+                                case "Effect":
+                                    _this.container.removeAll(false);
+                                    _this.container.add(_this.variantEffectForm.panel);
+                                    break;
+
+                                case "Index":
+                                    _this.container.removeAll(false);
+                                    _this.container.add(_this.variantIndexForm.panel);
+                                    break;
+                            }
+                        });
+                    }
+                }
+            },
+            items: [
+                {html: "Home", cls: 'home active'},
+
+                {html: "Data", cls: 'header'},
+                {html: "Upload", cls: 'data'},
+//
+                {html: "Preprocess", cls: 'header'},
+                {html: "Stats", cls: 'preprocess'},
+                {html: "Merge", cls: 'preprocess'},
+                {html: "Filter", cls: 'preprocess'},
+                {html: "Annot", cls: 'preprocess'},
+
+                {html: "Analysis", cls: 'header'},
+                {html: "GWAS", cls: 'analysis'},
+                {html: "Effect", cls: 'analysis'},
+
+                {html: "Visualization", cls: 'header'},
+                {html: "Index", cls: 'visualization'},
+                {html: "Results", cls: 'visualization'}
+            ]
+        });
+        return toolbar;
+    },
+
+
+    _createHomePanel: function () {
+        var _this = this;
+
+        var homePanel = Ext.create('Ext.panel.Panel', {
             border: 0,
-//			layout: {
-//		        type: 'vbox',
-//		        align: 'stretch'
-//		    },
+            header:{
+                baseCls:'home-header'
+            },
             items: [
                 {
-                    xtype: 'panel',
-//                    title:'Home',
-                    padding: 30,
-                    border: false,
-                    autoScroll: true,
+                    xtype: 'container',
+                    style:{fontSize:'15px', color:'dimgray'},
                     html: SUITE_INFO,
-                    bodyPadding: 30,
-                    flex: 1
+                    margin: '30 0 0 30',
+                    autoScroll: true
                 }
             ]
         });
+        return homePanel;
+    },
+
+    _createPanel: function (targetId) {
+
         var panel = Ext.create('Ext.tab.Panel', {
-            renderTo: targetId,
+//            renderTo: targetId,
             width: '100%',
             height: '100%',
+            tabBar: {
+                baseCls: 'visualization-header',
+                height: 33,
+                padding: '12 0 0 5'
+            },
+//            plain:true,
             border: 0,
-            cls: 'ocb-border-top-lightgrey',
             activeTab: 0,
-            items: [homePanel]
+            items: []
         });
         return panel;
     },
-
 
     _createJobListWidget: function (targetId) {
         var _this = this;
@@ -340,7 +448,10 @@ Variant.prototype = {
                 'width': 280,
                 'height': 625,
                 border: true,
-                'mode': 'view'
+                'mode': 'view',
+                headerConfig: {
+                    baseCls: 'home-header-dark'
+                }
             }
         });
 
@@ -352,75 +463,10 @@ Variant.prototype = {
 
         return jobListWidget;
     },
-    _createMenuPreToolsFormPanel: function () {
+
+    _createMenuPreToolsFormPanel: function (option) {
         var _this = this;
 
-        var st = Ext.create('Ext.data.Store', {
-            id: 'menuStore',
-            fields: [
-                {
-                    name: "name", type: 'string'
-                },
-                {
-                    name: "form", type: 'auto'
-                }
-            ],
-            data: [
-                {name: "Stats", form: "stats"},
-                {name: "Merge", form: "merge"},
-                {name: "<span class=''>Filter</span>", form: "filter"},
-                {name: "<span class=''>Annot</span>", form: "annot"}
-
-            ]
-        });
-
-        var menuTpl = new Ext.XTemplate(
-            '<div class="" style="margin: 15px; 0 0 10px;">',
-            '<tpl for=".">',
-//            '<div style="margin: 10px; border: 1px solid lightgray; padding: 10px" class="menu-list-item">',
-            '<div class="btn btn-primary menu-list-item" style="display: block;margin: 10px;">',
-            '{name}',
-            '</div>',
-            '</tpl>',
-            '</div>'
-        );
-
-        var view = Ext.create('Ext.view.View', {
-            store: st,
-            tpl: menuTpl,
-            trackOver: true,
-            autoScroll: true,
-            selectedItemCls: 'active',
-            cls: 'bootstrap',
-            overItemCls: 'list-item-hover',
-            itemSelector: '.menu-list-item',
-            listeners: {
-                itemclick: function (este, record) {
-                    console.log(este);
-                    console.log(record);
-
-                    var p = Ext.getCmp(_this.id + "variantCustomFormPanel");
-                    p.removeAll(false);
-
-                    var form = null;
-                    console.log(record.data.form);
-                    switch (record.data.form) {
-                        case "stats":
-                            form = _this.variantStatsForm.panel;
-                            break;
-                        case "merge":
-                            form = _this.variantMergeForm.panel;
-                            break;
-                    }
-
-                    console.log(form);
-                    if (form != null) {
-                        p.add(form);
-                    }
-                }
-
-            }
-        });
 
         var panel = Ext.create('Ext.container.Container', {
                 title: 'Preprocess',
@@ -678,6 +724,18 @@ Variant.prototype.setSize = function (width, height) {
 
 Variant.prototype.jobItemClick = function (record) {
     var _this = this;
+
+    this.container.removeAll(false);
+    this.container.add(this.panel);
+
+    this.variantMenu.items.each(function (item) {
+        if (item.getEl().getHTML() == 'Results') {
+            item.addCls('active');
+        } else {
+            item.removeCls('active');
+        }
+    });
+
     this.jobId = record.data.id;
     if (record.data.visites >= 0) {
 
@@ -703,7 +761,7 @@ Variant.prototype.jobItemClick = function (record) {
 //            });
 //            variantStatsWidget.draw();
 //        } else
-    if (toolName == "hpg-variant.gwas-tdt" || toolName == "hpg-variant.gwas-assoc") {
+        if (toolName == "hpg-variant.gwas-tdt" || toolName == "hpg-variant.gwas-assoc") {
             record.raw.command = Utils.parseJobCommand(record.raw);
 
             var variantGwasWidget = new VariantGwasWidget({
@@ -1016,7 +1074,7 @@ Variant.prototype.getGMSidePanelItems = function () {
                     }
                 }
             }
-        },
+        }
 
     ];
 }

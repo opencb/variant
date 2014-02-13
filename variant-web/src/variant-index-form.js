@@ -19,14 +19,15 @@
  * along with JS Common Libs. If not, see <http://www.gnu.org/licenses/>.
  */
 
-VariantIndexForm.prototype = new GenericFormPanel("variant");
+VariantIndexForm.prototype = new GenericFormPanel();
 
-function VariantIndexForm(webapp) {
+function VariantIndexForm(args) {
+    args.analysis = 'hpg-variant.index';
+    GenericFormPanel.prototype.constructor.call(this, args);
+
     this.id = Utils.genId("VariantIndexForm");
-    this.headerWidget = webapp.headerWidget;
-    this.opencgaBrowserWidget = webapp.headerWidget.opencgaBrowserWidget;
-
-    this.testing = true;
+    this.headerWidget = this.webapp.headerWidget;
+    this.opencgaBrowserWidget = this.webapp.headerWidget.opencgaBrowserWidget;
 }
 
 VariantIndexForm.prototype.beforeRun = function () {
@@ -50,7 +51,10 @@ VariantIndexForm.prototype.getPanels = function () {
         width: "99%",
         //height:900,
         //width: "600",
-        items: items
+        items: items,
+        defaults:{
+            margin:'0 0 15 0'
+        }
     });
 
     return [this._getExampleForm(), form];
@@ -61,8 +65,7 @@ VariantIndexForm.prototype._getExampleForm = function () {
     var _this = this;
 
     var example1 = Ext.create('Ext.Component', {
-        width: 275,
-        html: '<span class="u"><span class="emph u">Load example 1.</span> <span class="info s110">VCF file</span></span>',
+        html: '<span class="s140"><span class="btn btn-default">Load</span> &nbsp; VCF file example</span>',
         cls: 'dedo',
         listeners: {
             afterrender: function () {
@@ -77,8 +80,10 @@ VariantIndexForm.prototype._getExampleForm = function () {
 
     var exampleForm = Ext.create('Ext.container.Container', {
         bodyPadding: 10,
+        cls:'bootstrap',
         items: [this.note1, example1],
-        defaults: {margin: '5 0 0 5'}
+        defaults: {margin: '5 0 0 0'},
+        margin:'0 0 10 0'
     });
 
     return exampleForm;
@@ -96,7 +101,7 @@ VariantIndexForm.prototype._getBrowseForm = function () {
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Select your data",
-        //cls:'panel-border-top',
+        header:this.headerFormConfig,
         border: true,
         padding: "5 0 0 0",
         bodyPadding: 10,
