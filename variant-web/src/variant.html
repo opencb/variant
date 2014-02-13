@@ -207,9 +207,29 @@
         height: 100%;
     }
 
+
+    .hpg-variant.vcf-stats, .variant{
+        /*padding:2px 5px;*/
+        display: inline-block;
+        /*background-color: #e2edf7;*/
+        color:#428bca;
+    }
+
+    .hpg-variant.gwas-assoc, .hpg-variant.effect {
+        /*padding:2px 5px;*/
+        display: inline-block;
+        /*background-color: #fcf1dc;*/
+        /*color:#ffffff;*/
+        color:#eca81f;
+    }
+
+
     .variant-menu {
         font-size: 16px;
-        background-color: #f8f8f8;
+        /*background-color: #f8f8f8;*/
+        background-color: #ffffff;
+        padding: 0 10px 0 10px;
+        /*text-align: center;*/
         /*border-top:1px solid #d3d3d3;*/
         /*border-right:1px solid #d3d3d3;*/
     }
@@ -218,16 +238,67 @@
         height: 33px;
         background-color: #d1d9e3;
     }
+    .home-header-dark {
+        font-size: 16px;
+        color: #FFFFFF;
+        background-color: #596F8F;
+        padding: 7px 10px;
+    }
     .visualization-header {
         /*height: 33px;*/
         background-color: #f9e2e2;
     }
+    .preprocess-header {
+        font-size: 16px;
+        color: #FFFFFF;
+        background-color: #428bca;
+        padding: 7px 10px;
+    }
+    .preprocess-header-form {
+        font-size: 13px;
+        color: #428bca;
+        background-color: #e2edf7;
+        font-weight: bold;
+        padding: 4px 6px;
+        border:1px solid #d3d3d3;
+    }
 
+    .analysis-header {
+        font-size: 16px;
+        color: #FFFFFF;
+        background-color: #eca81f;
+        padding: 7px 10px;
+    }
+    .analysis-header-form {
+        font-size: 13px;
+        color: #eca81f;
+        background-color: #fcf1dc;
+        font-weight: bold;
+        padding: 4px 6px;
+        border:1px solid #d3d3d3;
+    }
+
+
+    .visualization-header {
+        font-size: 16px;
+        color: #FFFFFF;
+        background-color: #d9534f;
+        padding: 7px 10px;
+    }
+    .visualization-header-form {
+        font-size: 13px;
+        color: #d9534f;
+        background-color: #f9e2e2;
+        font-weight: bold;
+        padding: 4px 6px;
+        border:1px solid #d3d3d3;
+    }
 
     .variant-menu .header {
         font-size: 14px;
         color: gray;
         margin: 7px 10px 4px 10px;
+        text-align: left;
 
         /*border-bottom: 1px;*/
         /*border-bottom-style: solid;*/
@@ -240,6 +311,7 @@
         cursor: pointer;
         color: #596F8F;
         padding: 7px 20px;
+        /*margin-top: 33px;*/
     }
 
     .variant-menu .home:hover {
@@ -286,18 +358,18 @@
 
     .variant-menu .analysis, .analysis {
         cursor: pointer;
-        color: #ec751f;
+        color: #eca81f;
         padding: 7px 20px;
     }
 
     .variant-menu .analysis:hover {
-        background-color: #fce9dc;
+        background-color: #fcf1dc;
         text-decoration: underline;
     }
 
     .variant-menu .analysis.active {
         color: #ffffff;
-        background-color: #ec751f;
+        background-color: #eca81f;
     }
 
     .variant-menu .visualization, .visualization {

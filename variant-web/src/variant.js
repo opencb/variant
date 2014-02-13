@@ -127,7 +127,7 @@ Variant.prototype = {
             border: 0,
             width: '100%',
             height: '100%',
-            layout:'fit',
+            layout: 'fit',
         });
 
         /* Wrap Panel */
@@ -140,42 +140,90 @@ Variant.prototype = {
         this.jobListWidget = this._createJobListWidget($(this.sidePanelDiv).attr('id'));
 
 
-        this.variantEffectForm = new VariantEffectForm(this);
-        this.variantEffectForm.closable = false;
-        this.variantEffectForm.width = '50%';
-//        this.variantEffectForm.testing = true;
-        this.variantEffectForm.draw({tabpanel: this.panel});
+//        style: {
+//            borderColor: '#428bca',
+//                borderWidth: '0px 0px 0px 1px',
+//                borderStyle: 'solid'
+//        }
+        this.variantStatsForm = new VariantStatsForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            title: 'Stats',
+            bodyPadding:'15 0 0 40',
+            headerConfig: {
+                baseCls: 'preprocess-header'
+            },
+            headerFormConfig: {
+                baseCls: 'preprocess-header-form'
+            }
+        });
+        this.variantStatsForm.draw();
+        this.variantMergeForm = new VariantMergeForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            title: 'Merge',
+            bodyPadding:'15 0 0 40',
+            headerConfig: {
+                baseCls: 'preprocess-header'
+            },
+            headerFormConfig: {
+                baseCls: 'preprocess-header-form'
+            }
+        });
+        this.variantMergeForm.draw();
 
-        this.variantIndexForm = new VariantIndexForm(this);
-        this.variantIndexForm.closable = false;
-        this.variantIndexForm.width = '50%';
-        this.variantIndexForm.testing = true;
-        this.variantIndexForm.draw({tabpanel: this.panel});
 
-        this.variantStatsForm = new VariantStatsForm(this);
-        this.variantStatsForm.closable = false;
-        this.variantStatsForm.width = '50%';
-        this.variantStatsForm.testing = true;
-        this.variantStatsForm.title = 'Stats form';
-        this.variantStatsForm.draw({tabpanel: this.panel, testing: true,
-            padding:'0 0 0 20',
-            style: {
-                borderColor: '#428bca',
-                borderWidth: '0px 0px 0px 1px',
-                borderStyle: 'solid'
-            }});
+        this.variantGwasForm = new VariantGwasForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            title: 'GWAS',
+            bodyPadding:'15 0 0 40',
+            headerConfig: {
+                baseCls: 'analysis-header'
+            },
+            headerFormConfig: {
+                baseCls: 'analysis-header-form'
+            }
+        });
+        this.variantGwasForm.draw();
+        this.variantEffectForm = new VariantEffectForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            title: 'Effect',
+            bodyPadding:'15 0 0 40',
+            headerConfig: {
+                baseCls: 'analysis-header'
+            },
+            headerFormConfig: {
+                baseCls: 'analysis-header-form'
+            }
+        });
+        this.variantEffectForm.draw();
 
-        this.variantMergeForm = new VariantMergeForm(this);
-        this.variantMergeForm.closable = false;
-        this.variantMergeForm.width = '50%';
-        this.variantMergeForm.testing = true;
-        this.variantMergeForm.draw({tabpanel: this.panel});
 
-        this.variantGwasForm = new VariantGwasForm(this);
-        this.variantGwasForm.closable = false;
-        this.variantGwasForm.width = '50%';
-        this.variantGwasForm.testing = true;
-        this.variantGwasForm.draw({tabpanel: this.panel});
+        this.variantIndexForm = new VariantIndexForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            title: 'Index',
+            bodyPadding:'15 0 0 40',
+            headerConfig: {
+                baseCls: 'visualization-header'
+            },
+            headerFormConfig: {
+                baseCls: 'visualization-header-form'
+            }
+        });
+        this.variantIndexForm.draw();
 
 
         /*check login*/
@@ -348,17 +396,17 @@ Variant.prototype = {
     _createHomePanel: function () {
         var _this = this;
 
-        var homePanel = Ext.create('Ext.container.Container', {
+        var homePanel = Ext.create('Ext.panel.Panel', {
             border: 0,
+            header:{
+                baseCls:'home-header'
+            },
             items: [
                 {
-                    xtype:'container',
-                    cls:'home-header'
-                },
-                {
-                    xtype:'container',
-                    html:SUITE_INFO,
-                    margin: '0 0 0 30',
+                    xtype: 'container',
+                    style:{fontSize:'15px', color:'dimgray'},
+                    html: SUITE_INFO,
+                    margin: '30 0 0 30',
                     autoScroll: true
                 }
             ]
@@ -372,11 +420,10 @@ Variant.prototype = {
 //            renderTo: targetId,
             width: '100%',
             height: '100%',
-            tabBar:{
-              baseCls:'visualization-header',
-//              plain:true,
-              height:33,
-              padding:'12 0 0 5'
+            tabBar: {
+                baseCls: 'visualization-header',
+                height: 33,
+                padding: '12 0 0 5'
             },
 //            plain:true,
             border: 0,
@@ -401,7 +448,10 @@ Variant.prototype = {
                 'width': 280,
                 'height': 625,
                 border: true,
-                'mode': 'view'
+                'mode': 'view',
+                headerConfig: {
+                    baseCls: 'home-header-dark'
+                }
             }
         });
 
@@ -679,9 +729,9 @@ Variant.prototype.jobItemClick = function (record) {
     this.container.add(this.panel);
 
     this.variantMenu.items.each(function (item) {
-        if(item.getEl().getHTML() == 'Results'){
+        if (item.getEl().getHTML() == 'Results') {
             item.addCls('active');
-        }else{
+        } else {
             item.removeCls('active');
         }
     });

@@ -19,13 +19,15 @@
  * along with JS Common Libs. If not, see <http://www.gnu.org/licenses/>.
  */
 
-VariantGwasForm.prototype = new GenericFormPanel("hpg-variant.gwas-assoc");
+VariantGwasForm.prototype = new GenericFormPanel();
 
-function VariantGwasForm(webapp) {
+function VariantGwasForm(args) {
+    args.analysis = 'hpg-variant.gwas-assoc';
+    GenericFormPanel.prototype.constructor.call(this, args);
+
     this.id = Utils.genId("VariantGwasForm");
-    this.headerWidget = webapp.headerWidget;
-    this.opencgaBrowserWidget = webapp.headerWidget.opencgaBrowserWidget;
-//    this.testing = true;
+    this.headerWidget = this.webapp.headerWidget;
+    this.opencgaBrowserWidget = this.webapp.headerWidget.opencgaBrowserWidget;
 }
 
 VariantGwasForm.prototype.beforeRun = function () {
@@ -79,7 +81,10 @@ VariantGwasForm.prototype.getPanels = function () {
         width: "99%",
         //height:900,
         //width: "600",
-        items: items
+        items: items,
+        defaults:{
+            margin:'0 0 15 0'
+        }
     });
 
     return [this._getExampleForm(), form];
@@ -91,7 +96,7 @@ VariantGwasForm.prototype._getExampleForm = function () {
 
     var example1 = Ext.create('Ext.Component', {
         width: 275,
-        html: '<span class="u"><span class="emph u">Load example 1.</span> <span class="info s110">VCF file</span></span>',
+        html: '<span class="s140"><span class="btn btn-default">Load</span> &nbsp; VCF file example</span>',
         cls: 'dedo',
         listeners: {
             afterrender: function () {
@@ -106,8 +111,10 @@ VariantGwasForm.prototype._getExampleForm = function () {
 
     var exampleForm = Ext.create('Ext.container.Container', {
         bodyPadding: 10,
+        cls:'bootstrap',
         items: [this.note1, example1],
-        defaults: {margin: '5 0 0 5'}
+        defaults: {margin: '5 0 0 0'},
+        margin:'0 0 10 0'
     });
 
     return exampleForm;
@@ -118,7 +125,7 @@ VariantGwasForm.prototype._getBrowseInputForm = function () {
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Input",
-        //cls:'panel-border-top',
+        header:this.headerFormConfig,
         border: true,
         padding: "5 0 0 0",
         bodyPadding: 10,
@@ -155,7 +162,7 @@ VariantGwasForm.prototype._getBrowseOutputForm = function () {
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Output",
-        //cls:'panel-border-top',
+        header:this.headerFormConfig,
         border: true,
         padding: "5 0 0 0",
         bodyPadding: 10,
@@ -241,7 +248,7 @@ VariantGwasForm.prototype._getTestForm = function () {
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Test",
-        //cls:'panel-border-top',
+        header:this.headerFormConfig,
         border: true,
         padding: "5 0 0 0",
         bodyPadding: 10,
