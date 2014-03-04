@@ -1,4 +1,4 @@
-package java.org.opencb.variant.lib.stats;
+package org.opencb.variant.lib.stats;
 
 import org.junit.After;
 import org.junit.Before;
@@ -6,10 +6,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.opencb.commons.bioformats.variant.VariantStudy;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfDataReader;
-import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
-import org.opencb.variant.lib.runners.VariantRunner;
-import org.opencb.variant.lib.runners.VariantStatsRunner;
 
 import java.util.Arrays;
 
@@ -57,8 +53,8 @@ public class CalculateStatsTest {
 
         VariantStudy study = new VariantStudy("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList("hola", "adios"));
 
-        VariantRunner vr = new VariantStatsRunner(study, new VariantVcfDataReader(vcfFileName), null, new VariantVcfSqliteWriter(dbFilename));
-        vr.run();
+//        VariantRunner vr = new VariantStatsRunner(study, new VariantVcfDataReader(vcfFileName), null, new VariantVcfSqliteWriter(dbFilename));
+//        vr.run();
 
     }
 }
