@@ -1,7 +1,7 @@
 package org.opencb.variant.lib.runners.tasks;
 
 import org.opencb.commons.bioformats.variant.Variant;
-import org.opencb.commons.bioformats.variant.VariantStudy;
+import org.opencb.commons.bioformats.variant.VariantSource;
 import org.opencb.commons.bioformats.variant.stats.StatsCalculator;
 import org.opencb.commons.bioformats.variant.utils.stats.VariantGlobalStats;
 import org.opencb.commons.bioformats.variant.utils.stats.VariantStats;
@@ -19,10 +19,10 @@ import java.util.List;
 public class VariantStatsTask extends Task<Variant> {
 
     private VariantReader reader;
-    private VariantStudy study;
+    private VariantSource study;
     private VariantStatsWrapper stats;
 
-    public VariantStatsTask(VariantReader reader, VariantStudy study) {
+    public VariantStatsTask(VariantReader reader, VariantSource study) {
         super();
         this.reader = reader;
         this.study = study;
@@ -30,7 +30,7 @@ public class VariantStatsTask extends Task<Variant> {
 
     }
 
-    public VariantStatsTask(VariantReader reader, VariantStudy study, int priority) {
+    public VariantStatsTask(VariantReader reader, VariantSource study, int priority) {
         super(priority);
         this.reader = reader;
         this.study = study;
