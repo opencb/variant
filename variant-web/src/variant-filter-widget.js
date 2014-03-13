@@ -35,20 +35,23 @@ function VariantFilterWidget(jobId, args) {
             this.tableLayout = args.tableLayout;
         }
     }
+
+    this.grids = {};
+
     this.dataConsequence = new Array();
-    this.resultTables = new Object();
+//    this.resultTables = new Object();
     for (var fileName in this.fileNames) {
-
-
-        this.resultTables[this.fileNames[fileName]] = new ResultTable(this.jobId, fileName, ["CONSEQUENCE_TYPE_VARIANTS"], {
-            tableLayout: this.tableLayout,
-            targetId: null,
-            collapsible: false,
-            numRows: 10,
-            border: false,
-            flex: 3,
-            cls: 'ocb-border-left-lightgrey'
-        });
+//
+//
+////        this.resultTables[this.fileNames[fileName]] = new ResultTable(this.jobId, fileName, ["CONSEQUENCE_TYPE_VARIANTS"], {
+////            tableLayout: this.tableLayout,
+////            targetId: null,
+////            collapsible: false,
+////            numRows: 10,
+////            border: false,
+////            flex: 3,
+////            cls: 'ocb-border-left-lightgrey'
+////        });
         this.dataConsequence.push({name: this.fileNames[fileName]});
     }
 
@@ -196,6 +199,11 @@ VariantFilterWidget.prototype._render = function (mode, targetId) {
         });
 
 
+        this.gridContainer = Ext.create('Ext.container.Container', {
+            layout: 'fit',
+            flex: 3
+        });
+
         if (mode == 'panel') {
             this._panel = Ext.create('Ext.panel.Panel', {
                 title: 'Variant filter tool',
@@ -205,7 +213,7 @@ VariantFilterWidget.prototype._render = function (mode, targetId) {
                 collapsible: true,
                 margin: '0 0 10 0',
                 layout: { type: 'hbox', align: 'stretch'},
-                items: [panTab]
+                items: [panTab, this.gridContainer]
             });
 //            Ext.getCmp(targetId).insert(0, this._panel);
         } else {
@@ -219,7 +227,7 @@ VariantFilterWidget.prototype._render = function (mode, targetId) {
                 height: this.height,
                 width: this.width,
                 layout: { type: 'hbox', align: 'stretch'},
-                items: [panTab],
+                items: [panTab, this.gridContainer],
                 listeners: {
                     minimize: function () {
                         _this._panel.hide();
@@ -244,7 +252,8 @@ VariantFilterWidget.prototype._render = function (mode, targetId) {
                     selModel.select(viewConsequence.store.first());
                 }
             });
-            panGene.on("activate", function () {
+            panGene.on("show", function () {
+                console.log("activated")
                 //deselect and select the same on tab change
                 var selModel = viewGene.getSelectionModel();
                 var last = selModel.getLastSelected();
@@ -256,6 +265,21 @@ VariantFilterWidget.prototype._render = function (mode, targetId) {
                 }
             });
         });
+
+        var grid = this.grids["allVariants"];
+        if (typeof grid === 'undefined') {
+            OpencgaManager.poll({
+                accountId: $.cookie('bioinfo_account'),
+                sessionId: $.cookie('bioinfo_sid'),
+                jobId: _this.jobId,
+                filename: 'all_variants.json',
+                zip: false,
+                success: function (data) {
+                    var arr = JSON.parse(data);
+                    var grid = _this.createGrid(arr, "allVariants");
+                }
+            });
+        }
     }
 };
 
@@ -321,88 +345,164 @@ VariantFilterWidget.prototype._render = function (mode, targetId) {
 VariantFilterWidget.prototype.optionSOClick = function (dataRecord) {
     var _this = this;
     var soName = dataRecord.name;
-    if (this._panel.getComponent(1) != null) {
-        this._panel.getComponent(1).hide();
-        this._panel.remove(1, false);
-    }
-    this.resultTables[soName].draw();
-    this._panel.add(this.resultTables[soName].table.show());
 
-    //set location on Genome Viewer
-    this.resultTables[soName].table.getSelectionModel().on("selectionchange", function (este, sel) {
-        if (_this.args.viewer != null && sel.length > 0) {
-            var r = {
-                chromosome: sel[0].data.Chrom,
-                start: parseInt(sel[0].data.Position) - 5000,
-                end: parseInt(sel[0].data.Position) + 5000
+    this.gridContainer.removeAll(false);
+
+    var grid = this.grids[soName];
+    if (typeof grid === 'undefined') {
+        OpencgaManager.poll({
+            accountId: $.cookie('bioinfo_account'),
+            sessionId: $.cookie('bioinfo_sid'),
+            jobId: _this.jobId,
+            filename: soName + ".json",
+            zip: false,
+            success: function (data) {
+                var arr = JSON.parse(data);
+                _this.gridContainer.add(_this.createGrid(arr, soName));
             }
-            _this.viewer.setRegion(r);
-//            _this.viewer.onRegionChange.notify({sender: ""});
-        }
-    });
-    this.resultTables[soName].table.getSelectionModel().getStore().on("load", function (store) {
-        if (store.getTotalCount() > 0) {
-            _this.resultTables[soName].table.getSelectionModel().selectRange(0, 0);
-        }
-    });
+        });
+    } else {
+        this.gridContainer.add(grid);
+    }
+
+
+//    this.resultTables[soName].draw();
+//    this._panel.add(this.resultTables[soName].table.show());
+//
+//    //set location on Genome Viewer
+//    this.resultTables[soName].table.getSelectionModel().on("selectionchange", function (este, sel) {
+//        if (_this.args.viewer != null && sel.length > 0) {
+//            var r = {
+//                chromosome: sel[0].data.Chrom,
+//                start: parseInt(sel[0].data.Position) - 5000,
+//                end: parseInt(sel[0].data.Position) + 5000
+//            }
+//            _this.viewer.setRegion(r);
+////            _this.viewer.onRegionChange.notify({sender: ""});
+//        }
+//    });
+//    this.resultTables[soName].table.getSelectionModel().getStore().on("load", function (store) {
+//        if (store.getTotalCount() > 0) {
+//            _this.resultTables[soName].table.getSelectionModel().selectRange(0, 0);
+//        }
+//    });
 };
 
 VariantFilterWidget.prototype.optionGeneClick = function (dataRecord) {
     var _this = this;
     var name = dataRecord.name;
-    if (this._panel.getComponent(1) != null) {
-        this._panel.getComponent(1).hide();
-        this._panel.remove(1, false);
+
+    var grid = this.grids["allVariants"];
+
+    if (this.gridContainer.items.get(0) != grid) {
+        this.gridContainer.removeAll(false);
+        this.gridContainer.add(grid);
     }
 
-    if (this[name + "Grid"] == null) {
-//        var wumAdapter = new OpencgaManager();
-        this._panel.setLoading();
-//        wumAdapter.onGrep.addEventListener(function (sender, data) {
-//            debugger
-//            var storeData = new Array();
-//            var lines = data.split("\n");
-//            for (var i = 0; i < lines.length - 1; i++) {
-//                if (lines[i][0] != "#") {
-//                    var fields = lines[i].split("\t");
-//                    storeData.push(fields);
-//                    _this.genesData[name] = storeData;
+    var store = grid.store;
+    store.clearFilter();
+    store.filterBy(function (item) {
+        return item.data['geneName'] == name;
+    });
+    grid.setTitle(name);
+
+
+//
+//    if (this[name + "Grid"] == null) {
+////        var wumAdapter = new OpencgaManager();
+//        this._panel.setLoading();
+////        wumAdapter.onGrep.addEventListener(function (sender, data) {
+////            debugger
+////            var storeData = new Array();
+////            var lines = data.split("\n");
+////            for (var i = 0; i < lines.length - 1; i++) {
+////                if (lines[i][0] != "#") {
+////                    var fields = lines[i].split("\t");
+////                    storeData.push(fields);
+////                    _this.genesData[name] = storeData;
+////                }
+////            }
+////            _this._panel.add(_this.getByGeneGrid(_this.genesData[name], name).show());
+////            _this._panel.setLoading(false);
+////        });
+////        wumAdapter.grep(this.jobId, "all_variants.txt", ".*" + name + ".*", true, $.cookie("bioinfo_sid"));
+//
+//        OpencgaManager.poll({
+//            accountId: $.cookie('bioinfo_account'),
+//            sessionId: $.cookie('bioinfo_sid'),
+//            jobId: this.jobId,
+//            filename: "all_variants.json",
+//            zip: false,
+//            success: function (data) {
+//                var arr = JSON.parse(data);
+//                debugger
+//                var storeData = [];
+//                var lines = data.split("\n");
+//                for (var i = 0; i < lines.length - 1; i++) {
+//                    var line = lines[i];
+//                    if (line[0] != "#" && line.indexOf(name) != -1) {
+//                        var fields = line.split("\t");
+//                        storeData.push(fields);
+//                        _this.genesData[name] = storeData;
+//                    }
 //                }
+//                _this._panel.add(_this.getByGeneGrid(_this.genesData[name], name).show());
+//                _this._panel.setLoading(false);
 //            }
-//            _this._panel.add(_this.getByGeneGrid(_this.genesData[name], name).show());
-//            _this._panel.setLoading(false);
 //        });
-//        wumAdapter.grep(this.jobId, "all_variants.txt", ".*" + name + ".*", true, $.cookie("bioinfo_sid"));
-
-        OpencgaManager.poll({
-            accountId: $.cookie('bioinfo_account'),
-            sessionId: $.cookie('bioinfo_sid'),
-            jobId: this.jobId,
-            filename: "all_variants.txt",
-            zip: false,
-            success: function (data) {
-                var storeData = [];
-                var lines = data.split("\n");
-                for (var i = 0; i < lines.length - 1; i++) {
-                    var line = lines[i];
-                    if (line[0] != "#" && line.indexOf(name) != -1) {
-                        var fields = line.split("\t");
-                        storeData.push(fields);
-                        _this.genesData[name] = storeData;
-                    }
-                }
-                _this._panel.add(_this.getByGeneGrid(_this.genesData[name], name).show());
-                _this._panel.setLoading(false);
-            }
-        });
-
-    } else {
-        this._panel.add(this[name + "Grid"].show());
-    }
+//
+//    } else {
+//        this._panel.add(this[name + "Grid"].show());
+//    }
 
 
 };
 
+
+VariantFilterWidget.prototype.createGrid = function (data, name) {
+    var _this = this;
+
+    var fields = ["featureStrand", "transcriptId", "alternativeAllele", "referenceAllele", "consequenceType",
+        "consequenceTypeObo", "featureStart", "featureChromosome", "chromosome", "alternative", "ancestral",
+        "featureName", "position", "featureId", "consequenceTypeDesc", "featureType", "featureBiotype",
+        "featureEnd", "snpId", "geneName", "geneId", "consequenceTypeType", "aaPosition", "aminoacidChange", "codonChange"];
+
+    var grid = this.grids[name];
+    if (typeof grid === 'undefined') {
+        var groupField = '';
+        var modelName = name;
+        var fields = fields;
+        var columns = [
+//            {"header": "Gene name", "dataIndex": "geneName", flex: 0.5},
+            {"header": "Chrom", "dataIndex": "chromosome", flex: 0.5},
+            {"header": "Position", "dataIndex": "position", flex: 1},
+            {"header": "Reference", "dataIndex": "referenceAllele", flex: 1},
+            {"header": "Alternative", "dataIndex": "alternativeAllele", flex: 1},
+            {"header": "Feature ID", "dataIndex": "featureId", flex: 1.2},
+            {"header": "Feature Type", "dataIndex": "featureType", flex: 1.1},
+            {"header": "Biotype", "dataIndex": "featureBiotype", flex: 1.2},
+            {"header": "ConsequenceType", "dataIndex": "consequenceTypeObo", flex: 1.5},
+            {"header": "SO acc", "dataIndex": "consequenceType", flex: 1}
+        ];
+        grid = this.doGrid(columns, fields, modelName, groupField, data);
+        //this[name+"Grid"].store.loadData(data);
+
+        //set location on Genome Viewer
+        grid.getSelectionModel().on("selectionchange", function (este, sel) {
+            var r = {
+                chromosome: sel[0].data.chromosome,
+                start: parseInt(sel[0].data.position) - 500,
+                end: parseInt(sel[0].data.position) + 500
+            }
+            if (_this.args.viewer != null) {
+                _this.viewer.setRegion(r);
+            }
+        });
+
+        this.grids[name] = grid;
+    }
+    return grid;
+};
 
 //VariantFilterWidget.prototype.getBySOGrid = function(data, name){
 //	var _this=this;

@@ -2,8 +2,11 @@ package org.opencb.variant.cli;
 
 import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.Variant;
-import org.opencb.commons.bioformats.variant.VariantStudy;
-import org.opencb.commons.bioformats.variant.annotators.*;
+import org.opencb.commons.bioformats.variant.VariantSource;
+import org.opencb.commons.bioformats.variant.annotators.VariantAnnotator;
+import org.opencb.commons.bioformats.variant.annotators.VariantControlAnnotator;
+import org.opencb.commons.bioformats.variant.annotators.VariantEVSControlAnnotator;
+import org.opencb.commons.bioformats.variant.annotators.VariantSNPAnnotator;
 import org.opencb.commons.bioformats.variant.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfReader;
@@ -132,7 +135,7 @@ public class VariantMain {
         List<Task<Variant>> taskList = new SortedList<>();
         List<VariantWriter> writers = new ArrayList<>();
 
-        VariantStudy study = new VariantStudy("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
+        VariantSource study = new VariantSource("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
         VariantReader reader = new VariantVcfReader(inputFile);
 //        VariantWriter writer = new VariantVcfSqliteWriter(outputFile);
         List<VariantFilter> filters = parseFilters(commandLine);
@@ -199,8 +202,6 @@ public class VariantMain {
         if (commandLine.hasOption("annot-snp")) {
             annots.add(new VariantSNPAnnotator());
         }
-
-        annots.add(new VariantControlMongoAnnotator());
 
         return annots;
     }

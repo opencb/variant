@@ -127,7 +127,7 @@ Variant.prototype = {
             border: 0,
             width: '100%',
             height: '100%',
-            layout: 'fit',
+            layout: 'fit'
         });
 
         /* Wrap Panel */
@@ -140,11 +140,6 @@ Variant.prototype = {
         this.jobListWidget = this._createJobListWidget($(this.sidePanelDiv).attr('id'));
 
 
-//        style: {
-//            borderColor: '#428bca',
-//                borderWidth: '0px 0px 0px 1px',
-//                borderStyle: 'solid'
-//        }
         this.variantStatsForm = new VariantStatsForm({
             webapp: this,
             closable: false,
@@ -196,7 +191,7 @@ Variant.prototype = {
             webapp: this,
             closable: false,
             width: '50%',
-            testing: true,
+            testing: false,
             title: 'Effect',
             bodyPadding:'15 0 0 40',
             headerConfig: {
@@ -725,19 +720,22 @@ Variant.prototype.setSize = function (width, height) {
 Variant.prototype.jobItemClick = function (record) {
     var _this = this;
 
-    this.container.removeAll(false);
-    this.container.add(this.panel);
-
-    this.variantMenu.items.each(function (item) {
-        if (item.getEl().getHTML() == 'Results') {
-            item.addCls('active');
-        } else {
-            item.removeCls('active');
-        }
-    });
 
     this.jobId = record.data.id;
     if (record.data.visites >= 0) {
+        this.container.removeAll(false);
+        this.container.add(this.panel);
+
+        this.variantMenu.items.each(function (item) {
+            if (item.getEl().getHTML() == 'Results') {
+                item.addCls('active');
+            } else {
+                item.removeCls('active');
+            }
+        });
+
+
+
 
         Ext.getCmp(this.id + 'jobsButton').toggle(false);
 

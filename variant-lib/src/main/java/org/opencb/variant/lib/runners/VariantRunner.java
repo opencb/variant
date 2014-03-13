@@ -3,7 +3,7 @@ package org.opencb.variant.lib.runners;
 import java.util.List;
 import org.opencb.commons.bioformats.pedigree.io.readers.PedigreeReader;
 import org.opencb.commons.bioformats.variant.Variant;
-import org.opencb.commons.bioformats.variant.VariantStudy;
+import org.opencb.commons.bioformats.variant.VariantSource;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantWriter;
 import org.opencb.commons.run.Runner;
@@ -14,9 +14,9 @@ import org.opencb.commons.run.Task;
  */
 public class VariantRunner extends Runner<Variant> {
 
-    protected VariantStudy study;
+    protected VariantSource study;
 
-    public VariantRunner(VariantStudy study, VariantReader reader, PedigreeReader pedReader, List<VariantWriter> writer, List<Task<Variant>> tasks) {
+    public VariantRunner(VariantSource study, VariantReader reader, PedigreeReader pedReader, List<VariantWriter> writer, List<Task<Variant>> tasks) {
         super(reader, writer, tasks);
         this.study = study;
         parsePhenotypes(pedReader);
@@ -30,11 +30,11 @@ public class VariantRunner extends Runner<Variant> {
         }
     }
 
-    public VariantStudy getStudy() {
+    public VariantSource getStudy() {
         return study;
     }
 
-    public void setStudy(VariantStudy study) {
+    public void setStudy(VariantSource study) {
         this.study = study;
     }
 
