@@ -46,6 +46,18 @@
             <artifactId>commons-lib</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.opencb.biodata</groupId>
+            <artifactId>formats</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opencb.biodata</groupId>
+            <artifactId>models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opencb.biodata</groupId>
+            <artifactId>tools</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
         </dependency>

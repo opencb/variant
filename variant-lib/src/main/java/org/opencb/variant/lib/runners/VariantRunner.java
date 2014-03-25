@@ -1,11 +1,11 @@
 package org.opencb.variant.lib.runners;
 
 import java.util.List;
-import org.opencb.commons.bioformats.pedigree.io.readers.PedigreeReader;
-import org.opencb.commons.bioformats.variant.Variant;
-import org.opencb.commons.bioformats.variant.VariantSource;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantWriter;
+import org.opencb.biodata.formats.pedigree.io.PedigreeReader;
+import org.opencb.biodata.formats.variant.vcf4.io.VariantReader;
+import org.opencb.biodata.formats.variant.vcf4.io.VariantWriter;
+import org.opencb.biodata.models.variant.Variant;
+import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.commons.run.Runner;
 import org.opencb.commons.run.Task;
 /**

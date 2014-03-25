@@ -1,17 +1,16 @@
 package org.opencb.variant.lib.runners.tasks;
 
-import org.opencb.commons.bioformats.variant.Variant;
-import org.opencb.commons.bioformats.variant.VariantSource;
-import org.opencb.commons.bioformats.variant.stats.StatsCalculator;
-import org.opencb.commons.bioformats.variant.utils.stats.VariantGlobalStats;
-import org.opencb.commons.bioformats.variant.utils.stats.VariantStats;
-import org.opencb.commons.bioformats.variant.utils.stats.VariantStatsWrapper;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
-import org.opencb.commons.run.Task;
-
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import org.opencb.biodata.formats.variant.vcf4.io.VariantReader;
+import org.opencb.biodata.models.variant.Variant;
+import org.opencb.biodata.models.variant.VariantSource;
+import org.opencb.biodata.models.variant.stats.VariantGlobalStats;
+import org.opencb.biodata.models.variant.stats.VariantStats;
+import org.opencb.biodata.models.variant.stats.VariantStatsWrapper;
+import org.opencb.biodata.tools.variant.StatsCalculator;
+import org.opencb.commons.run.Task;
 
 /**
  * @author Alejandro Aleman Ramos <aaleman@cipf.es>

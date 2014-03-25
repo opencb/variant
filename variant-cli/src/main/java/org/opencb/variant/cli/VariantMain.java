@@ -1,16 +1,6 @@
 package org.opencb.variant.cli;
 
 import org.apache.commons.cli.*;
-import org.opencb.commons.bioformats.variant.Variant;
-import org.opencb.commons.bioformats.variant.VariantSource;
-import org.opencb.commons.bioformats.variant.annotators.VariantAnnotator;
-import org.opencb.commons.bioformats.variant.annotators.VariantControlAnnotator;
-import org.opencb.commons.bioformats.variant.annotators.VariantEVSControlAnnotator;
-import org.opencb.commons.bioformats.variant.annotators.VariantSNPAnnotator;
-import org.opencb.commons.bioformats.variant.filters.*;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantWriter;
 import org.opencb.commons.containers.list.SortedList;
 import org.opencb.commons.run.Task;
 import org.opencb.variant.lib.runners.VariantRunner;
@@ -24,6 +14,21 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import org.opencb.biodata.formats.variant.vcf4.io.VariantReader;
+import org.opencb.biodata.formats.variant.vcf4.io.VariantVcfReader;
+import org.opencb.biodata.formats.variant.vcf4.io.VariantWriter;
+import org.opencb.biodata.models.variant.Variant;
+import org.opencb.biodata.models.variant.VariantSource;
+import org.opencb.commons.bioformats.variant.annotators.VariantAnnotator;
+import org.opencb.commons.bioformats.variant.annotators.VariantControlAnnotator;
+import org.opencb.commons.bioformats.variant.annotators.VariantEVSControlAnnotator;
+import org.opencb.commons.bioformats.variant.annotators.VariantSNPAnnotator;
+import org.opencb.commons.bioformats.variant.filters.VariantBedFilter;
+import org.opencb.commons.bioformats.variant.filters.VariantConsequenceTypeFilter;
+import org.opencb.commons.bioformats.variant.filters.VariantFilter;
+import org.opencb.commons.bioformats.variant.filters.VariantGeneFilter;
+import org.opencb.commons.bioformats.variant.filters.VariantRegionFilter;
+import org.opencb.commons.bioformats.variant.filters.VariantSnpFilter;
 
 //import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 
