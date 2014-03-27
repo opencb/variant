@@ -20,8 +20,6 @@ import org.opencb.biodata.formats.variant.vcf4.io.VariantWriter;
 import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.commons.bioformats.variant.annotators.VariantAnnotator;
-import org.opencb.commons.bioformats.variant.annotators.VariantControlAnnotator;
-import org.opencb.commons.bioformats.variant.annotators.VariantEVSControlAnnotator;
 import org.opencb.commons.bioformats.variant.annotators.VariantSNPAnnotator;
 import org.opencb.commons.bioformats.variant.filters.VariantBedFilter;
 import org.opencb.commons.bioformats.variant.filters.VariantConsequenceTypeFilter;
@@ -141,7 +139,7 @@ public class VariantMain {
         List<VariantWriter> writers = new ArrayList<>();
 
         VariantSource study = new VariantSource("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
-        VariantReader reader = new VariantVcfReader(inputFile);
+        VariantReader reader = new VariantVcfReader(inputFile, "s1", "s1");
 //        VariantWriter writer = new VariantVcfSqliteWriter(outputFile);
         List<VariantFilter> filters = parseFilters(commandLine);
         List<VariantAnnotator> annots = parseAnnotations(commandLine);
@@ -190,20 +188,7 @@ public class VariantMain {
 
     private static List<VariantAnnotator> parseAnnotations(CommandLine commandLine) {
         List<VariantAnnotator> annots = new ArrayList<>();
-        if (commandLine.hasOption("annot-control-list")) {
-            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
-            Map<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
-            annots.add(new VariantControlAnnotator(infoPrefix, controlList));
-        } else if (commandLine.hasOption("annot-control-file")) {
-            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
-            annots.add(new VariantControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-file")));
-        }
-
-        if (commandLine.hasOption("annot-control-evs")) {
-            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
-            annots.add(new VariantEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
-        }
-
+        
         if (commandLine.hasOption("annot-snp")) {
             annots.add(new VariantSNPAnnotator());
         }
