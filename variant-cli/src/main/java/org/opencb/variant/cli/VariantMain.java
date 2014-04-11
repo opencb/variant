@@ -10,6 +10,7 @@ import org.opencb.commons.bioformats.variant.annotators.VariantSNPAnnotator;
 import org.opencb.commons.bioformats.variant.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfReader;
+import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantVcfDataWriter;
 import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantWriter;
 import org.opencb.commons.containers.list.SortedList;
 import org.opencb.commons.run.Task;
@@ -52,9 +53,10 @@ public class VariantMain {
         options.addOption(OptionFactory.createOption("help", "h", "Print this message", false, false));
         options.addOption(OptionFactory.createOption("vcf-file", "Input VCF file", true, true));
         options.addOption(OptionFactory.createOption("outdir", "o", "Output dir", true, true));
-        options.addOption(OptionFactory.createOption("output-file", "Output filename", false, true));
+        options.addOption(OptionFactory.createOption("output-file", "Output filename", true, true));
         options.addOption(OptionFactory.createOption("ped-file", "Ped file", false, true));
         options.addOption(OptionFactory.createOption("threads", "Num threads", false, true));
+        options.addOption(OptionFactory.createOption("batch-size", "Batch Size (Default: 1000)", false, true));
 
         options.addOption(OptionFactory.createOption("filter", "Filter vcf file", false, false));
         options.addOption(OptionFactory.createOption("annot", "Annotate vcf file", false, false));
@@ -79,6 +81,7 @@ public class VariantMain {
         options.addOption(OptionFactory.createOption("filter-ct", "Filter Consequence Type", false, true));
         options.addOption(OptionFactory.createOption("filter-gene", "Filter Gene (BRCA2,PPL)", false, true));
         options.addOption(OptionFactory.createOption("filter-gene-file", "Filter Gene gene_list.txt", false, true));
+        options.addOption(OptionFactory.createOption("filter-retain", "Retain variants from vcf file)", false, true));
 
 
     }
@@ -89,6 +92,7 @@ public class VariantMain {
         List<Tool> toolList = new ArrayList<>(5);
 
         int numThreads = 1;
+        int batchSize = 1000;
 
 
         parse(args, false);
@@ -97,6 +101,10 @@ public class VariantMain {
 
         if (commandLine.hasOption("output-file")) {
             outputFile = commandLine.getOptionValue("output-file");
+        }
+
+        if (commandLine.hasOption("batch-size")) {
+            batchSize = Integer.parseInt(commandLine.getOptionValue("batch-size"));
         }
 
         inputFile = commandLine.getOptionValue("vcf-file");
@@ -137,27 +145,21 @@ public class VariantMain {
 
         VariantSource study = new VariantSource("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
         VariantReader reader = new VariantVcfReader(inputFile);
-//        VariantWriter writer = new VariantVcfSqliteWriter(outputFile);
+        VariantWriter writer = new VariantVcfDataWriter(reader, outputFile);
+
+
         List<VariantFilter> filters = parseFilters(commandLine);
         List<VariantAnnotator> annots = parseAnnotations(commandLine);
+
+        writers.add(writer);
 
         for (Tool t : toolList) {
             System.out.println("t = " + t);
             switch (t) {
                 case FILTER:
-//                    if (toolList.size() == 1) {
-//                        vrAux = new VariantFilterRunner(study, reader, null, new VariantVcfDataWriter(outputFile), filters, vr);
-//                    } else {
-//                        vrAux = new VariantFilterRunner(study, reader, null, null, filters, vr);
-//                    }
                     taskList.add(new VariantFilterTask(filters, Integer.MAX_VALUE));
-
                     break;
                 case ANNOT:
-//                    if (toolList.size() == 1) {
-//                        vrAux = new VariantAnnotRunner(study, reader, null, new VariantVcfDataWriter(outputFile), annots, vr);
-//                    } else
-//                        vrAux = new VariantAnnotRunner(study, reader, null, null, annots, vr);
                     taskList.add(new VariantAnnotTask(annots));
                     break;
                 case EFFECT:
@@ -177,6 +179,7 @@ public class VariantMain {
         System.out.println("START");
 
         vr = new VariantRunner(study, reader, null, writers, taskList);
+        vr.setBatchSize(batchSize);
 
         vr.run();
         System.out.println("END");
@@ -229,6 +232,10 @@ public class VariantMain {
             filters.add(new VariantGeneFilter(commandLine.getOptionValue("filter-gene")));
         } else if (commandLine.hasOption("filter-gene-file")) {
             filters.add(new VariantGeneFilter(new File(commandLine.getOptionValue("filter-gene-file"))));
+        }
+
+        if (commandLine.hasOption("filter-retain")) {
+            filters.add(new VariantRetainFilter(commandLine.getOptionValue("filter-retain")));
         }
         return filters;
     }
