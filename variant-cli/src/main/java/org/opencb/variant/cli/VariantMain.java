@@ -3,10 +3,7 @@ package org.opencb.variant.cli;
 import org.apache.commons.cli.*;
 import org.opencb.commons.bioformats.variant.Variant;
 import org.opencb.commons.bioformats.variant.VariantSource;
-import org.opencb.commons.bioformats.variant.annotators.VariantAnnotator;
-import org.opencb.commons.bioformats.variant.annotators.VariantControlAnnotator;
-import org.opencb.commons.bioformats.variant.annotators.VariantEVSControlAnnotator;
-import org.opencb.commons.bioformats.variant.annotators.VariantSNPAnnotator;
+import org.opencb.commons.bioformats.variant.annotators.*;
 import org.opencb.commons.bioformats.variant.filters.*;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
 import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfReader;
@@ -72,6 +69,10 @@ public class VariantMain {
         options.addOption(OptionFactory.createOption("annot-control-prefix", "Control prefix", false, true));
         options.addOption(OptionFactory.createOption("annot-control-evs", "Control EVS", false, true));
         options.addOption(OptionFactory.createOption("annot-snp", "SNP", false, false));
+        options.addOption(OptionFactory.createOption("annot-ct", "Annot Consequence Type", false, false));
+        options.addOption(OptionFactory.createOption("annot-genename", "Annot Genename", false, false));
+        options.addOption(OptionFactory.createOption("annot-polyphen-sift", "Annot Polyphen & SIFT", false, false));
+        options.addOption(OptionFactory.createOption("annot-control", "Control Annot", false, false));
 
 
         // FILTERS
@@ -188,6 +189,11 @@ public class VariantMain {
 
     private static List<VariantAnnotator> parseAnnotations(CommandLine commandLine) {
         List<VariantAnnotator> annots = new ArrayList<>();
+
+        if (commandLine.hasOption("annot-polyphen-sift")) {
+            annots.add(new VariantPolyphenSIFTAnnotator());
+        }
+
         if (commandLine.hasOption("annot-control-list")) {
             String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
             Map<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
@@ -204,6 +210,18 @@ public class VariantMain {
 
         if (commandLine.hasOption("annot-snp")) {
             annots.add(new VariantSNPAnnotator());
+        }
+
+        if (commandLine.hasOption("annot-ct")) {
+            annots.add(new VariantConsequenceTypeAnnotator());
+        }
+
+        if (commandLine.hasOption("annot-genename")) {
+            annots.add(new VariantGeneNameAnnotator());
+        }
+
+        if(commandLine.hasOption("annot-control")){
+            annots.add(new VariantControlMongoAnnotator());
         }
 
         return annots;
