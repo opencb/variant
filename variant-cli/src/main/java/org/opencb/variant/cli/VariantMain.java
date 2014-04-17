@@ -138,7 +138,7 @@ public class VariantMain {
         List<Task<Variant>> taskList = new SortedList<>();
         List<VariantWriter> writers = new ArrayList<>();
 
-        VariantSource study = new VariantSource("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
+        VariantSource study = new VariantSource(inputFile, "s1", "study1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
         VariantReader reader = new VariantVcfReader(inputFile, "s1", "s1");
 //        VariantWriter writer = new VariantVcfSqliteWriter(outputFile);
         List<VariantFilter> filters = parseFilters(commandLine);
