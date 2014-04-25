@@ -2,7 +2,7 @@ package org.opencb.variant.lib.runners.tasks;
 
 import java.io.IOException;
 import java.util.List;
-import org.opencb.biodata.formats.variant.vcf4.io.VariantReader;
+import org.opencb.biodata.formats.variant.io.VariantReader;
 import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.biodata.models.variant.stats.ArchivedVariantFileStats;
