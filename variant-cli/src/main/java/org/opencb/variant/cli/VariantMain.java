@@ -19,14 +19,14 @@ import org.opencb.biodata.formats.variant.vcf4.io.VariantVcfReader;
 import org.opencb.biodata.formats.variant.io.VariantWriter;
 import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.VariantSource;
-import org.opencb.commons.bioformats.variant.annotators.VariantAnnotator;
-import org.opencb.commons.bioformats.variant.annotators.VariantSNPAnnotator;
-import org.opencb.commons.bioformats.variant.filters.VariantBedFilter;
-import org.opencb.commons.bioformats.variant.filters.VariantConsequenceTypeFilter;
-import org.opencb.commons.bioformats.variant.filters.VariantFilter;
-import org.opencb.commons.bioformats.variant.filters.VariantGeneFilter;
-import org.opencb.commons.bioformats.variant.filters.VariantRegionFilter;
-import org.opencb.commons.bioformats.variant.filters.VariantSnpFilter;
+import org.opencb.biodata.tools.variant.annotation.VariantAnnotator;
+import org.opencb.biodata.tools.variant.annotation.VariantSNPAnnotator;
+import org.opencb.biodata.tools.variant.filtering.VariantBedFilter;
+import org.opencb.biodata.tools.variant.filtering.VariantConsequenceTypeFilter;
+import org.opencb.biodata.tools.variant.filtering.VariantFilter;
+import org.opencb.biodata.tools.variant.filtering.VariantGeneFilter;
+import org.opencb.biodata.tools.variant.filtering.VariantRegionFilter;
+import org.opencb.biodata.tools.variant.filtering.VariantSnpFilter;
 
 //import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 

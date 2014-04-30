@@ -5,7 +5,7 @@ import org.opencb.commons.run.Task;
 import java.io.IOException;
 import java.util.List;
 import org.opencb.biodata.models.variant.Variant;
-import org.opencb.commons.bioformats.variant.annotators.VariantAnnotator;
+import org.opencb.biodata.tools.variant.annotation.VariantAnnotator;
 
 /**
  * @author Alejandro Aleman Ramos <aaleman@cipf.es>
