@@ -10,6 +10,7 @@ import org.opencb.commons.run.Task;
 
 /**
  * @author Alejandro Aleman Ramos <aaleman@cipf.es>
+ * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
 public class VariantEffectTask extends Task<Variant> {
 
@@ -22,13 +23,17 @@ public class VariantEffectTask extends Task<Variant> {
 
     @Override
     public boolean apply(List<Variant> batch) throws IOException {
-        List<List<VariantEffect>> batchEffect = EffectCalculator.getEffectPerVariant(batch);
+        List<VariantEffect> batchEffect = EffectCalculator.getEffects(batch);
 
         Iterator<Variant> variantIterator = batch.iterator();
-        Iterator<List<VariantEffect>> effectIterator = batchEffect.iterator();
+        Iterator<VariantEffect> effectIterator = batchEffect.iterator();
 
         while (variantIterator.hasNext() && effectIterator.hasNext()) {
-            variantIterator.next().setEffect(effectIterator.next());
+            VariantEffect effect = effectIterator.next();
+            
+            if (effect != null) { // TODO Could it be that the return effect was null instead of empty?
+                variantIterator.next().setEffect(effect);
+            }
         }
 
         return true;
