@@ -23,6 +23,7 @@ VariantStatsForm.prototype = new GenericFormPanel();
 
 function VariantStatsForm(args) {
     args.analysis = 'hpg-variant.vcf-stats';
+    args.border = false;
     GenericFormPanel.prototype.constructor.call(this, args);
 
     this.id = Utils.genId("VariantStatsForm");
@@ -108,12 +109,12 @@ VariantStatsForm.prototype._getBrowseInputForm = function () {
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Input",
         header:this.headerFormConfig,
-        border: true,
+        border: this.border,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [
             this.createOpencgaBrowserCmp({
-                fieldLabel: 'Input VCF file:',
+                fieldLabel: 'Input VCF file',
                 dataParamName: 'vcf-file',
                 id: this.id + 'vcf-file',
                 mode: 'fileSelection',
@@ -146,13 +147,13 @@ VariantStatsForm.prototype._getBrowseOutputForm = function () {
         title: "Output",
         //cls:'panel-border-top',
         header:this.headerFormConfig,
-        border: true,
+        border: this.border,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [
             file,
             this.createOpencgaBrowserCmp({
-                fieldLabel: 'Output folder:',
+                fieldLabel: 'Output folder',
                 dataParamName: 'output-folder',
                 id: this.id + 'outputFolder',
                 mode: 'fileSelection',

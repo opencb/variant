@@ -4,33 +4,29 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Variant</title>
 
-<link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext/gpl/4.2.1/resources/css/ext-all-gray.css">
-
-<!-- CSS from vendors -->
+<!--<link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext/gpl/4.2.1/resources/css/ext-all-gray.css">-->
+<!--<link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext/gpl/4.2.1/resources/css/ext-all-neptune.css">-->
+<link rel="stylesheet" type="text/css" href="../lib/jsorolla/vendor/ext-5/packages/ext-theme-crisp/build/resources/ext-theme-crisp-all.css">
 <!-- build:style vendor -->
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/ChemDoodleWeb.css"/>
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/jquery.qtip.min.css"/>
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/bootstrap-scoped-dist/css/bootstrap.min.css">
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/typeahead.js-bootstrap.css">
-
 <!-- /build -->
 
-<!-- CSS from Styles -->
 <!-- build:style css -->
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/styles/css/style.css"/>
 <!-- /build -->
 
-<!-- Sencha Ext -->
-<script type="text/javascript" src="http://cdn.sencha.io/ext/gpl/4.2.1/ext-all.js"></script>
-<script type="text/javascript" src="http://cdn.sencha.io/ext/gpl/4.2.1/examples/shared/examples.js"></script>
-
+<!--<script type="text/javascript" src="http://cdn.sencha.io/ext/gpl/4.2.1/ext-all.js"></script>-->
+<!--<script type="text/javascript" src="http://cdn.sencha.io/ext/gpl/4.2.1/examples/shared/examples.js"></script>-->
+<script type="text/javascript" src="../lib/jsorolla/vendor/ext-5/ext-all.js"></script>
 
 <!-- Workers directory -->
 <script type="text/javascript">
     WORKERS_PATH = "./";
 </script>
 
-<!-- JS from vendors -->
 
 <!-- build:script vendor -->
 <script type="text/javascript" src="../lib/jsorolla/vendor/underscore-min.js"></script>
@@ -47,77 +43,83 @@
 <script type="text/javascript" src="../lib/jsorolla/vendor/jquery.mousewheel.min.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/vendor/gl-matrix-min.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/vendor/ChemDoodleWeb.js"></script>
-
-
-<!--<script type="text/javascript" src="../vendor/genome-viewer-1.0.2.js"></script>-->
-<!--<script type="text/javascript" src="../vendor/opencga-1.0.0.js"></script>-->
-
-
 <!-- /build -->
 
 
-<!-- Genome Maps config -->
-<!-- build:script gvconfig -->
+<!-- build:script config -->
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/gv-config.js"></script>
 <!-- /build -->
+
 <script type="text/javascript" src="va-config.js"></script>
 
-<!-- JS from Genome Viewer -->
-<!-- build:script gv -->
+<!-- build:script lib -->
 
 <!-- utils -->
-<script type="text/javascript" src="../lib/jsorolla/src/lib/utils/svg.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/utils/utils.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/svg.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/utils.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/region.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/feature-binary-search-tree.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase-manager.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/ensembl-manager.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga-manager.js"></script>
 
-<!-- ui-widgets -->
-<script type="text/javascript" src="../lib/jsorolla/src/lib/ui-widgets/ux-window.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/cache/memory-store.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/cache/feature-chunk-cache.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/cache/feature-cache.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/cache/bam-cache.js"></script>
 
-<!-- Genome-viewer -->
 
-<!-- cellbase ui-widgets -->
-<script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase/ui-widgets/info-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase/ui-widgets/gene-info-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase/ui-widgets/protein-info-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase/ui-widgets/snp-info-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase/ui-widgets/transcript-info-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase/ui-widgets/vcf-variant-info-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/cellbase-adapter.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/sequence-adapter.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/ensembl-adapter.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/opencga-adapter.js"></script>
 
-<!-- cellbase ws-manager -->
-<script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase/cellbase-manager.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/bam-adapter.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/feature-data-adapter.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/vcf-data-adapter.js"></script>
 
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/data-adapter/cellbase-adapter.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/data-adapter/sequence-adapter.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/data-adapter/opencga-adapter.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/data-adapter/bam-adapter.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/data-adapter/feature-data-adapter.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/data-adapter/vcf-data-adapter.js"></script>
+
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/info-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/gene-info-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/protein-info-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/snp-info-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/transcript-info-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/vcf-variant-info-widget.js"></script>
+
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/file/legend-panel.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/file/legend-widget.js"></script>
+
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/ux-window.js"></script>
 
 <script type="text/javascript" src="../lib/jsorolla/src/lib/data-source/data-source.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/data-source/string-data-source.js"></script>
 
-<script type="text/javascript" src="../lib/jsorolla/src/lib/region.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/feature-binary-search-tree.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/cache/memory-store.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/cache/feature-chunk-cache.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/cache/feature-cache.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/cache/bam-cache.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/generic-form-panel.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/user-list-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/check-browser.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/header-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/job-list-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/login-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/opencga-browser-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/paged-view-list-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/profile-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/result2-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/result-table.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/upload-widget.js"></script>
 
+<!-- **** -->
 
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/navigation-bar.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/chromosome-panel.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/karyotype-panel.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/tracklist-panel.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/status-bar.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/widget/legend-panel.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/widget/legend-widget.js"></script>
 
-
+<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/tracklist-panel.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/track.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/feature-track.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/sequence-track.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/gene-track.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/bam-track.js"></script>
-
 
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/renderer.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/feature-renderer.js"></script>
@@ -129,23 +131,8 @@
 
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/genome-viewer.js"></script>
 
-
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/opencga-manager.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/generic-form-panel.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/ui-widgets/user-list-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/ui-widgets/check-browser.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/ui-widgets/header-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/ui-widgets/job-list-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/ui-widgets/login-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/ui-widgets/opencga-browser-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/ui-widgets/paged-view-list-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/ui-widgets/profile-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/ui-widgets/result2-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/ui-widgets/result-table.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/opencga/ui-widgets/upload-widget.js"></script>
-
 <script type="text/javascript">
-    WORKERS_PATH = "../lib/jsorolla/src/lib/opencga/";
+    WORKERS_PATH = "../lib/jsorolla/src/lib/";
 </script>
 <!-- /build -->
 
@@ -167,15 +154,15 @@
 
 
 <script>
-    Ext.Loader.setConfig({enabled: true});
-    Ext.Loader.setPath('Ext.ux', 'http://cdn.sencha.io/ext/gpl/4.2.1/examples/ux');
-    Ext.QuickTips.init();
-    Ext.require([
-        'Ext.ux.grid.FiltersFeature',
-        'Ext.grid.plugin.BufferedRenderer'
-//	    'Ext.grid.PagingScroller',
-//	    'Ext.ux.data.PagingMemoryProxy'
-    ]);
+//        Ext.Loader.setPath('Ext.ux', 'http://cdn.sencha.io/ext/gpl/4.2.1/examples/ux');
+//        Ext.Loader.setConfig({enabled: true});
+    //    Ext.QuickTips.init();
+    //    Ext.require([
+    //        'Ext.ux.grid.FiltersFeature',
+    //        'Ext.grid.plugin.BufferedRenderer'
+    ////	    'Ext.grid.PagingScroller',
+    ////	    'Ext.ux.data.PagingMemoryProxy'
+    //    ]);
 
     var variant;
     Ext.onReady(function () {
@@ -188,205 +175,284 @@
     });
 </script>
 <STYLE type="text/css">
-    html {
-        overflow: hidden;
-        height: 100%;
-    }
+html {
+    overflow: hidden;
+    height: 100%;
+}
 
-    body {
-        padding: 4px;
-        position: relative;
-        background-color: #f5f5f5;
-        margin: 0px;
-        height: 100%;
-        height: calc(100% - 8px);
+body {
+    height: calc(100% - 8px);
+}
 
-    }
+#application {
+    height: 100%;
+}
 
-    #application {
-        height: 100%;
-    }
+ul.variant-menu {
+    margin: 0;
+    padding: 0;
+    background: white;
+    color: #596F8F;
+    list-style: none;
+    text-transform: none;
+    font-family: 'Oxygen', Arial, sans-serif;
+    line-height: 40px;
+    font-size: 16px;
+}
+ul.variant-menu > li {
+    border-bottom: 1px solid #c6d0da;
+    /*border-left: 1px solid #c6d0da;*/
+    border-right: 1px solid #c6d0da;
+    padding: 0 10px 0 30px;
+}
 
+ul.variant-menu > li.data {
+    color: #5CB85C;
+}
+ul.variant-menu > li.preprocess {
+    color: #428bca;
+}
+ul.variant-menu > li.analysis {
+    color: #eca81f;
+}
+ul.variant-menu > li.visualization {
+    color: #d9534f;
+}
 
-    .hpg-variant.vcf-stats, .variant{
-        /*padding:2px 5px;*/
-        display: inline-block;
-        /*background-color: #e2edf7;*/
-        color:#428bca;
-    }
+ul.variant-menu > li.active {
+    background: #596F8F;
+    color: white;
+}
+ul.variant-menu > li.title {
+    font-size: 14px;
+    padding: 0 10px 0 10px;
+    color: #696969;
+}
+ul.variant-menu > li:first-child {
+    border-top: 1px solid #c6d0da;
+}
+ul.variant-menu > li:hover {
+    background: #d1d9e3;
+    color: #596F8F;
+}
+ul.variant-menu > li.title:hover {
+    background: white;
+    color: #596F8F;
+}
 
-    .hpg-variant.gwas-assoc, .hpg-variant.effect {
-        /*padding:2px 5px;*/
-        display: inline-block;
-        /*background-color: #fcf1dc;*/
-        /*color:#ffffff;*/
-        color:#eca81f;
-    }
+/*.header-panel {*/
+    /*line-height: 33px;*/
+    /*font-size: 14px;*/
+    /*font-family: Oxygen;*/
+    /*background: #596F8F;*/
+    /*color: white;*/
+    /*padding: 4px 30px;*/
+    /*height:0;*/
+    /*border:1px solid #d3d3d3;*/
+/*}*/
 
+.header-form {
+    font-size: 16px;
+    font-family: Oxygen;
+    /*background-color: #f5f5f5;*/
+    padding: 4px 6px;
+    border:1px solid #000000;
+}
 
-    .variant-menu {
-        font-size: 16px;
-        /*background-color: #f8f8f8;*/
-        background-color: #ffffff;
-        padding: 0 10px 0 10px;
-        /*text-align: center;*/
-        /*border-top:1px solid #d3d3d3;*/
-        /*border-right:1px solid #d3d3d3;*/
-    }
+.header-job {
+    line-height: 20px;
+    font-size: 14px;
+    font-family: Oxygen;
+    /*background: #d1d9e3;*/
+    background: #f5f5f5;
+    color: #596F8F;
+    padding: 4px 10px;
+    border:1px solid #c6d0da;
+}
 
-    .home-header {
-        height: 33px;
-        background-color: #d1d9e3;
-    }
-    .home-header-dark {
-        font-size: 16px;
-        color: #FFFFFF;
-        background-color: #596F8F;
-        padding: 7px 10px;
-    }
-    .visualization-header {
-        /*height: 33px;*/
-        background-color: #f9e2e2;
-    }
-    .preprocess-header {
-        font-size: 16px;
-        color: #FFFFFF;
-        background-color: #428bca;
-        padding: 7px 10px;
-    }
-    .preprocess-header-form {
-        font-size: 13px;
-        color: #428bca;
-        background-color: #e2edf7;
-        font-weight: bold;
-        padding: 4px 6px;
-        border:1px solid #d3d3d3;
-    }
+/*.hpg-variant.vcf-stats, .variant {*/
+    /*padding:2px 5px;*/
+    /*display: inline-block;*/
+    /*background-color: #e2edf7;*/
+    /*color: #428bca;*/
+/*}*/
 
-    .analysis-header {
-        font-size: 16px;
-        color: #FFFFFF;
-        background-color: #eca81f;
-        padding: 7px 10px;
-    }
-    .analysis-header-form {
-        font-size: 13px;
-        color: #eca81f;
-        background-color: #fcf1dc;
-        font-weight: bold;
-        padding: 4px 6px;
-        border:1px solid #d3d3d3;
-    }
+/*.hpg-variant.gwas-assoc, .hpg-variant.effect {*/
+    /*padding:2px 5px;*/
+    /*display: inline-block;*/
+    /*background-color: #fcf1dc;*/
+    /*color:#ffffff;*/
+    /*color: #eca81f;*/
+/*}*/
 
+/*.variant-menu {*/
+    /*font-size: 16px;*/
+    /*background-color: #f8f8f8;*/
+    /*background-color: #ffffff;*/
+    /*padding: 0 10px 0 10px;*/
+    /*text-align: center;*/
+    /*border-top:1px solid #d3d3d3;*/
+    /*border-right:1px solid #d3d3d3;*/
+/*}*/
 
-    .visualization-header {
-        font-size: 16px;
-        color: #FFFFFF;
-        background-color: #d9534f;
-        padding: 7px 10px;
-    }
-    .visualization-header-form {
-        font-size: 13px;
-        color: #d9534f;
-        background-color: #f9e2e2;
-        font-weight: bold;
-        padding: 4px 6px;
-        border:1px solid #d3d3d3;
-    }
+/*.home-header {*/
+    /*height: 33px;*/
+    /*background-color: #d1d9e3;*/
+/*}*/
 
-    .variant-menu .header {
-        font-size: 14px;
-        color: gray;
-        margin: 7px 10px 4px 10px;
-        text-align: left;
+/*.home-header-dark {*/
+    /*font-size: 16px;*/
+    /*color: #FFFFFF;*/
+    /*background-color: #596F8F;*/
+    /*padding: 7px 10px;*/
+/*}*/
 
-        /*border-bottom: 1px;*/
-        /*border-bottom-style: solid;*/
-        /*border-bottom-color: #d3d3d3;*/
-    }
+/*.visualization-header {*/
+    /*height: 33px;*/
+    /*background-color: #f9e2e2;*/
+/*}*/
 
-    .variant-menu .home, .home {
-        margin-top: 0px;
-        margin-bottom: 20px;
-        cursor: pointer;
-        color: #596F8F;
-        padding: 7px 20px;
-        /*margin-top: 33px;*/
-    }
+/*.preprocess-header {*/
+    /*font-size: 16px;*/
+    /*color: #FFFFFF;*/
+    /*background-color: #428bca;*/
+    /*padding: 7px 10px;*/
+/*}*/
 
-    .variant-menu .home:hover {
-        background-color: #d1d9e3;
-        text-decoration: underline;
-    }
+/*.preprocess-header-form {*/
+    /*font-size: 13px;*/
+    /*color: #428bca;*/
+    /*background-color: #e2edf7;*/
+    /*font-weight: bold;*/
+    /*padding: 4px 6px;*/
+    /*border: 1px solid #d3d3d3;*/
+/*}*/
 
-    .variant-menu .home.active {
-        color: #ffffff;
-        background-color: #596F8F;
-    }
+/*.analysis-header {*/
+    /*font-size: 16px;*/
+    /*color: #FFFFFF;*/
+    /*background-color: #eca81f;*/
+    /*padding: 7px 10px;*/
+/*}*/
 
-    .variant-menu .data {
-        cursor: pointer;
-        color: #5CB85C;
-        padding: 7px 20px;
-    }
+/*.analysis-header-form {*/
+    /*font-size: 13px;*/
+    /*color: #eca81f;*/
+    /*background-color: #fcf1dc;*/
+    /*font-weight: bold;*/
+    /*padding: 4px 6px;*/
+    /*border: 1px solid #d3d3d3;*/
+/*}*/
 
-    .variant-menu .data:hover {
-        background-color: #e9f6e9;
-        text-decoration: underline;
-    }
+/*.visualization-header {*/
+    /*font-size: 16px;*/
+    /*color: #FFFFFF;*/
+    /*background-color: #d9534f;*/
+    /*padding: 7px 10px;*/
+/*}*/
 
-    /*.variant-menu .data.active {*/
+/*.visualization-header-form {*/
+    /*font-size: 13px;*/
+    /*color: #d9534f;*/
+    /*background-color: #f9e2e2;*/
+    /*font-weight: bold;*/
+    /*padding: 4px 6px;*/
+    /*border: 1px solid #d3d3d3;*/
+/*}*/
+
+/*.variant-menu .header {*/
+    /*font-size: 14px;*/
+    /*color: gray;*/
+    /*margin: 7px 10px 4px 10px;*/
+    /*text-align: left;*/
+
+    /*border-bottom: 1px;*/
+    /*border-bottom-style: solid;*/
+    /*border-bottom-color: #d3d3d3;*/
+/*}*/
+
+/*.variant-menu .home, .home {*/
+    /*margin-top: 0px;*/
+    /*margin-bottom: 20px;*/
+    /*cursor: pointer;*/
+    /*color: #596F8F;*/
+    /*padding: 7px 20px;*/
+    /*margin-top: 33px;*/
+/*}*/
+
+/*.variant-menu .home:hover {*/
+    /*background-color: #d1d9e3;*/
+    /*text-decoration: underline;*/
+/*}*/
+
+/*.variant-menu .home.active {*/
     /*color: #ffffff;*/
-    /*background-color: #5CB85C;*/
-    /*}*/
+    /*background-color: #596F8F;*/
+/*}*/
 
-    .variant-menu .preprocess, .preprocess {
-        cursor: pointer;
-        color: #428bca;
-        padding: 7px 20px;
-    }
+/*.variant-menu .data {*/
+    /*cursor: pointer;*/
+    /*color: #5CB85C;*/
+    /*padding: 7px 20px;*/
+/*}*/
 
-    .variant-menu .preprocess:hover {
-        background-color: #e2edf7;
-        text-decoration: underline;
-    }
+/*.variant-menu .data:hover {*/
+    /*background-color: #e9f6e9;*/
+    /*text-decoration: underline;*/
+/*}*/
 
-    .variant-menu .preprocess.active {
-        color: #ffffff;
-        background-color: #428bca;
-    }
+/*.variant-menu .data.active {*/
+/*color: #ffffff;*/
+/*background-color: #5CB85C;*/
+/*}*/
 
-    .variant-menu .analysis, .analysis {
-        cursor: pointer;
-        color: #eca81f;
-        padding: 7px 20px;
-    }
+/*.variant-menu .preprocess, .preprocess {*/
+    /*cursor: pointer;*/
+    /*color: #428bca;*/
+    /*padding: 7px 20px;*/
+/*}*/
 
-    .variant-menu .analysis:hover {
-        background-color: #fcf1dc;
-        text-decoration: underline;
-    }
+/*.variant-menu .preprocess:hover {*/
+    /*background-color: #e2edf7;*/
+    /*text-decoration: underline;*/
+/*}*/
 
-    .variant-menu .analysis.active {
-        color: #ffffff;
-        background-color: #eca81f;
-    }
+/*.variant-menu .preprocess.active {*/
+    /*color: #ffffff;*/
+    /*background-color: #428bca;*/
+/*}*/
 
-    .variant-menu .visualization, .visualization {
-        cursor: pointer;
-        color: #d9534f;
-        padding: 7px 20px;
-    }
+/*.variant-menu .analysis, .analysis {*/
+    /*cursor: pointer;*/
+    /*color: #eca81f;*/
+    /*padding: 7px 20px;*/
+/*}*/
 
-    .variant-menu .visualization:hover {
-        background-color: #f9e2e2;
-        text-decoration: underline;
-    }
+/*.variant-menu .analysis:hover {*/
+    /*background-color: #fcf1dc;*/
+    /*text-decoration: underline;*/
+/*}*/
 
-    .variant-menu .visualization.active {
-        color: #ffffff;
-        background-color: #d9534f;
-    }
+/*.variant-menu .analysis.active {*/
+    /*color: #ffffff;*/
+    /*background-color: #eca81f;*/
+/*}*/
+
+/*.variant-menu .visualization, .visualization {*/
+    /*cursor: pointer;*/
+    /*color: #d9534f;*/
+    /*padding: 7px 20px;*/
+/*}*/
+
+/*.variant-menu .visualization:hover {*/
+    /*background-color: #f9e2e2;*/
+    /*text-decoration: underline;*/
+/*}*/
+
+/*.variant-menu .visualization.active {*/
+    /*color: #ffffff;*/
+    /*background-color: #d9534f;*/
+/*}*/
 
 </STYLE>
 </head>

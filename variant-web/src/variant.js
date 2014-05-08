@@ -8,9 +8,9 @@ function Variant(args) {
     this.suiteId = 6;
     this.title = '<span class="emph">Vari</span>ant <span class="emph">an</span>alysis <span class="emph">t</span>ool';
     this.description = 'beta';
-    this.version = '2.0.4';
+    this.version = '2.0.5';
     this.tools = ["hpg-variant.effect", "variant", "hpg-variant.vcf-stats", "hpg-variant.gwas-assoc", "hpg-variant.gwas-tdt"];
-    this.border = true;
+    this.border = false;
     this.targetId;
     this.width;
     this.height;
@@ -34,13 +34,12 @@ Variant.prototype = {
     render: function (targetId) {
         var _this = this;
         this.targetId = (targetId) ? targetId : this.targetId;
-        if ($('#' + this.targetId).length < 1) {
-            console.log('targetId not found in DOM');
+        this.targetDiv = (this.targetId instanceof HTMLElement ) ? this.targetId : $('#' + this.targetId)[0];
+        if (this.targetDiv === 'undefined') {
+            console.log('targetId not found');
             return;
         }
 
-        console.log("Initializing Variant");
-        this.targetDiv = $('#' + this.targetId)[0];
         this.div = $('<div id="variant" style="height:100%;position:relative;"></div>')[0];
         $(this.targetDiv).append(this.div);
 
@@ -63,7 +62,7 @@ Variant.prototype = {
         $(this.leftDiv).css({
             position: 'absolute',
             height: '100%',
-            width: leftDivWidth + 'px'
+            width: leftDivWidth + 'px',
         });
 
         this.contentDiv = $('<div id="content"></div>')[0];
@@ -71,7 +70,8 @@ Variant.prototype = {
             position: 'absolute',
             height: '100%',
             left: leftDivWidth + 'px',
-            width: 'calc( 100% - ' + leftDivWidth + 'px)'
+            width: 'calc( 100% - ' + leftDivWidth + 'px)',
+            'border-top': '1px solid #c6d0da'
         });
 
         $(this.wrapDiv).append(this.leftDiv);
@@ -107,12 +107,12 @@ Variant.prototype = {
         }
 
         /* Header Widget */
-        this.headerWidget = this._createHeaderWidget($(this.headerWidgetDiv).attr('id'));
+        this.headerWidget = this._createHeaderWidget(this.headerWidgetDiv);
 
         /* Header Widget */
         this.menu = this._createMenu($(this.menuDiv).attr('id'));
 
-        this.variantMenu = this._createVariantMenu($(this.leftDiv).attr('id'));
+        this.variantMenu = this._createVariantMenu(this.leftDiv);
 
         /* check height */
         var topOffset = $(this.headerWidgetDiv).height() + $(this.menuDiv).height();
@@ -139,19 +139,18 @@ Variant.prototype = {
         /* Job List Widget */
         this.jobListWidget = this._createJobListWidget($(this.sidePanelDiv).attr('id'));
 
-
         this.variantStatsForm = new VariantStatsForm({
             webapp: this,
             closable: false,
             width: '50%',
             testing: true,
-            title: 'Stats',
-            bodyPadding:'15 0 0 40',
-            headerConfig: {
-                baseCls: 'preprocess-header'
-            },
+//            title: 'Stats',
+            bodyPadding: '15 0 0 40',
+//            headerConfig: {
+//                baseCls: 'header-panel'
+//            },
             headerFormConfig: {
-                baseCls: 'preprocess-header-form'
+                baseCls: 'header-form'
             }
         });
         this.variantStatsForm.draw();
@@ -161,12 +160,12 @@ Variant.prototype = {
             width: '50%',
             testing: true,
             title: 'Merge',
-            bodyPadding:'15 0 0 40',
+            bodyPadding: '15 0 0 40',
             headerConfig: {
                 baseCls: 'preprocess-header'
             },
             headerFormConfig: {
-                baseCls: 'preprocess-header-form'
+                baseCls: 'header-form'
             }
         });
         this.variantMergeForm.draw();
@@ -178,27 +177,28 @@ Variant.prototype = {
             width: '50%',
             testing: true,
             title: 'GWAS',
-            bodyPadding:'15 0 0 40',
+            bodyPadding: '15 0 0 40',
             headerConfig: {
                 baseCls: 'analysis-header'
             },
             headerFormConfig: {
-                baseCls: 'analysis-header-form'
+                baseCls: 'header-form'
             }
         });
         this.variantGwasForm.draw();
         this.variantEffectForm = new VariantEffectForm({
             webapp: this,
             closable: false,
-            width: '50%',
+            width: 600,
             testing: false,
-            title: 'Effect',
-            bodyPadding:'15 0 0 40',
-            headerConfig: {
-                baseCls: 'analysis-header'
-            },
+            border:false,
+//            title: 'Effect',
+            bodyPadding: '15 0 0 40',
+//            headerConfig: {
+//                baseCls: 'analysis-header'
+//            },
             headerFormConfig: {
-                baseCls: 'analysis-header-form'
+                baseCls: 'header-form'
             }
         });
         this.variantEffectForm.draw();
@@ -210,12 +210,12 @@ Variant.prototype = {
             width: '50%',
             testing: true,
             title: 'Index',
-            bodyPadding:'15 0 0 40',
+            bodyPadding: '15 0 0 40',
             headerConfig: {
                 baseCls: 'visualization-header'
             },
             headerFormConfig: {
-                baseCls: 'visualization-header-form'
+                baseCls: 'header-form'
             }
         });
         this.variantIndexForm.draw();
@@ -238,6 +238,10 @@ Variant.prototype = {
             version: this.version,
             suiteId: this.suiteId,
             accountData: this.accountData,
+            homeLink: "http://variant.bioinfo.cipf.es",
+            helpLink: "http://docs.bioinfo.cipf.es/projects/variant",
+            tutorialLink: "http://docs.bioinfo.cipf.es/projects/variant/wiki/Tutorial",
+            aboutText: '',
             handlers: {
                 'login': function (event) {
                     Ext.example.msg('Welcome', 'You logged in');
@@ -293,98 +297,190 @@ Variant.prototype = {
     _createVariantMenu: function (targetId) {
         var _this = this;
 
-        var toolbar = Ext.create('Ext.container.Container', {
-            renderTo: targetId,
-            cls: 'variant-menu',
-            layout: {
-                type: 'vbox',
-                align: 'stretch'
-            },
-            height: '100%',
-            defaults: {
-                xtype: 'box',
-                listeners: {
-                    afterrender: function (box) {
-                        var el = this.getEl();
-                        el.on('click', function () {
-                            if (!box.hasCls('header') && !box.hasCls('data')) {
-                                var cont = box.up('container');
-                                cont.items.each(function (item) {
-                                    item.removeCls('active');
-                                });
-                                box.addCls('active');
+        var targetDiv = (targetId instanceof HTMLElement ) ? targetId : $('#' + targetId)[0];
+        var menuHtml = '' +
+            '<div>' +
+            '   <ul class="variant-menu">' +
+            '       <li id="home" class="active">Home</li>' +
+            '       <li id="data" class="title">Data</li>' +
+            '       <li id="upload" class="data">Upload</li>' +
+            '       <li id="preprocess" class="title">Preprocess</li>' +
+            '       <li id="stats" class="preprocess">Stats</li>' +
+            '       <li id="merge" class="preprocess">Merge</li>' +
+            '       <li id="filter" class="preprocess">Filter</li>' +
+            '       <li id="annot" class="preprocess">Annot</li>' +
+            '       <li id="analysis" class="title">Analysis</li>' +
+            '       <li id="gwas" class="analysis">GWAS</li>' +
+            '       <li id="effect" class="analysis">Effect</li>' +
+            '       <li id="visualization" class="title">Visualization</li>' +
+//            '       <li id="index" class="visualization">Index</li>' +
+            '       <li id="results" class="visualization">Results</li>' +
+            '   </ul>'
+        '</div>' +
+        '';
 
-                            }
-                            var text = el.getHTML();
-                            switch (text) {
-                                case "Home":
-                                    _this.container.removeAll(false);
-                                    _this.container.add(_this.homePanel);
-                                    break;
-                                case "Results":
-                                    _this.container.removeAll(false);
-                                    _this.container.add(_this.panel);
-                                    break;
-                                case "Upload":
-                                    _this.headerWidget.opencgaBrowserWidget.show({mode: 'manager'});
-                                    break;
-                                case "Stats":
-                                    _this.container.removeAll(false);
-                                    _this.container.add(_this.variantStatsForm.panel);
-                                    break;
-                                case "Merge":
-                                    _this.container.removeAll(false);
-                                    _this.container.add(_this.variantMergeForm.panel);
-                                    break;
-                                case "Filter":
-                                    _this.container.removeAll(false);
-                                    _this.container.add();
-                                    break;
-                                case "Annot":
-                                    _this.container.removeAll(false);
-                                    _this.container.add();
-                                    break;
-
-                                case "GWAS":
-                                    _this.container.removeAll(false);
-                                    _this.container.add(_this.variantGwasForm.panel);
-                                    break;
-                                case "Effect":
-                                    _this.container.removeAll(false);
-                                    _this.container.add(_this.variantEffectForm.panel);
-                                    break;
-
-                                case "Index":
-                                    _this.container.removeAll(false);
-                                    _this.container.add(_this.variantIndexForm.panel);
-                                    break;
-                            }
-                        });
-                    }
-                }
-            },
-            items: [
-                {html: "Home", cls: 'home active'},
-
-                {html: "Data", cls: 'header'},
-                {html: "Upload", cls: 'data'},
-//
-                {html: "Preprocess", cls: 'header'},
-                {html: "Stats", cls: 'preprocess'},
-                {html: "Merge", cls: 'preprocess'},
-                {html: "Filter", cls: 'preprocess'},
-                {html: "Annot", cls: 'preprocess'},
-
-                {html: "Analysis", cls: 'header'},
-                {html: "GWAS", cls: 'analysis'},
-                {html: "Effect", cls: 'analysis'},
-
-                {html: "Visualization", cls: 'header'},
-                {html: "Index", cls: 'visualization'},
-                {html: "Results", cls: 'visualization'}
-            ]
+        var div = $('<div class="unselectable bootstrap">' + menuHtml + '</div>')[0];
+        $(div).css({
+            height: '50px',
+            position: 'relative'
         });
-        return toolbar;
+        $(targetDiv).append(div);
+
+        var els = $(this.div).find('ul').children();
+        var domEls = {};
+        for (var i = 0; i < els.length; i++) {
+            var elid = els[i].getAttribute('id');
+            if (elid) {
+                domEls[elid] = els[i];
+            }
+        }
+        $(div).click(function (e) {
+            if (!$(e.target).hasClass('title')) {
+                $(div).find('ul').children().each(function (index, el) {
+                    $(el).removeClass('active');
+                });
+                $(e.target).addClass('active');
+                var text = $(e.target).text();
+                switch (text) {
+                    case "Home":
+                        _this.container.removeAll(false);
+                        _this.container.add(_this.homePanel);
+                        break;
+                    case "Results":
+                        _this.container.removeAll(false);
+                        _this.container.add(_this.panel);
+                        break;
+                    case "Upload":
+                        _this.headerWidget.opencgaBrowserWidget.show({mode: 'manager'});
+                        break;
+                    case "Stats":
+                        _this.container.removeAll(false);
+                        _this.container.add(_this.variantStatsForm.panel);
+                        break;
+                    case "Merge":
+                        _this.container.removeAll(false);
+                        _this.container.add(_this.variantMergeForm.panel);
+                        break;
+                    case "Filter":
+                        _this.container.removeAll(false);
+                        _this.container.add();
+                        break;
+                    case "Annot":
+                        _this.container.removeAll(false);
+                        _this.container.add();
+                        break;
+
+                    case "GWAS":
+                        _this.container.removeAll(false);
+                        _this.container.add(_this.variantGwasForm.panel);
+                        break;
+                    case "Effect":
+                        _this.container.removeAll(false);
+                        _this.container.add(_this.variantEffectForm.panel);
+                        break;
+
+                    case "Index":
+                        _this.container.removeAll(false);
+                        _this.container.add(_this.variantIndexForm.panel);
+                        break;
+                }
+
+            }
+        });
+
+
+//        var toolbar = Ext.create('Ext.container.Container', {
+//            renderTo: targetId,
+//            cls: 'variant-menu',
+//            layout: {
+//                type: 'vbox',
+//                align: 'stretch'
+//            },
+//            height: '100%',
+//            defaults: {
+//                xtype: 'box',
+//                listeners: {
+//                    afterrender: function (box) {
+//                        var el = this.getEl();
+//                        el.on('click', function () {
+//                            if (!box.hasCls('header') && !box.hasCls('data')) {
+//                                var cont = box.up('container');
+//                                cont.items.each(function (item) {
+//                                    item.removeCls('active');
+//                                });
+//                                box.addCls('active');
+//
+//                            }
+//                            var text = $(el.dom).text()
+//                            switch (text) {
+//                                case "Home":
+//                                    _this.container.removeAll(false);
+//                                    _this.container.add(_this.homePanel);
+//                                    break;
+//                                case "Results":
+//                                    _this.container.removeAll(false);
+//                                    _this.container.add(_this.panel);
+//                                    break;
+//                                case "Upload":
+//                                    _this.headerWidget.opencgaBrowserWidget.show({mode: 'manager'});
+//                                    break;
+//                                case "Stats":
+//                                    _this.container.removeAll(false);
+//                                    _this.container.add(_this.variantStatsForm.panel);
+//                                    break;
+//                                case "Merge":
+//                                    _this.container.removeAll(false);
+//                                    _this.container.add(_this.variantMergeForm.panel);
+//                                    break;
+//                                case "Filter":
+//                                    _this.container.removeAll(false);
+//                                    _this.container.add();
+//                                    break;
+//                                case "Annot":
+//                                    _this.container.removeAll(false);
+//                                    _this.container.add();
+//                                    break;
+//
+//                                case "GWAS":
+//                                    _this.container.removeAll(false);
+//                                    _this.container.add(_this.variantGwasForm.panel);
+//                                    break;
+//                                case "Effect":
+//                                    _this.container.removeAll(false);
+//                                    _this.container.add(_this.variantEffectForm.panel);
+//                                    break;
+//
+//                                case "Index":
+//                                    _this.container.removeAll(false);
+//                                    _this.container.add(_this.variantIndexForm.panel);
+//                                    break;
+//                            }
+//                        });
+//                    }
+//                }
+//            },
+//            items: [
+//                {html: "Home", cls: 'home active'},
+//
+//                {html: "Data", cls: 'header'},
+//                {html: "Upload", cls: 'data'},
+////
+//                {html: "Preprocess", cls: 'header'},
+//                {html: "Stats", cls: 'preprocess'},
+//                {html: "Merge", cls: 'preprocess'},
+//                {html: "Filter", cls: 'preprocess'},
+//                {html: "Annot", cls: 'preprocess'},
+//
+//                {html: "Analysis", cls: 'header'},
+//                {html: "GWAS", cls: 'analysis'},
+//                {html: "Effect", cls: 'analysis'},
+//
+//                {html: "Visualization", cls: 'header'},
+//                {html: "Index", cls: 'visualization'},
+//                {html: "Results", cls: 'visualization'}
+//            ]
+//        });
+//        return toolbar;
     },
 
 
@@ -393,15 +489,15 @@ Variant.prototype = {
 
         var homePanel = Ext.create('Ext.panel.Panel', {
             border: 0,
-            header:{
-                baseCls:'home-header'
-            },
+//            header: {
+//                baseCls: 'header-panel'
+//            },
             items: [
                 {
                     xtype: 'container',
-                    style:{fontSize:'15px', color:'dimgray'},
+                    style: {fontSize: '15px', color: 'dimgray'},
                     html: SUITE_INFO,
-                    margin: '30 0 0 30',
+                    margin: '0 0 0 30',
                     autoScroll: true
                 }
             ]
@@ -445,7 +541,7 @@ Variant.prototype = {
                 border: true,
                 'mode': 'view',
                 headerConfig: {
-                    baseCls: 'home-header-dark'
+                    baseCls: 'header-job'
                 }
             }
         });
@@ -733,8 +829,6 @@ Variant.prototype.jobItemClick = function (record) {
                 item.removeCls('active');
             }
         });
-
-
 
 
         Ext.getCmp(this.id + 'jobsButton').toggle(false);
