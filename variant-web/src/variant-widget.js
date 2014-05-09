@@ -42,11 +42,13 @@ VariantWidget.prototype = {
             filename: this.dbName,
             jobId: this.job.id,
             success: function (data, textStatus, jqXHR) {
-                _this.variantInfo = JSON.parse(data);
+                //console.log(data);
+                //_this.variantInfo = JSON.parse(data.response);
 
-                _this._draw();
+                //_this._draw();
             }
         });
+                _this._draw();
     },
     _draw: function () {
         this.optValues = Ext.create('Ext.data.Store', {
