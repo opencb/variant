@@ -6,8 +6,8 @@ function Variant(args) {
 
     //set default args
     this.suiteId = 6;
-    this.title = '<span class="emph">Vari</span>ant <span class="emph">an</span>alysis <span class="emph">t</span>ool';
-    this.description = 'beta';
+    this.title = 'Variant'
+    this.description = '<span class="emph">Vari</span>ant <span class="emph">an</span>alysis <span class="emph">t</span>ool';
     this.version = '2.0.5';
     this.tools = ["hpg-variant.effect", "variant", "hpg-variant.vcf-stats", "hpg-variant.gwas-assoc", "hpg-variant.gwas-tdt"];
     this.border = false;
@@ -45,14 +45,9 @@ Variant.prototype = {
 
         this.headerWidgetDiv = $('<div id="header-widget"></div>')[0];
         $(this.div).append(this.headerWidgetDiv);
-        this.menuDiv = $('<div id="menu"></div>')[0];
-        $(this.div).append(this.menuDiv);
         this.wrapDiv = $('<div id="wrap" style="height:100%;position:relative;"></div>')[0];
         $(this.div).append(this.wrapDiv);
 
-        $(this.menuDiv).css({
-
-        });
 
         this.sidePanelDiv = $('<div id="right-side-panel" style="position:absolute; z-index:50;right:0px;"></div>')[0];
         $(this.wrapDiv).append(this.sidePanelDiv);
@@ -109,18 +104,13 @@ Variant.prototype = {
         /* Header Widget */
         this.headerWidget = this._createHeaderWidget(this.headerWidgetDiv);
 
-        /* Header Widget */
-        this.menu = this._createMenu($(this.menuDiv).attr('id'));
-
         this.variantMenu = this._createVariantMenu(this.leftDiv);
 
         /* check height */
-        var topOffset = $(this.headerWidgetDiv).height() + $(this.menuDiv).height();
+        var topOffset = $(this.headerWidgetDiv).height();
         $(this.wrapDiv).css({height: 'calc(100% - ' + topOffset + 'px)'});
 
-
         this.homePanel = this._createHomePanel();
-
 
         this.container = Ext.create('Ext.panel.Panel', {
             renderTo: $(this.contentDiv).attr('id'),
@@ -134,7 +124,6 @@ Variant.prototype = {
         this.panel = this._createPanel(this.container);
 
         this.container.add(this.homePanel);
-//        this.menuFormPanel = this._createPanel($(this.contentDiv).attr('id'));
 
         /* Job List Widget */
         this.jobListWidget = this._createJobListWidget($(this.sidePanelDiv).attr('id'));
@@ -244,55 +233,26 @@ Variant.prototype = {
             aboutText: '',
             handlers: {
                 'login': function (event) {
-                    Ext.example.msg('Welcome', 'You logged in');
+                    Utils.msg('Welcome', 'You logged in');
                     _this.sessionInitiated();
                 },
                 'logout': function (event) {
-                    Ext.example.msg('Good bye', 'You logged out');
+                    Utils.msg('Good bye', 'You logged out');
                     _this.sessionFinished();
 
                 },
                 'account:change': function (event) {
                     _this.setAccountData(event.response);
 
+                },
+                'jobs:click':function(){
+                    _this.jobListWidget.toggle();
                 }
             }
         });
         headerWidget.draw();
 
         return headerWidget;
-    },
-    _createMenu: function (targetId) {
-        var _this = this;
-
-        var toolbar = Ext.create('Ext.toolbar.Toolbar', {
-            id: this.id + "navToolbar",
-            renderTo: targetId,
-            cls: 'jso-white-background whiteborder bootstrap',
-            region: "north",
-            width: '100%',
-            border: false,
-            items: [
-                '->',
-                {
-                    id: this.id + 'jobsButton',
-                    tooltip: 'Show Jobs',
-                    text: '<span class="emph"> Hide jobs </span>',
-                    enableToggle: true,
-                    pressed: true,
-                    toggleHandler: function () {
-                        if (this.pressed) {
-                            this.setText('<span class="emph"> Hide jobs </span>');
-                            _this.jobListWidget.show();
-                        } else {
-                            this.setText('<span class="emph"> Show jobs </span>');
-                            _this.jobListWidget.hide();
-                        }
-                    }
-                }
-            ]
-        });
-        return toolbar;
     },
     _createVariantMenu: function (targetId) {
         var _this = this;
@@ -387,100 +347,6 @@ Variant.prototype = {
 
             }
         });
-
-
-//        var toolbar = Ext.create('Ext.container.Container', {
-//            renderTo: targetId,
-//            cls: 'variant-menu',
-//            layout: {
-//                type: 'vbox',
-//                align: 'stretch'
-//            },
-//            height: '100%',
-//            defaults: {
-//                xtype: 'box',
-//                listeners: {
-//                    afterrender: function (box) {
-//                        var el = this.getEl();
-//                        el.on('click', function () {
-//                            if (!box.hasCls('header') && !box.hasCls('data')) {
-//                                var cont = box.up('container');
-//                                cont.items.each(function (item) {
-//                                    item.removeCls('active');
-//                                });
-//                                box.addCls('active');
-//
-//                            }
-//                            var text = $(el.dom).text()
-//                            switch (text) {
-//                                case "Home":
-//                                    _this.container.removeAll(false);
-//                                    _this.container.add(_this.homePanel);
-//                                    break;
-//                                case "Results":
-//                                    _this.container.removeAll(false);
-//                                    _this.container.add(_this.panel);
-//                                    break;
-//                                case "Upload":
-//                                    _this.headerWidget.opencgaBrowserWidget.show({mode: 'manager'});
-//                                    break;
-//                                case "Stats":
-//                                    _this.container.removeAll(false);
-//                                    _this.container.add(_this.variantStatsForm.panel);
-//                                    break;
-//                                case "Merge":
-//                                    _this.container.removeAll(false);
-//                                    _this.container.add(_this.variantMergeForm.panel);
-//                                    break;
-//                                case "Filter":
-//                                    _this.container.removeAll(false);
-//                                    _this.container.add();
-//                                    break;
-//                                case "Annot":
-//                                    _this.container.removeAll(false);
-//                                    _this.container.add();
-//                                    break;
-//
-//                                case "GWAS":
-//                                    _this.container.removeAll(false);
-//                                    _this.container.add(_this.variantGwasForm.panel);
-//                                    break;
-//                                case "Effect":
-//                                    _this.container.removeAll(false);
-//                                    _this.container.add(_this.variantEffectForm.panel);
-//                                    break;
-//
-//                                case "Index":
-//                                    _this.container.removeAll(false);
-//                                    _this.container.add(_this.variantIndexForm.panel);
-//                                    break;
-//                            }
-//                        });
-//                    }
-//                }
-//            },
-//            items: [
-//                {html: "Home", cls: 'home active'},
-//
-//                {html: "Data", cls: 'header'},
-//                {html: "Upload", cls: 'data'},
-////
-//                {html: "Preprocess", cls: 'header'},
-//                {html: "Stats", cls: 'preprocess'},
-//                {html: "Merge", cls: 'preprocess'},
-//                {html: "Filter", cls: 'preprocess'},
-//                {html: "Annot", cls: 'preprocess'},
-//
-//                {html: "Analysis", cls: 'header'},
-//                {html: "GWAS", cls: 'analysis'},
-//                {html: "Effect", cls: 'analysis'},
-//
-//                {html: "Visualization", cls: 'header'},
-//                {html: "Index", cls: 'visualization'},
-//                {html: "Results", cls: 'visualization'}
-//            ]
-//        });
-//        return toolbar;
     },
 
 
@@ -497,7 +363,7 @@ Variant.prototype = {
                     xtype: 'container',
                     style: {fontSize: '15px', color: 'dimgray'},
                     html: SUITE_INFO,
-                    margin: '0 0 0 30',
+                    margin: '20 0 0 50',
                     autoScroll: true
                 }
             ]
@@ -539,10 +405,7 @@ Variant.prototype = {
                 'width': 280,
                 'height': 625,
                 border: true,
-                'mode': 'view',
-                headerConfig: {
-                    baseCls: 'header-job'
-                }
+                'mode': 'view'
             }
         });
 
@@ -679,115 +542,112 @@ Variant.prototype = {
         return panel;
 
     },
-    _createMenuAnalysisFormPanel: function () {
-        var _this = this;
-
-        var st = Ext.create('Ext.data.Store', {
-            id: 'menuStore',
-            fields: [
-                {
-                    name: "name", type: 'string'
-                },
-                {
-                    name: "form", type: 'auto'
-                }
-            ],
-            data: [
-                {name: "GWAS", form: "gwas"},
-                {name: "Effect", form: "effect"}
-
-            ]
-        });
-
-        var menuTpl = new Ext.XTemplate(
-            '<div class="" style="margin: 15px; 0 0 10px;">',
-            '<tpl for=".">',
-//            '<div style="margin: 10px; border: 1px solid lightgray; padding: 10px" class="menu-list-item">',
-            '<div class="btn btn-warning menu-list-item" style="display: block;margin: 10px;">',
-            '{name}',
-            '</div>',
-            '</tpl>',
-            '</div>'
-        );
-
-        var view = Ext.create('Ext.view.View', {
-            store: st,
-            tpl: menuTpl,
-            trackOver: true,
-            autoScroll: true,
-            selectedItemCls: 'active',
-            cls: 'bootstrap',
-            overItemCls: 'list-item-hover',
-            itemSelector: '.menu-list-item',
-            listeners: {
-                itemclick: function (este, record) {
-                    console.log(este);
-                    console.log(record);
-
-                    var p = Ext.getCmp(_this.id + "variantCustomAnalysisFormPanel");
-                    p.removeAll(false);
-
-                    var form = null;
-                    console.log(record.data.form);
-                    switch (record.data.form) {
-                        case "effect":
-                            form = _this.variantEffectForm.panel;
-                            break;
-                        case "gwas":
-                            form = _this.variantGwasForm.panel;
-                            break;
-
-                    }
-
-                    console.log(form);
-                    if (form != null) {
-                        p.add(form);
-                    }
-                }
-
-            }
-        });
-
-        var panel = Ext.create('Ext.container.Container', {
-                title: 'Analysis',
-                layout: 'hbox',
-                border: 0,
-                items: [
-                    {
-                        xtype: 'container',
-//                        title: 'Analysis',
-//                        flex: 1,
-                        width: 120,
-                        margin: '0 5 0 0',
-                        items: [view]
-                    },
-                    {
-                        xtype: 'container',
-                        height: "100%",
-                        margin: 10,
-                        id: _this.id + "variantCustomAnalysisFormPanel",
-//                        title: 'FORM',
-                        autoScroll: true,
-                        flex: 1
-                    }
-                ]
-            }
-        );
-
-        return panel;
-
-    }
+//    _createMenuAnalysisFormPanel: function () {
+//        var _this = this;
+//
+//        var st = Ext.create('Ext.data.Store', {
+//            id: 'menuStore',
+//            fields: [
+//                {
+//                    name: "name", type: 'string'
+//                },
+//                {
+//                    name: "form", type: 'auto'
+//                }
+//            ],
+//            data: [
+//                {name: "GWAS", form: "gwas"},
+//                {name: "Effect", form: "effect"}
+//
+//            ]
+//        });
+//
+//        var menuTpl = new Ext.XTemplate(
+//            '<div class="" style="margin: 15px; 0 0 10px;">',
+//            '<tpl for=".">',
+////            '<div style="margin: 10px; border: 1px solid lightgray; padding: 10px" class="menu-list-item">',
+//            '<div class="btn btn-warning menu-list-item" style="display: block;margin: 10px;">',
+//            '{name}',
+//            '</div>',
+//            '</tpl>',
+//            '</div>'
+//        );
+//
+//        var view = Ext.create('Ext.view.View', {
+//            store: st,
+//            tpl: menuTpl,
+//            trackOver: true,
+//            autoScroll: true,
+//            selectedItemCls: 'active',
+//            cls: 'bootstrap',
+//            overItemCls: 'list-item-hover',
+//            itemSelector: '.menu-list-item',
+//            listeners: {
+//                itemclick: function (este, record) {
+//                    console.log(este);
+//                    console.log(record);
+//
+//                    var p = Ext.getCmp(_this.id + "variantCustomAnalysisFormPanel");
+//                    p.removeAll(false);
+//
+//                    var form = null;
+//                    console.log(record.data.form);
+//                    switch (record.data.form) {
+//                        case "effect":
+//                            form = _this.variantEffectForm.panel;
+//                            break;
+//                        case "gwas":
+//                            form = _this.variantGwasForm.panel;
+//                            break;
+//
+//                    }
+//
+//                    console.log(form);
+//                    if (form != null) {
+//                        p.add(form);
+//                    }
+//                }
+//
+//            }
+//        });
+//
+//        var panel = Ext.create('Ext.container.Container', {
+//                title: 'Analysis',
+//                layout: 'hbox',
+//                border: 0,
+//                items: [
+//                    {
+//                        xtype: 'container',
+////                        title: 'Analysis',
+////                        flex: 1,
+//                        width: 120,
+//                        margin: '0 5 0 0',
+//                        items: [view]
+//                    },
+//                    {
+//                        xtype: 'container',
+//                        height: "100%",
+//                        margin: 10,
+//                        id: _this.id + "variantCustomAnalysisFormPanel",
+////                        title: 'FORM',
+//                        autoScroll: true,
+//                        flex: 1
+//                    }
+//                ]
+//            }
+//        );
+//
+//        return panel;
+//
+//    }
 }
 Variant.prototype.sessionInitiated = function () {
-    Ext.getCmp(this.id + 'jobsButton').enable();
-    Ext.getCmp(this.id + 'jobsButton').toggle(true);
-    //this.jobListWidget.draw();
+    this.jobListWidget.show();
     //this.dataListWidget.draw();
 };
 
 Variant.prototype.sessionFinished = function () {
-    Ext.getCmp(this.id + 'jobsButton').disable();
-    Ext.getCmp(this.id + 'jobsButton').toggle(false);
+    this.jobListWidget.hide();
 
     this.jobListWidget.clean();
     this.accountData = null;
