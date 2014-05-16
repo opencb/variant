@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.opencb.commons.bioformats.variant.VariantStudy;
+import org.opencb.commons.bioformats.variant.VariantSource;
 
 import java.util.Arrays;
 
@@ -51,7 +51,7 @@ public class CalculateStatsTest {
     @Test
     public void testCalculateStatsList() throws Exception {
 
-        VariantStudy study = new VariantStudy("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList("hola", "adios"));
+        VariantSource study = new VariantSource("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList("hola", "adios"));
 
 //        VariantRunner vr = new VariantStatsRunner(study, new VariantVcfDataReader(vcfFileName), null, new VariantVcfSqliteWriter(dbFilename));
 //        vr.run();
