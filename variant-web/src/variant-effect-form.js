@@ -155,7 +155,7 @@ VariantEffectForm.prototype._getSpeciesForm = function () {
     var speciesForm = Ext.create('Ext.panel.Panel', {
         title: "Species",
         header: this.headerFormConfig,
-        border: this.border,
+        border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: []
@@ -210,7 +210,7 @@ VariantEffectForm.prototype._getBrowseForm = function () {
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Select your data",
         header: this.headerFormConfig,
-        border: this.border,
+        border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [note1, this.createOpencgaBrowserCmp({
@@ -236,7 +236,7 @@ VariantEffectForm.prototype._getExampleForm = function () {
             afterrender: function () {
                 this.getEl().on("click", function () {
                     _this.loadExample1();
-                    Ext.example.msg("Example loaded", "");
+                    Utils.msg("Example loaded", "");
                 });
 
             }
@@ -249,7 +249,7 @@ VariantEffectForm.prototype._getExampleForm = function () {
             afterrender: function () {
                 this.getEl().on("click", function () {
                     _this.loadExample2();
-                    Ext.example.msg("Example loaded", "");
+                    Utils.msg("Example loaded", "");
                 });
 
             }
@@ -261,7 +261,7 @@ VariantEffectForm.prototype._getExampleForm = function () {
         cls: 'bootstrap',
         title:'Examples',
         header: this.headerFormConfig,
-        border: this.border,
+        border: this.formBorder,
         items: [this.note1, example1],
         defaults: {margin: '5 0 0 0'},
         margin: '0 0 10 0'
@@ -354,7 +354,7 @@ VariantEffectForm.prototype._getFilterForm = function () {
     var formFilterOptions = Ext.create('Ext.form.Panel', {
         title: "Input data filter options",
         header: this.headerFormConfig,
-        border: this.border,
+        border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: items
@@ -435,7 +435,7 @@ VariantEffectForm.prototype._getOutputForm = function () {
     var pan = Ext.create('Ext.form.Panel', {
         title: "Output options",
         header: this.headerFormConfig,
-        border: this.border,
+        border: this.formBorder,
         padding: "5 0 0 0",
         flex: 1,
         bodyPadding: 10,
@@ -490,7 +490,7 @@ VariantEffectForm.prototype.loadExample1 = function () {
 VariantEffectForm.prototype.loadExample2 = function () {
 
 
-    Ext.getCmp(this.id + 'vcf-file').setText('<span class="emph">Example 2</span>', false);
+    Ext.getCmp(this.id + 'vcf-file').update('<span class="emph">Example 2</span>', false);
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_1000genomes_5000_variants.vcf');
 
 

@@ -6,9 +6,11 @@ function Variant(args) {
 
     //set default args
     this.suiteId = 6;
-    this.title = 'Variant'
-    this.description = '<span class="emph">Vari</span>ant <span class="emph">an</span>alysis <span class="emph">t</span>ool';
-    this.version = '2.0.5';
+    this.title = 'VARIANT'
+//    this.description = '<span class="emph">Vari</span>ant <span class="emph">an</span>alysis <span class="emph">t</span>ool';
+//    this.description = '';
+    this.description = 'Variant analysis tool'
+    this.version = '2.0.6';
     this.tools = ["hpg-variant.effect", "variant", "hpg-variant.vcf-stats", "hpg-variant.gwas-assoc", "hpg-variant.gwas-tdt"];
     this.border = false;
     this.targetId;
@@ -40,36 +42,56 @@ Variant.prototype = {
             return;
         }
 
-        this.div = $('<div id="variant" style="height:100%;position:relative;"></div>')[0];
+        this.div = $('<div id="variant"></div>')[0];
+        $(this.div).css({
+            position: 'relative',
+            height: '100%'
+        });
         $(this.targetDiv).append(this.div);
 
         this.headerWidgetDiv = $('<div id="header-widget"></div>')[0];
+        $(this.wrapDiv).css({
+
+        });
         $(this.div).append(this.headerWidgetDiv);
-        this.wrapDiv = $('<div id="wrap" style="height:100%;position:relative;"></div>')[0];
+        this.wrapDiv = $('<div id="wrap"></div>')[0];
+        $(this.wrapDiv).css({
+            position: 'relative',
+            height: '100%',
+            background: '#314559'
+        });
         $(this.div).append(this.wrapDiv);
 
 
-        this.sidePanelDiv = $('<div id="right-side-panel" style="position:absolute; z-index:50;right:0px;"></div>')[0];
-        $(this.wrapDiv).append(this.sidePanelDiv);
-
-        var leftDivWidth = 150;
-        this.leftDiv = $('<div id="left"></div>')[0];
-        $(this.leftDiv).css({
+        this.rightDiv = $('<div id="right-side-panel"></div>')[0];
+        $(this.rightDiv).css({
             position: 'absolute',
-            height: '100%',
-            width: leftDivWidth + 'px',
+            'z-index': '50',
+            right: '0px'
         });
+        $(this.wrapDiv).append(this.rightDiv);
+
+        this.leftDivWidth = 150;
+//        this.leftDiv = $('<div id="left"></div>')[0];
+//        $(this.leftDiv).css({
+//            position: 'absolute',
+//            height: '100%',
+//            width: leftDivWidth + 'px',
+//            background: '#314559'
+////            'border-top': '1px solid #c6d0da'
+//        });
+//        $(this.wrapDiv).append(this.leftDiv);
 
         this.contentDiv = $('<div id="content"></div>')[0];
         $(this.contentDiv).css({
             position: 'absolute',
             height: '100%',
-            left: leftDivWidth + 'px',
-            width: 'calc( 100% - ' + leftDivWidth + 'px)',
-            'border-top': '1px solid #c6d0da'
+//            left: leftDivWidth + 'px',
+//            width: 'calc( 100% - ' + leftDivWidth + 'px)',
+//            paddingLeft:leftDivWidth
+//            borderTop: '1px solid #C6D0DA'
         });
 
-        $(this.wrapDiv).append(this.leftDiv);
         $(this.wrapDiv).append(this.contentDiv);
 
         this.width = ($(this.div).width());
@@ -100,17 +122,16 @@ Variant.prototype = {
             console.info('Variant is not rendered yet');
             return;
         }
+        this.variantMenuEl = this._createVariantMenuEl();
 
         /* Header Widget */
         this.headerWidget = this._createHeaderWidget(this.headerWidgetDiv);
 
-        this.variantMenu = this._createVariantMenu(this.leftDiv);
 
         /* check height */
         var topOffset = $(this.headerWidgetDiv).height();
         $(this.wrapDiv).css({height: 'calc(100% - ' + topOffset + 'px)'});
 
-        this.homePanel = this._createHomePanel();
 
         this.container = Ext.create('Ext.panel.Panel', {
             renderTo: $(this.contentDiv).attr('id'),
@@ -120,21 +141,27 @@ Variant.prototype = {
             layout: 'fit'
         });
 
-        /* Wrap Panel */
-        this.panel = this._createPanel(this.container);
+        this.homePanel = this._createHomePanel();
+        this.resultPanel = this._createResultPanel(this.container);
 
         this.container.add(this.homePanel);
 
         /* Job List Widget */
-        this.jobListWidget = this._createJobListWidget($(this.sidePanelDiv).attr('id'));
+        this.jobListWidget = this._createJobListWidget($(this.rightDiv).attr('id'));
 
         this.variantStatsForm = new VariantStatsForm({
             webapp: this,
             closable: false,
             width: '50%',
             testing: true,
+            formBorder: false,
+            border: false,
+            style: {
+                borderTop: '1px solid #d1d9e3'
+            },
 //            title: 'Stats',
-            bodyPadding: '15 0 0 40',
+//            bodyPadding: '15 0 0 40',
+            bodyPadding: '20 0 0 200',
 //            headerConfig: {
 //                baseCls: 'header-panel'
 //            },
@@ -148,11 +175,16 @@ Variant.prototype = {
             closable: false,
             width: '50%',
             testing: true,
-            title: 'Merge',
-            bodyPadding: '15 0 0 40',
-            headerConfig: {
-                baseCls: 'preprocess-header'
+            formBorder: false,
+            border: false,
+            style: {
+                borderTop: '1px solid #d1d9e3'
             },
+//            title: 'Merge',
+            bodyPadding: '20 0 0 200',
+//            headerConfig: {
+//                baseCls: 'preprocess-header'
+//            },
             headerFormConfig: {
                 baseCls: 'header-form'
             }
@@ -165,11 +197,17 @@ Variant.prototype = {
             closable: false,
             width: '50%',
             testing: true,
-            title: 'GWAS',
-            bodyPadding: '15 0 0 40',
-            headerConfig: {
-                baseCls: 'analysis-header'
+            formBorder: false,
+            border: false,
+            style: {
+                borderTop: '1px solid #d1d9e3'
             },
+//            title: 'GWAS',
+//            bodyPadding: '15 0 0 40',
+            bodyPadding: '20 0 0 200',
+//            headerConfig: {
+//                baseCls: 'analysis-header'
+//            },
             headerFormConfig: {
                 baseCls: 'header-form'
             }
@@ -180,9 +218,13 @@ Variant.prototype = {
             closable: false,
             width: 600,
             testing: false,
-            border:false,
+            formBorder: false,
+            border: false,
+            style: {
+                borderTop: '1px solid #d1d9e3'
+            },
 //            title: 'Effect',
-            bodyPadding: '15 0 0 40',
+            bodyPadding: '20 0 0 200',
 //            headerConfig: {
 //                baseCls: 'analysis-header'
 //            },
@@ -198,11 +240,16 @@ Variant.prototype = {
             closable: false,
             width: '50%',
             testing: true,
-            title: 'Index',
-            bodyPadding: '15 0 0 40',
-            headerConfig: {
-                baseCls: 'visualization-header'
+            formBorder: false,
+            border: false,
+            style: {
+                borderTop: '1px solid #d1d9e3'
             },
+//            title: 'Index',
+            bodyPadding: '20 0 0 200',
+//            headerConfig: {
+//                baseCls: 'visualization-header'
+//            },
             headerFormConfig: {
                 baseCls: 'header-form'
             }
@@ -231,6 +278,7 @@ Variant.prototype = {
             helpLink: "http://docs.bioinfo.cipf.es/projects/variant",
             tutorialLink: "http://docs.bioinfo.cipf.es/projects/variant/wiki/Tutorial",
             aboutText: '',
+            applicationMenuEl: this.variantMenuEl,
             handlers: {
                 'login': function (event) {
                     Utils.msg('Welcome', 'You logged in');
@@ -245,7 +293,7 @@ Variant.prototype = {
                     _this.setAccountData(event.response);
 
                 },
-                'jobs:click':function(){
+                'jobs:click': function () {
                     _this.jobListWidget.toggle();
                 }
             }
@@ -254,16 +302,14 @@ Variant.prototype = {
 
         return headerWidget;
     },
-    _createVariantMenu: function (targetId) {
+    _createVariantMenuEl: function () {
         var _this = this;
 
-        var targetDiv = (targetId instanceof HTMLElement ) ? targetId : $('#' + targetId)[0];
         var menuHtml = '' +
-            '<div>' +
-            '   <ul class="variant-menu">' +
+            '   <ul class="ocb-app-menu unselectable">' +
             '       <li id="home" class="active">Home</li>' +
-            '       <li id="data" class="title">Data</li>' +
-            '       <li id="upload" class="data">Upload</li>' +
+//            '       <li id="data" class="title">Data</li>' +
+//            '       <li id="upload" class="data">Upload</li>' +
             '       <li id="preprocess" class="title">Preprocess</li>' +
             '       <li id="stats" class="preprocess">Stats</li>' +
             '       <li id="merge" class="preprocess">Merge</li>' +
@@ -276,17 +322,11 @@ Variant.prototype = {
 //            '       <li id="index" class="visualization">Index</li>' +
             '       <li id="results" class="visualization">Results</li>' +
             '   </ul>'
-        '</div>' +
         '';
 
-        var div = $('<div class="unselectable bootstrap">' + menuHtml + '</div>')[0];
-        $(div).css({
-            height: '50px',
-            position: 'relative'
-        });
-        $(targetDiv).append(div);
+        var ul = $(menuHtml)[0];
 
-        var els = $(this.div).find('ul').children();
+        var els = $(ul).children();
         var domEls = {};
         for (var i = 0; i < els.length; i++) {
             var elid = els[i].getAttribute('id');
@@ -294,9 +334,9 @@ Variant.prototype = {
                 domEls[elid] = els[i];
             }
         }
-        $(div).click(function (e) {
+        $(ul).click(function (e) {
             if (!$(e.target).hasClass('title')) {
-                $(div).find('ul').children().each(function (index, el) {
+                $(ul).find('ul').children().each(function (index, el) {
                     $(el).removeClass('active');
                 });
                 $(e.target).addClass('active');
@@ -308,7 +348,7 @@ Variant.prototype = {
                         break;
                     case "Results":
                         _this.container.removeAll(false);
-                        _this.container.add(_this.panel);
+                        _this.container.add(_this.resultPanel);
                         break;
                     case "Upload":
                         _this.headerWidget.opencgaBrowserWidget.show({mode: 'manager'});
@@ -347,6 +387,7 @@ Variant.prototype = {
 
             }
         });
+        return ul;
     },
 
 
@@ -354,24 +395,30 @@ Variant.prototype = {
         var _this = this;
 
         var homePanel = Ext.create('Ext.panel.Panel', {
+            bodyStyle: {
+                fontSize: '22px',
+                lineHeight: '30px',
+                fontWeight: '300',
+                color: '#ccc',
+                background: '#314559',
+                padding: '20px 0 0 200px'
+            },
             border: 0,
+            html: SUITE_INFO,
 //            header: {
 //                baseCls: 'header-panel'
 //            },
-            items: [
-                {
-                    xtype: 'container',
-                    style: {fontSize: '15px', color: 'dimgray'},
-                    html: SUITE_INFO,
-                    margin: '20 0 0 50',
-                    autoScroll: true
-                }
-            ]
+//            items: [
+//                {
+//                    xtype: 'container',
+//                    autoScroll: true
+//                }
+//            ]
         });
         return homePanel;
     },
 
-    _createPanel: function (targetId) {
+    _createResultPanel: function (targetId) {
 
         var panel = Ext.create('Ext.tab.Panel', {
 //            renderTo: targetId,
@@ -652,7 +699,7 @@ Variant.prototype.sessionFinished = function () {
     this.jobListWidget.clean();
     this.accountData = null;
 
-    this.panel.items.each(function (child) {
+    this.resultPanel.items.each(function (child) {
         if (child.title != 'Home') {
             child.destroy();
         }
@@ -670,7 +717,7 @@ Variant.prototype.setSize = function (width, height) {
     this.height = height;
     this.headerWidget.setWidth(width);
     this.menu.setWidth($(this.menuDiv).width());
-    this.panel.setWidth($(this.contentDiv).width());
+    this.resultPanel.setWidth($(this.contentDiv).width());
 };
 
 Variant.prototype.jobItemClick = function (record) {
@@ -680,15 +727,15 @@ Variant.prototype.jobItemClick = function (record) {
     this.jobId = record.data.id;
     if (record.data.visites >= 0) {
         this.container.removeAll(false);
-        this.container.add(this.panel);
+        this.container.add(this.resultPanel);
 
-        this.variantMenu.items.each(function (item) {
-            if (item.getEl().getHTML() == 'Results') {
-                item.addCls('active');
-            } else {
-                item.removeCls('active');
-            }
-        });
+//        this.variantMenu.items.each(function (item) {
+//            if (item.getEl().getHTML() == 'Results') {
+//                item.addCls('active');
+//            } else {
+//                item.removeCls('active');
+//            }
+//        });
 
 
         Ext.getCmp(this.id + 'jobsButton').toggle(false);
@@ -697,7 +744,7 @@ Variant.prototype.jobItemClick = function (record) {
 //        if (toolName == 'variant') {
 //            record.raw.command = Utils.parseJobCommand(record.raw);
 //            var variantWidget = new VariantWidget({
-//                targetId: this.panel,
+//                targetId: this.resultPanel,
 //                title: record.raw.name,
 //                job: record.raw,
 //                autoRender: true
@@ -706,7 +753,7 @@ Variant.prototype.jobItemClick = function (record) {
 //        } else if (toolName == "hpg-variant.vcf-stats") {
 //            record.raw.command = Utils.parseJobCommand(record.raw);
 //            var variantStatsWidget = new VariantStatsWidget({
-//                targetId: this.panel,
+//                targetId: this.resultPanel,
 //                title: record.raw.name,
 //                job: record.raw,
 //                autoRender: true
@@ -717,7 +764,7 @@ Variant.prototype.jobItemClick = function (record) {
             record.raw.command = Utils.parseJobCommand(record.raw);
 
             var variantGwasWidget = new VariantGwasWidget({
-                targetId: this.panel,
+                targetId: this.resultPanel,
                 title: record.raw.name,
                 job: record.raw,
                 autoRender: true
@@ -726,7 +773,7 @@ Variant.prototype.jobItemClick = function (record) {
         }
         else {
             var resultWidget = new ResultWidget({
-                targetId: this.panel.getId(),
+                targetId: this.resultPanel.getId(),
                 application: 'variant',
                 app: this,
                 layoutName: record.raw.toolName
@@ -756,20 +803,20 @@ Variant.prototype._checkLogin = function (showForm) {
 Variant.prototype.showEffectForm = function () {
     var _this = this;
     var showForm = function () {
-        if (!_this.panel.contains(_this.variantEffectForm.panel)) {
-            _this.panel.add(_this.variantEffectForm.panel);
+        if (!_this.resultPanel.contains(_this.variantEffectForm.panel)) {
+            _this.resultPanel.add(_this.variantEffectForm.panel);
         }
-        _this.panel.setActiveTab(_this.variantEffectForm.panel);
+        _this.resultPanel.setActiveTab(_this.variantEffectForm.panel);
     };
     this._checkLogin(showForm);
 };
 Variant.prototype.showIndexForm = function () {
     var _this = this;
     var showForm = function () {
-        if (!_this.panel.contains(_this.variantIndexForm.panel)) {
-            _this.panel.add(_this.variantIndexForm.panel);
+        if (!_this.resultPanel.contains(_this.variantIndexForm.panel)) {
+            _this.resultPanel.add(_this.variantIndexForm.panel);
         }
-        _this.panel.setActiveTab(_this.variantIndexForm.panel);
+        _this.resultPanel.setActiveTab(_this.variantIndexForm.panel);
     };
     this._checkLogin(showForm);
 };

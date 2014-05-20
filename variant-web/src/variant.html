@@ -1,13 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset=utf-8">
+<meta name="viewport" content="width=device-width">
 <title>Variant</title>
 
 <!--<link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext/gpl/4.2.1/resources/css/ext-all-gray.css">-->
 <!--<link rel="stylesheet" type="text/css" href="http://cdn.sencha.io/ext/gpl/4.2.1/resources/css/ext-all-neptune.css">-->
-<link rel="stylesheet" type="text/css" href="../lib/jsorolla/vendor/ext-5-beta/theme-babel-all.css">
 <!-- build:style vendor -->
+<link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/ext-5-beta/theme-babel-all.css">
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/ChemDoodleWeb.css"/>
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/jquery.qtip.min.css"/>
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/bootstrap-scoped-dist/css/bootstrap.min.css">
@@ -20,15 +21,14 @@
 
 <!--<script type="text/javascript" src="http://cdn.sencha.io/ext/gpl/4.2.1/ext-all.js"></script>-->
 <!--<script type="text/javascript" src="http://cdn.sencha.io/ext/gpl/4.2.1/examples/shared/examples.js"></script>-->
-<script type="text/javascript" src="../lib/jsorolla/vendor/ext-5-beta/ext-all.js"></script>
 
-<!-- Workers directory -->
 <script type="text/javascript">
     WORKERS_PATH = "./";
 </script>
 
 
 <!-- build:script vendor -->
+<script type="text/javascript" src="../lib/jsorolla/vendor/ext-5-beta/ext-all.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/vendor/underscore-min.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/vendor/backbone-min.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/vendor/rawdeflate.js"></script>
@@ -53,8 +53,6 @@
 <script type="text/javascript" src="va-config.js"></script>
 
 <!-- build:script lib -->
-
-<!-- utils -->
 <script type="text/javascript" src="../lib/jsorolla/src/lib/svg.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/utils.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/region.js"></script>
@@ -136,8 +134,6 @@
 </script>
 <!-- /build -->
 
-
-<!-- APP ui-widgets-->
 <!-- build:script js -->
 <script type="text/javascript" src="variant.js"></script>
 <script type="text/javascript" src="variant-effect-form.js"></script>
@@ -165,7 +161,7 @@
 
     var variant;
     Ext.onReady(function () {
-        CheckBrowser("variant");
+//        CheckBrowser("variant");
         variant = new Variant({
             targetId: 'application',
             autoRender: true
@@ -175,12 +171,17 @@
 </script>
 <STYLE type="text/css">
 html {
+    position:fixed;
     overflow: hidden;
     height: 100%;
+    width: 100%;
+    /*margin-right: 300px;*/
+    /*margin-left: 300px;*/
 }
 
 body {
-    height: calc(100% - 8px);
+    /*height: calc(100% - 8px);*/
+    height: 100%;
     background-color: #ffffff;
 }
 
@@ -188,53 +189,56 @@ body {
     height: 100%;
 }
 
-ul.variant-menu {
-    margin: 0;
-    padding: 0;
-    background: #ffffff;
-    color: #435f7a;
-    list-style: none;
-    text-transform: none;
-    line-height: 40px;
-    font-size: 16px;
-}
-ul.variant-menu > li {
-    border-bottom: 1px solid #c6d0da;
+/*ul.variant-menu {*/
+    /*margin: 0;*/
+    /*padding: 0;*/
+    /*background: #ffffff;*/
+    /*color: #435f7a;*/
+    /*list-style: none;*/
+    /*text-transform: none;*/
+    /*line-height: 40px;*/
+    /*font-size: 16px;*/
+/*}*/
+/*ul.variant-menu > li {*/
+    /*border-bottom: 1px solid #c6d0da;*/
     /*border-left: 1px solid #c6d0da;*/
-    border-right: 1px solid #c6d0da;
+    /*border-right: 1px solid #c6d0da;*/
+    /*padding: 0 10px 0 30px;*/
+/*}*/
+
+/*ul.ocb-app-menu > li.data {*/
+    /*color: #5CB85C;*/
+/*}*/
+ul.ocb-app-menu > li#home {
+    padding: 0 10px 0 30px;
+}
+ul.ocb-app-menu > li.preprocess {
+    color: #428bca;
+    padding: 0 10px 0 30px;
+}
+ul.ocb-app-menu > li.analysis {
+    color: #eca81f;
+    padding: 0 10px 0 30px;
+}
+ul.ocb-app-menu > li.visualization {
+    color: #d9534f;
     padding: 0 10px 0 30px;
 }
 
-ul.variant-menu > li.data {
-    color: #5CB85C;
+ul.ocb-app-menu > li.active {
+    background: #d1d9e3;
+    color: #435f7a;
 }
-ul.variant-menu > li.preprocess {
-    color: #428bca;
-}
-ul.variant-menu > li.analysis {
-    color: #eca81f;
-}
-ul.variant-menu > li.visualization {
-    color: #d9534f;
-}
-
-ul.variant-menu > li.active {
-    background: #435f7a;
-    color: white;
-}
-ul.variant-menu > li.title {
+ul.ocb-app-menu > li.title {
     font-size: 14px;
     padding: 0 10px 0 10px;
     color: #696969;
 }
-ul.variant-menu > li:first-child {
-    border-top: 1px solid #c6d0da;
-}
-ul.variant-menu > li:hover {
+ul.ocb-app-menu > li:hover {
     background: #d1d9e3;
     color: #435f7a;
 }
-ul.variant-menu > li.title:hover {
+ul.ocb-app-menu > li.title:hover {
     background: white;
     color: #435f7a;
 }
