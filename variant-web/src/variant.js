@@ -283,6 +283,8 @@ Variant.prototype = {
         } else {
             this.sessionFinished();
         }
+                        
+        //this.container.add(this.variantFilterForm.panel);
     },
     _createHeaderWidget: function (targetId) {
         var _this = this;

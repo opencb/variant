@@ -109,9 +109,12 @@ VariantGwasForm.prototype._getExampleForm = function () {
         }
     });
 
-    var exampleForm = Ext.create('Ext.container.Container', {
+    var exampleForm = Ext.create('Ext.panel.Panel', {
         bodyPadding: 10,
         cls:'bootstrap',
+        title: 'Examples',
+        header: this.headerFormConfig,
+        border: this.formBorder,
         items: [this.note1, example1],
         defaults: {margin: '5 0 0 0'},
         margin:'0 0 10 0'
@@ -249,7 +252,7 @@ VariantGwasForm.prototype._getTestForm = function () {
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Test",
         header:this.headerFormConfig,
-        border: true,
+        border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [radioGroupTest, radioGroupFunction]
