@@ -8,8 +8,8 @@ function Variant(args) {
     this.suiteId = 6;
     this.title = 'VARIANT'
 //    this.description = '<span class="emph">Vari</span>ant <span class="emph">an</span>alysis <span class="emph">t</span>ool';
-//    this.description = '';
-    this.description = 'Variant analysis tool'
+    this.description = 'Home';
+//    this.description = 'Variant analysis tool'
     this.version = '2.0.6';
     this.tools = ["hpg-variant.effect", "variant", "hpg-variant.vcf-stats", "hpg-variant.gwas-assoc", "hpg-variant.gwas-tdt"];
     this.border = false;
@@ -44,8 +44,9 @@ Variant.prototype = {
 
         this.div = $('<div id="variant"></div>')[0];
         $(this.div).css({
-            position: 'relative',
-            height: '100%'
+            position: 'absolute',
+            height: '100%',
+            width: '100%'
         });
         $(this.targetDiv).append(this.div);
 
@@ -56,8 +57,9 @@ Variant.prototype = {
         $(this.div).append(this.headerWidgetDiv);
         this.wrapDiv = $('<div id="wrap"></div>')[0];
         $(this.wrapDiv).css({
-            position: 'relative',
+            position: 'absolute',
             height: '100%',
+            width: '100%',
             background: '#314559'
         });
         $(this.div).append(this.wrapDiv);
@@ -86,10 +88,7 @@ Variant.prototype = {
         $(this.contentDiv).css({
             position: 'absolute',
             height: '100%',
-//            left: leftDivWidth + 'px',
-//            width: 'calc( 100% - ' + leftDivWidth + 'px)',
-//            paddingLeft:leftDivWidth
-//            borderTop: '1px solid #C6D0DA'
+            width: '100%'
         });
 
         $(this.wrapDiv).append(this.contentDiv);
@@ -133,7 +132,7 @@ Variant.prototype = {
         $(this.wrapDiv).css({height: 'calc(100% - ' + topOffset + 'px)'});
 
 
-        this.container = Ext.create('Ext.panel.Panel', {
+        this.container = Ext.create('Ext.container.Container', {
             renderTo: $(this.contentDiv).attr('id'),
             border: 0,
             width: '100%',
@@ -142,7 +141,7 @@ Variant.prototype = {
         });
 
         this.homePanel = this._createHomePanel();
-        this.resultPanel = this._createResultPanel(this.container);
+        this.resultPanel = this._createResultPanel();
 
         this.container.add(this.homePanel);
 
@@ -190,6 +189,27 @@ Variant.prototype = {
             }
         });
         this.variantMergeForm.draw();
+
+        this.variantFilterForm = new VariantFilterForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            formBorder: false,
+            border: false,
+            style: {
+                borderTop: '1px solid #d1d9e3'
+            },
+//            title: 'Filter',
+            bodyPadding: '20 0 0 200',
+//            headerConfig: {
+//                baseCls: 'preprocess-header'
+//            },
+            headerFormConfig: {
+                baseCls: 'header-form'
+            }
+        });
+        this.variantFilterForm.draw();
 
 
         this.variantGwasForm = new VariantGwasForm({
@@ -336,15 +356,18 @@ Variant.prototype = {
         }
         $(ul).click(function (e) {
             if (!$(e.target).hasClass('title')) {
-                $(ul).find('ul').children().each(function (index, el) {
+                $(ul).children().each(function (index, el) {
                     $(el).removeClass('active');
                 });
                 $(e.target).addClass('active');
                 var text = $(e.target).text();
+                _this.headerWidget.setDescription(text);
                 switch (text) {
                     case "Home":
+                        _this.jobListWidget.hide();
                         _this.container.removeAll(false);
                         _this.container.add(_this.homePanel);
+                        _this.headerWidget.toogleAppMenu(false);
                         break;
                     case "Results":
                         _this.container.removeAll(false);
@@ -363,7 +386,7 @@ Variant.prototype = {
                         break;
                     case "Filter":
                         _this.container.removeAll(false);
-                        _this.container.add();
+                        _this.container.add(_this.variantFilterForm.panel);
                         break;
                     case "Annot":
                         _this.container.removeAll(false);
@@ -392,8 +415,6 @@ Variant.prototype = {
 
 
     _createHomePanel: function () {
-        var _this = this;
-
         var homePanel = Ext.create('Ext.panel.Panel', {
             bodyStyle: {
                 fontSize: '22px',
@@ -404,34 +425,24 @@ Variant.prototype = {
                 padding: '20px 0 0 200px'
             },
             border: 0,
-            html: SUITE_INFO,
-//            header: {
-//                baseCls: 'header-panel'
-//            },
-//            items: [
-//                {
-//                    xtype: 'container',
-//                    autoScroll: true
-//                }
-//            ]
+            html: SUITE_INFO
         });
         return homePanel;
     },
 
-    _createResultPanel: function (targetId) {
-
+    _createResultPanel: function () {
         var panel = Ext.create('Ext.tab.Panel', {
-//            renderTo: targetId,
+//            tabBar: {
+//                baseCls: 'visualization-header',
+//                height: 33,
+//                padding: '12 0 0 5'
+//            },
             width: '100%',
             height: '100%',
-            tabBar: {
-                baseCls: 'visualization-header',
-                height: 33,
-                padding: '12 0 0 5'
-            },
 //            plain:true,
+//            padding: '0 0 0 200px',
             border: 0,
-            activeTab: 0,
+//            activeTab: 0,
             items: []
         });
         return panel;
@@ -463,230 +474,7 @@ Variant.prototype = {
         jobListWidget.draw();
 
         return jobListWidget;
-    },
-
-    _createMenuPreToolsFormPanel: function (option) {
-        var _this = this;
-
-
-        var panel = Ext.create('Ext.container.Container', {
-                title: 'Preprocess',
-                layout: 'hbox',
-                border: 0,
-                items: [
-                    {
-                        xtype: 'container',
-//                        title: 'Preprocess',
-//                        flex: 1,
-                        width: 120,
-                        items: [view]
-                    },
-                    {
-                        xtype: 'container',
-                        height: "100%",
-                        margin: 10,
-                        id: _this.id + "variantCustomFormPanel",
-//                        title: 'FORM',
-                        autoScroll: true,
-                        flex: 1
-                    }
-                ]
-            }
-        );
-
-        return panel;
-
-    },
-    _createMenuVisualizationFormPanel: function () {
-        var _this = this;
-
-        var st = Ext.create('Ext.data.Store', {
-            id: 'menuStore',
-            fields: [
-                {
-                    name: "name", type: 'string'
-                },
-                {
-                    name: "form", type: 'auto'
-                }
-            ],
-            data: [
-                {name: "Index", form: "index"}
-
-            ]
-        });
-
-        var menuTpl = new Ext.XTemplate(
-            '<div class="" style="margin: 15px; 0 0 10px;">',
-            '<tpl for=".">',
-//            '<div style="margin: 10px; border: 1px solid lightgray; padding: 10px" class="menu-list-item">',
-            '<div class="btn btn-danger menu-list-item" style="display: block;margin: 10px;">',
-            '{name}',
-            '</div>',
-            '</tpl>',
-            '</div>'
-        );
-
-        var view = Ext.create('Ext.view.View', {
-            store: st,
-            tpl: menuTpl,
-            trackOver: true,
-            autoScroll: true,
-            selectedItemCls: 'active',
-            cls: 'bootstrap',
-            overItemCls: 'list-item-hover',
-            itemSelector: '.menu-list-item',
-            listeners: {
-                itemclick: function (este, record) {
-                    console.log(este);
-                    console.log(record);
-
-                    var p = Ext.getCmp(_this.id + "variantCustomIndexFormPanel");
-                    p.removeAll(false);
-
-                    var form = null;
-                    console.log(record.data.form);
-                    switch (record.data.form) {
-                        case "index":
-                            form = _this.variantIndexForm.panel;
-                            break;
-                    }
-
-                    console.log(form);
-                    if (form != null) {
-                        p.add(form);
-                    }
-                }
-
-            }
-        });
-
-        var panel = Ext.create('Ext.container.Container', {
-                title: 'Visualization',
-                layout: 'hbox',
-                border: 0,
-                items: [
-                    {
-                        xtype: 'container',
-//                        title: 'Visualization',
-//                        flex: 1,
-                        width: 120,
-                        margin: '0 5 0 0',
-                        items: [view]
-                    },
-                    {
-                        xtype: 'container',
-                        height: "100%",
-                        id: _this.id + "variantCustomIndexFormPanel",
-//                        title: 'FORM',
-                        autoScroll: true,
-                        flex: 1
-                    }
-                ]
-            }
-        );
-
-        return panel;
-
-    },
-//    _createMenuAnalysisFormPanel: function () {
-//        var _this = this;
-//
-//        var st = Ext.create('Ext.data.Store', {
-//            id: 'menuStore',
-//            fields: [
-//                {
-//                    name: "name", type: 'string'
-//                },
-//                {
-//                    name: "form", type: 'auto'
-//                }
-//            ],
-//            data: [
-//                {name: "GWAS", form: "gwas"},
-//                {name: "Effect", form: "effect"}
-//
-//            ]
-//        });
-//
-//        var menuTpl = new Ext.XTemplate(
-//            '<div class="" style="margin: 15px; 0 0 10px;">',
-//            '<tpl for=".">',
-////            '<div style="margin: 10px; border: 1px solid lightgray; padding: 10px" class="menu-list-item">',
-//            '<div class="btn btn-warning menu-list-item" style="display: block;margin: 10px;">',
-//            '{name}',
-//            '</div>',
-//            '</tpl>',
-//            '</div>'
-//        );
-//
-//        var view = Ext.create('Ext.view.View', {
-//            store: st,
-//            tpl: menuTpl,
-//            trackOver: true,
-//            autoScroll: true,
-//            selectedItemCls: 'active',
-//            cls: 'bootstrap',
-//            overItemCls: 'list-item-hover',
-//            itemSelector: '.menu-list-item',
-//            listeners: {
-//                itemclick: function (este, record) {
-//                    console.log(este);
-//                    console.log(record);
-//
-//                    var p = Ext.getCmp(_this.id + "variantCustomAnalysisFormPanel");
-//                    p.removeAll(false);
-//
-//                    var form = null;
-//                    console.log(record.data.form);
-//                    switch (record.data.form) {
-//                        case "effect":
-//                            form = _this.variantEffectForm.panel;
-//                            break;
-//                        case "gwas":
-//                            form = _this.variantGwasForm.panel;
-//                            break;
-//
-//                    }
-//
-//                    console.log(form);
-//                    if (form != null) {
-//                        p.add(form);
-//                    }
-//                }
-//
-//            }
-//        });
-//
-//        var panel = Ext.create('Ext.container.Container', {
-//                title: 'Analysis',
-//                layout: 'hbox',
-//                border: 0,
-//                items: [
-//                    {
-//                        xtype: 'container',
-////                        title: 'Analysis',
-////                        flex: 1,
-//                        width: 120,
-//                        margin: '0 5 0 0',
-//                        items: [view]
-//                    },
-//                    {
-//                        xtype: 'container',
-//                        height: "100%",
-//                        margin: 10,
-//                        id: _this.id + "variantCustomAnalysisFormPanel",
-////                        title: 'FORM',
-//                        autoScroll: true,
-//                        flex: 1
-//                    }
-//                ]
-//            }
-//        );
-//
-//        return panel;
-//
-//    }
+    }
 }
 Variant.prototype.sessionInitiated = function () {
     this.jobListWidget.show();
@@ -704,6 +492,10 @@ Variant.prototype.sessionFinished = function () {
             child.destroy();
         }
     })
+
+    this.container.removeAll(false);
+    this.container.add(this.homePanel);
+    this.headerWidget.toogleAppMenu(false);
 };
 
 
@@ -723,6 +515,8 @@ Variant.prototype.setSize = function (width, height) {
 Variant.prototype.jobItemClick = function (record) {
     var _this = this;
 
+    this.headerWidget.toogleAppMenu(false);
+    this.headerWidget.setDescription('Results');
 
     this.jobId = record.data.id;
     if (record.data.visites >= 0) {
@@ -737,36 +531,33 @@ Variant.prototype.jobItemClick = function (record) {
 //            }
 //        });
 
-
-        Ext.getCmp(this.id + 'jobsButton').toggle(false);
-
-        var toolName = record.raw.toolName;
+        var toolName = record.data.toolName;
 //        if (toolName == 'variant') {
-//            record.raw.command = Utils.parseJobCommand(record.raw);
+//            record.data.command = Utils.parseJobCommand(record.data);
 //            var variantWidget = new VariantWidget({
 //                targetId: this.resultPanel,
-//                title: record.raw.name,
-//                job: record.raw,
+//                title: record.data.name,
+//                job: record.data,
 //                autoRender: true
 //            });
-//            variantWidget.draw();
+//            variantWidget.data();
 //        } else if (toolName == "hpg-variant.vcf-stats") {
-//            record.raw.command = Utils.parseJobCommand(record.raw);
+//            record.data.command = Utils.parseJobCommand(record.data);
 //            var variantStatsWidget = new VariantStatsWidget({
 //                targetId: this.resultPanel,
-//                title: record.raw.name,
-//                job: record.raw,
+//                title: record.data.name,
+//                job: record.data,
 //                autoRender: true
 //            });
 //            variantStatsWidget.draw();
 //        } else
         if (toolName == "hpg-variant.gwas-tdt" || toolName == "hpg-variant.gwas-assoc") {
-            record.raw.command = Utils.parseJobCommand(record.raw);
+            record.data.command = Utils.parseJobCommand(record.data);
 
             var variantGwasWidget = new VariantGwasWidget({
                 targetId: this.resultPanel,
-                title: record.raw.name,
-                job: record.raw,
+                title: record.data.name,
+                job: record.data,
                 autoRender: true
             });
             variantGwasWidget.draw();
@@ -776,7 +567,7 @@ Variant.prototype.jobItemClick = function (record) {
                 targetId: this.resultPanel.getId(),
                 application: 'variant',
                 app: this,
-                layoutName: record.raw.toolName
+                layoutName: record.data.toolName
             });
             resultWidget.draw($.cookie('bioinfo_sid'), record);
 

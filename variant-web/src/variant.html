@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta charset=utf-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 <title>Variant</title>
 
@@ -101,7 +101,7 @@
 <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/opencga-browser-widget.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/paged-view-list-widget.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/profile-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/result2-widget.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/result-widget.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/result-table.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/opencga/upload-widget.js"></script>
 
@@ -136,21 +136,23 @@
 
 <!-- build:script js -->
 <script type="text/javascript" src="variant.js"></script>
-<script type="text/javascript" src="variant-effect-form.js"></script>
-<script type="text/javascript" src="variant-index-form.js"></script>
-<script type="text/javascript" src="variant-gwas-form.js"></script>
-<script type="text/javascript" src="variant-effect-form.js"></script>
-<script type="text/javascript" src="variant-stats-form.js"></script>
-<script type="text/javascript" src="variant-merge-form.js"></script>
+
 <script type="text/javascript" src="variant-widget.js"></script>
 <script type="text/javascript" src="variant-filter-widget.js"></script>
 <script type="text/javascript" src="variant-stats-widget.js"></script>
 <script type="text/javascript" src="variant-gwas-widget.js"></script>
+
+<script type="text/javascript" src="variant-index-form.js"></script>
+<script type="text/javascript" src="variant-stats-form.js"></script>
+<script type="text/javascript" src="variant-merge-form.js"></script>
+<script type="text/javascript" src="variant-gwas-form.js"></script>
+<script type="text/javascript" src="variant-effect-form.js"></script>
+<script type="text/javascript" src="variant-filter-form.js"></script>
 <!-- /build -->
 
 
 <script>
-//        Ext.Loader.setPath('Ext.ux', 'http://cdn.sencha.io/ext/gpl/4.2.1/examples/ux');
+    //        Ext.Loader.setPath('Ext.ux', 'http://cdn.sencha.io/ext/gpl/4.2.1/examples/ux');
     //    Ext.QuickTips.init();
     //    Ext.require([
     //        'Ext.ux.grid.FiltersFeature',
@@ -170,290 +172,92 @@
     });
 </script>
 <STYLE type="text/css">
-html {
-    position:fixed;
-    overflow: hidden;
-    height: 100%;
-    width: 100%;
-    /*margin-right: 300px;*/
-    /*margin-left: 300px;*/
-}
+    html {
+        position: fixed;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+        /*margin-right: 300px;*/
+        /*margin-left: 300px;*/
+    }
 
-body {
-    /*height: calc(100% - 8px);*/
-    height: 100%;
-    background-color: #ffffff;
-}
+    body {
+        height: 100%;
+        width: 100%;
+    }
+    #application {
+        height: 100%;
+        width: 100%;
+    }
 
-#application {
-    height: 100%;
-}
 
-/*ul.variant-menu {*/
-    /*margin: 0;*/
-    /*padding: 0;*/
-    /*background: #ffffff;*/
-    /*color: #435f7a;*/
-    /*list-style: none;*/
-    /*text-transform: none;*/
-    /*line-height: 40px;*/
-    /*font-size: 16px;*/
-/*}*/
-/*ul.variant-menu > li {*/
-    /*border-bottom: 1px solid #c6d0da;*/
-    /*border-left: 1px solid #c6d0da;*/
-    /*border-right: 1px solid #c6d0da;*/
-    /*padding: 0 10px 0 30px;*/
-/*}*/
+    ul.ocb-app-menu > li#home {
+        padding: 0 10px 0 30px;
+    }
 
-/*ul.ocb-app-menu > li.data {*/
-    /*color: #5CB85C;*/
-/*}*/
-ul.ocb-app-menu > li#home {
-    padding: 0 10px 0 30px;
-}
-ul.ocb-app-menu > li.preprocess {
-    color: #428bca;
-    padding: 0 10px 0 30px;
-}
-ul.ocb-app-menu > li.analysis {
-    color: #eca81f;
-    padding: 0 10px 0 30px;
-}
-ul.ocb-app-menu > li.visualization {
-    color: #d9534f;
-    padding: 0 10px 0 30px;
-}
+    ul.ocb-app-menu > li.preprocess {
+        color: #428bca;
+        padding: 0 10px 0 30px;
+    }
 
-ul.ocb-app-menu > li.active {
-    background: #d1d9e3;
-    color: #435f7a;
-}
-ul.ocb-app-menu > li.title {
-    font-size: 14px;
-    padding: 0 10px 0 10px;
-    color: #696969;
-}
-ul.ocb-app-menu > li:hover {
-    background: #d1d9e3;
-    color: #435f7a;
-}
-ul.ocb-app-menu > li.title:hover {
-    background: white;
-    color: #435f7a;
-}
+    ul.ocb-app-menu > li.analysis {
+        color: #eca81f;
+        padding: 0 10px 0 30px;
+    }
 
-/*.header-panel {*/
-    /*line-height: 33px;*/
-    /*font-size: 14px;*/
-    /*background: #435f7a;*/
-    /*color: white;*/
-    /*padding: 4px 30px;*/
-    /*height:0;*/
-    /*border:1px solid #d3d3d3;*/
-/*}*/
+    ul.ocb-app-menu > li.visualization {
+        color: #d9534f;
+        padding: 0 10px 0 30px;
+    }
 
-.header-form {
-    font-size: 16px;
-    /*background-color: #f5f5f5;*/
-    padding: 4px 6px;
-    border:1px solid #000000;
-}
+    ul.ocb-app-menu > li.active {
+        background: #d1d9e3;
+        color: #435f7a;
+    }
 
-.header-job {
-    line-height: 20px;
-    font-size: 14px;
-    /*background: #d1d9e3;*/
-    background: #f5f5f5;
-    color: #435f7a;
-    padding: 4px 10px;
-    border:1px solid #c6d0da;
-}
+    ul.ocb-app-menu > li.title {
+        font-size: 14px;
+        padding: 0 10px 0 10px;
+        color: #696969;
+    }
 
-/*.hpg-variant.vcf-stats, .variant {*/
+    ul.ocb-app-menu > li:hover {
+        background: #d1d9e3;
+        color: #435f7a;
+    }
+
+    ul.ocb-app-menu > li.title:hover {
+        background: white;
+        color: #435f7a;
+    }
+
+    .header-form {
+        font-size: 16px;
+        /*background-color: #f5f5f5;*/
+        padding: 4px 6px;
+        border: 1px solid #000000;
+    }
+
+    .header-job {
+        line-height: 20px;
+        font-size: 14px;
+        /*background: #d1d9e3;*/
+        background: #f5f5f5;
+        color: #435f7a;
+        padding: 4px 10px;
+        border: 1px solid #c6d0da;
+    }
+
+    /*.hpg-variant.vcf-stats, .variant {*/
     /*padding:2px 5px;*/
     /*display: inline-block;*/
     /*background-color: #e2edf7;*/
     /*color: #428bca;*/
-/*}*/
+    /*}*/
 
-/*.hpg-variant.gwas-assoc, .hpg-variant.effect {*/
-    /*padding:2px 5px;*/
-    /*display: inline-block;*/
-    /*background-color: #fcf1dc;*/
-    /*color:#ffffff;*/
-    /*color: #eca81f;*/
-/*}*/
-
-/*.variant-menu {*/
-    /*font-size: 16px;*/
-    /*background-color: #f8f8f8;*/
-    /*background-color: #ffffff;*/
-    /*padding: 0 10px 0 10px;*/
-    /*text-align: center;*/
-    /*border-top:1px solid #d3d3d3;*/
-    /*border-right:1px solid #d3d3d3;*/
-/*}*/
-
-/*.home-header {*/
-    /*height: 33px;*/
-    /*background-color: #d1d9e3;*/
-/*}*/
-
-/*.home-header-dark {*/
-    /*font-size: 16px;*/
-    /*color: #FFFFFF;*/
-    /*background-color: #435f7a;*/
-    /*padding: 7px 10px;*/
-/*}*/
-
-/*.visualization-header {*/
-    /*height: 33px;*/
-    /*background-color: #f9e2e2;*/
-/*}*/
-
-/*.preprocess-header {*/
-    /*font-size: 16px;*/
-    /*color: #FFFFFF;*/
-    /*background-color: #428bca;*/
-    /*padding: 7px 10px;*/
-/*}*/
-
-/*.preprocess-header-form {*/
-    /*font-size: 13px;*/
-    /*color: #428bca;*/
-    /*background-color: #e2edf7;*/
-    /*font-weight: bold;*/
-    /*padding: 4px 6px;*/
-    /*border: 1px solid #d3d3d3;*/
-/*}*/
-
-/*.analysis-header {*/
-    /*font-size: 16px;*/
-    /*color: #FFFFFF;*/
-    /*background-color: #eca81f;*/
-    /*padding: 7px 10px;*/
-/*}*/
-
-/*.analysis-header-form {*/
-    /*font-size: 13px;*/
-    /*color: #eca81f;*/
-    /*background-color: #fcf1dc;*/
-    /*font-weight: bold;*/
-    /*padding: 4px 6px;*/
-    /*border: 1px solid #d3d3d3;*/
-/*}*/
-
-/*.visualization-header {*/
-    /*font-size: 16px;*/
-    /*color: #FFFFFF;*/
-    /*background-color: #d9534f;*/
-    /*padding: 7px 10px;*/
-/*}*/
-
-/*.visualization-header-form {*/
-    /*font-size: 13px;*/
-    /*color: #d9534f;*/
-    /*background-color: #f9e2e2;*/
-    /*font-weight: bold;*/
-    /*padding: 4px 6px;*/
-    /*border: 1px solid #d3d3d3;*/
-/*}*/
-
-/*.variant-menu .header {*/
-    /*font-size: 14px;*/
-    /*color: gray;*/
-    /*margin: 7px 10px 4px 10px;*/
-    /*text-align: left;*/
-
-    /*border-bottom: 1px;*/
-    /*border-bottom-style: solid;*/
-    /*border-bottom-color: #d3d3d3;*/
-/*}*/
-
-/*.variant-menu .home, .home {*/
-    /*margin-top: 0px;*/
-    /*margin-bottom: 20px;*/
-    /*cursor: pointer;*/
-    /*color: #435f7a;*/
-    /*padding: 7px 20px;*/
-    /*margin-top: 33px;*/
-/*}*/
-
-/*.variant-menu .home:hover {*/
-    /*background-color: #d1d9e3;*/
-    /*text-decoration: underline;*/
-/*}*/
-
-/*.variant-menu .home.active {*/
-    /*color: #ffffff;*/
-    /*background-color: #435f7a;*/
-/*}*/
-
-/*.variant-menu .data {*/
-    /*cursor: pointer;*/
-    /*color: #5CB85C;*/
-    /*padding: 7px 20px;*/
-/*}*/
-
-/*.variant-menu .data:hover {*/
-    /*background-color: #e9f6e9;*/
-    /*text-decoration: underline;*/
-/*}*/
-
-/*.variant-menu .data.active {*/
-/*color: #ffffff;*/
-/*background-color: #5CB85C;*/
-/*}*/
-
-/*.variant-menu .preprocess, .preprocess {*/
-    /*cursor: pointer;*/
-    /*color: #428bca;*/
-    /*padding: 7px 20px;*/
-/*}*/
-
-/*.variant-menu .preprocess:hover {*/
-    /*background-color: #e2edf7;*/
-    /*text-decoration: underline;*/
-/*}*/
-
-/*.variant-menu .preprocess.active {*/
-    /*color: #ffffff;*/
-    /*background-color: #428bca;*/
-/*}*/
-
-/*.variant-menu .analysis, .analysis {*/
-    /*cursor: pointer;*/
-    /*color: #eca81f;*/
-    /*padding: 7px 20px;*/
-/*}*/
-
-/*.variant-menu .analysis:hover {*/
-    /*background-color: #fcf1dc;*/
-    /*text-decoration: underline;*/
-/*}*/
-
-/*.variant-menu .analysis.active {*/
-    /*color: #ffffff;*/
-    /*background-color: #eca81f;*/
-/*}*/
-
-/*.variant-menu .visualization, .visualization {*/
-    /*cursor: pointer;*/
-    /*color: #d9534f;*/
-    /*padding: 7px 20px;*/
-/*}*/
-
-/*.variant-menu .visualization:hover {*/
-    /*background-color: #f9e2e2;*/
-    /*text-decoration: underline;*/
-/*}*/
-
-/*.variant-menu .visualization.active {*/
-    /*color: #ffffff;*/
-    /*background-color: #d9534f;*/
-/*}*/
-
+    .hpg-variant.gwas-assoc, .hpg-variant.effect {
+        color: #eca81f;
+    }
 </STYLE>
 </head>
 <body>

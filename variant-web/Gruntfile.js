@@ -1,4 +1,3 @@
-/*global module:false*/
 module.exports = function (grunt) {
 
     grunt.initConfig({
@@ -14,6 +13,7 @@ module.exports = function (grunt) {
             dist: {
                 src: [
                     'src/variant-filter-widget.js',
+                    'src/variant-filter-form.js',
                     'src/variant-effect-form.js',
                     'src/variant-index-form.js',
                     'src/variant-stats-form.js',
@@ -81,7 +81,7 @@ module.exports = function (grunt) {
                             '<%= def.build %>/vendor/jquery.qtip*.js'
                         ],
                         config: [
-                            '<%= def.build %>/va-config.js'
+                            '<%= def.build %>/gv-config.js'
                         ],
                         lib: [
                             '<%= def.build %>/genome-viewer.min.js'
@@ -129,6 +129,6 @@ module.exports = function (grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['hub','clean', 'concat', 'uglify', 'copy', 'htmlbuild', 'rename', 'log-deploy']);
+    grunt.registerTask('default', ['hub', 'clean', 'concat', 'uglify', 'copy', 'htmlbuild', 'rename', 'log-deploy']);
 
 };

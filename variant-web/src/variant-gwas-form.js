@@ -126,7 +126,7 @@ VariantGwasForm.prototype._getBrowseInputForm = function () {
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Input",
         header:this.headerFormConfig,
-        border: true,
+        border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [
@@ -163,7 +163,7 @@ VariantGwasForm.prototype._getBrowseOutputForm = function () {
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Output",
         header:this.headerFormConfig,
-        border: true,
+        border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [
