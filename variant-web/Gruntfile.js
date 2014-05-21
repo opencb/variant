@@ -19,6 +19,7 @@ module.exports = function (grunt) {
                     'src/variant-stats-form.js',
                     'src/variant-gwas-form.js',
                     'src/variant-merge-form.js',
+                    'src/variant-split-form.js',
                     'src/variant-widget.js',
                     'src/variant-stats-widget.js',
                     'src/variant-gwas-widget.js',
