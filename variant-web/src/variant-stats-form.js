@@ -42,6 +42,7 @@ VariantStatsForm.prototype.beforeRun = function () {
     }
     this.paramsWS["db"] = "";
     this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
+
     console.log(this.paramsWS);
     console.log(this.analysis);
 
@@ -73,7 +74,6 @@ VariantStatsForm.prototype.getPanels = function () {
         form
     ];
 };
-
 
 VariantStatsForm.prototype._getExampleForm = function () {
     var _this = this;
