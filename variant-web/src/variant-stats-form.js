@@ -29,6 +29,22 @@ function VariantStatsForm(args) {
     this.id = Utils.genId("VariantStatsForm");
     this.headerWidget = this.webapp.headerWidget;
     this.opencgaBrowserWidget = this.webapp.headerWidget.opencgaBrowserWidget;
+
+
+    this.samplesData = [
+        {name: 'Phenotype', value: 'phenotype'},
+        {name: 'Family ID', value: 'Family ID'},
+        {name: 'Individual ID', value: 'Individual ID'},
+        {name: 'Paternal ID', value: 'Paternal ID'},
+        {name: 'Maternal ID', value: 'Maternal ID'},
+        {name: 'Gender', value: 'Gender'}
+        //    Population      Other info      Relationships from Pemberton et al AJHG 2010
+    ];
+    this.samplesStore = Ext.create('Ext.data.Store', {
+        fields: ['name', 'value'],
+        data: this.samplesData
+    });
+
 }
 
 VariantStatsForm.prototype.beforeRun = function () {
@@ -95,7 +111,7 @@ VariantStatsForm.prototype._getExampleForm = function () {
     var exampleForm = Ext.create('Ext.panel.Panel', {
         bodyPadding: 10,
         cls: 'bootstrap',
-        title:'Examples',
+        title: 'Examples',
         header: this.headerFormConfig,
         border: this.formBorder,
         items: [example1],
@@ -116,10 +132,33 @@ VariantStatsForm.prototype._getBrowseInputForm = function () {
         id: this.id + 'ped-file',
         mode: 'fileSelection',
         allowedTypes: ['ped'],
-        allowBlank: true
-    });
-    pedCont.child('textfield').on('change', function (t) {
-        console.log(t.getValue())
+        allowBlank: true,
+        onSelect: function (selectEv) {
+            OpencgaManager.pollObject({
+                accountId: $.cookie("bioinfo_account"),
+                sessionId: $.cookie("bioinfo_sid"),
+                bucketId: selectEv.bucketId,
+                objectId: selectEv.idQuery,
+                start: 0,
+                limit: 1,
+                success: function (data) {
+                    var lines = data.split('\n');
+                    if (lines.length > 0) {
+                        var line = lines[0];
+                        if (line.charAt(0) === '#') {
+                            var fields = line.substr(1).split('\t');
+                            var newSamples = [];
+                            for (var i = 6; i < fields.length; i++) {
+                                var field = fields[i];
+                                newSamples.push({name: field, value: field});
+                            }
+                            var data = _this.samplesData.concat(newSamples);
+                            _this.samplesStore.loadData(data);
+                        }
+                    }
+                }
+            });
+        }
     });
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
@@ -180,18 +219,7 @@ VariantStatsForm.prototype._getParametersForm = function () {
         labelWidth: this.labelWidth,
         labelAlign: 'left',
         name: 'variable',
-        store: Ext.create('Ext.data.Store', {
-            fields: ['name', 'value'],
-            data: [
-                {name: 'Phenotype', value: 'phenotype'},
-                {name: 'Family ID', value: 'Family ID'},
-                {name: 'Individual ID', value: 'Individual ID'},
-                {name: 'Paternal ID', value: 'Paternal ID'},
-                {name: 'Maternal ID', value: 'Maternal ID'},
-                {name: 'Gender', value: 'Gender'}
-                //    Population      Other info      Relationships from Pemberton et al AJHG 2010
-            ]
-        }),
+        store: this.samplesStore,
         allowBlank: false,
         editable: false,
         displayField: 'name',
