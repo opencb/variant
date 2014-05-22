@@ -80,7 +80,7 @@ VariantStatsForm.prototype._getExampleForm = function () {
     var _this = this;
 
     var example1 = Ext.create('Ext.Component', {
-        html: '<span class="s110"><span class="btn btn-default">Load</span> &nbsp; VCF file with ~3500 variants example</span>',
+        html: '<span class="s110"><span class="btn btn-default">Load</span> &nbsp; VCF file with ~3500 variants</span>',
         cls: 'dedo',
         listeners: {
             afterrender: function () {
@@ -92,13 +92,27 @@ VariantStatsForm.prototype._getExampleForm = function () {
             }
         }
     });
+    var example2 = Ext.create('Ext.Component', {
+        html: '<span class="s110"><span class="btn btn-default">Load</span> &nbsp; VCF file with 4000 variants and 147 samples</span>',
+        cls: 'dedo',
+        listeners: {
+            afterrender: function () {
+                this.getEl().on("click", function () {
+                    _this.loadExample2();
+                    Utils.msg("Example loaded", "");
+                });
+
+            }
+        }
+    });
+
     var exampleForm = Ext.create('Ext.panel.Panel', {
         bodyPadding: 10,
         cls: 'bootstrap',
         title:'Examples',
         header: this.headerFormConfig,
         border: this.formBorder,
-        items: [example1],
+        items: [example1, example2],
         defaults: {margin: '5 0 0 0'},
         margin: '0 0 10 0'
     });
@@ -314,11 +328,23 @@ VariantStatsForm.prototype._getParametersForm = function () {
 
 
 VariantStatsForm.prototype.loadExample1 = function () {
-    Ext.getCmp(this.id + 'vcf-file').update('<span class="emph">Example 1</span>', false);
+
+    Ext.getCmp(this.id + 'vcf-file').update('<span class="emph">Example 1.vcf</span>', false);
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_1000genomes_5000_variants.vcf');
 
-//    Ext.getCmp(this.id + 'ped-file').setText('<span class="emph">Example file.ped</span>', false);
-//    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_file.ped');
+    Ext.getCmp(this.id + 'ped-file').update('No file selected', false);
+    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('');
+
+    Ext.getCmp(this.id + 'jobname').setValue("VCF Stats example");
+    Ext.getCmp(this.id + 'jobdescription').setValue("VCF Stats example");
+};
+
+VariantStatsForm.prototype.loadExample2 = function () {
+    Ext.getCmp(this.id + 'vcf-file').update('<span class="emph">Example 2.vcf</span>', false);
+    Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_4K_variants_147_samples.vcf');
+
+    Ext.getCmp(this.id + 'ped-file').update('<span class="emph">Example 2.ped</span>', false);
+    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_4K_variants_147_samples.ped');
 
 
     Ext.getCmp(this.id + 'jobname').setValue("VCF Stats example");

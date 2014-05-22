@@ -723,8 +723,6 @@ VariantStatsWidget.prototype._getResult = function () {
 
     var values = this.form.getForm().getValues();
 
-    console.log(values);
-
     var formParams = {};
     for (var param in values) {
         if (formParams[param]) {
@@ -749,10 +747,7 @@ VariantStatsWidget.prototype._getResult = function () {
         jobId: this.job.id,
         formData: formParams,
         success: function (response, textStatus, jqXHR) {
-            console.log("Variant stats");
-
             response = JSON.parse(response.response);
-            console.log(response);
 
             if (response.length) {
 

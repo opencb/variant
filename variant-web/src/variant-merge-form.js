@@ -19,10 +19,11 @@
  * along with JS Common Libs. If not, see <http://www.gnu.org/licenses/>.
  */
 
-VariantMergeForm.prototype = new GenericFormPanel("");
+VariantMergeForm.prototype = new GenericFormPanel();
 
 function VariantMergeForm(args) {
     args.analysis = 'hpg-variant.merge';
+    args.border = false;
     GenericFormPanel.prototype.constructor.call(this, args);
 
     this.id = Utils.genId("VariantMergeForm");
@@ -172,18 +173,11 @@ VariantMergeForm.prototype._getSpeciesForm = function () {
 VariantMergeForm.prototype._getBrowseInputForm = function () {
     var _this = this;
 
-//    var note1 = Ext.create('Ext.container.Container', {
-//        html: '<p>Please select a VCF file from your <span class="info">server account</span> using the <span class="emph">Browse</span> button.</p>'
-//    });
-//    var note2 = Ext.create('Ext.container.Container', {
-//        html: '<p>Please select a PED file from your <span class="info">server account</span> using the <span class="emph">Browse</span> button.</p>'
-//    });
-//
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Input",
         header: this.headerFormConfig,
-        border: true,
+        border: this.border,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [
@@ -224,41 +218,31 @@ VariantMergeForm.prototype._getBrowseInputForm = function () {
 
 VariantMergeForm.prototype._getBrowseOutputForm = function () {
     var _this = this;
-//
-//    var note1 = Ext.create('Ext.container.Container', {
-//        html: '<p>Please select a VCF file from your <span class="info">server account</span> using the <span class="emph">Browse</span> button.</p>'
-//    });
-//    var note2 = Ext.create('Ext.container.Container', {
-//        html: '<p>Please select a PED file from your <span class="info">server account</span> using the <span class="emph">Browse</span> button.</p>'
-//    });
-
     var file = Ext.create('Ext.form.field.Text', {
         id: this.id + "output-file",
         fieldLabel: 'Output',
         name: 'output-file',
         width: 500
-//                emptyText:"chr:start-end",
-//                regex : /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/
     });
 
-//    var folder = _this.createOpencgaBrowserCmp({
-//        fieldLabel: 'Output folder:',
-//        dataParamName: 'output-folder',
-//        //  id: this.id + 'vcf-file',
-//        mode: 'fileSelection',
-//        allowedTypes: ['vcf'],
-//        allowBlank: false
-//    });
+    var folder = _this.createOpencgaBrowserCmp({
+        fieldLabel: 'Output folder:',
+        dataParamName: 'output-folder',
+        //  id: this.id + 'vcf-file',
+        mode: 'fileSelection',
+        allowedTypes: ['vcf'],
+        allowBlank: false
+    });
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Output",
         header: this.headerFormConfig,
-        border: true,
+        border: this.border,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [
             file,
-//            folder
+            folder
         ]
     });
 
