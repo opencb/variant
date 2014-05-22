@@ -19,22 +19,38 @@
  * along with JS Common Libs. If not, see <http://www.gnu.org/licenses/>.
  */
 
-VariantGwasForm.prototype = new GenericFormPanel();
+VariantSplitForm.prototype = new GenericFormPanel();
 
-function VariantGwasForm(args) {
+function VariantSplitForm(args) {
     args.analysis = 'hpg-variant.gwas-assoc';
     GenericFormPanel.prototype.constructor.call(this, args);
 
-    this.id = Utils.genId("VariantGwasForm");
+    this.id = Utils.genId("VariantSplitForm");
     this.headerWidget = this.webapp.headerWidget;
     this.opencgaBrowserWidget = this.webapp.headerWidget.opencgaBrowserWidget;
 }
 
-VariantGwasForm.prototype.beforeRun = function () {
+VariantSplitForm.prototype.beforeRun = function () {
 
     if (this.testing) {
         console.log("Watch out!!! testing flag is on, so job will not launched.")
     }
+
+//    switch (this.paramsWS["function_test"]) {
+//        case "fisher":
+//            this.paramsWS["fisher"] = "";
+//            if (this.paramsWS["chisq"]) {
+//                delete this.paramsWS["chisq"];
+//            }
+//            break;
+//        case "chisq":
+//            this.paramsWS["chisq"] = "";
+//            if (this.paramsWS["fisher"]) {
+//                delete this.paramsWS["fisher"];
+//            }
+//            break;
+//
+//    }
 
     if (this.paramsWS["test"] == "assoc") {
         delete this.paramsWS["chisq"];
@@ -50,11 +66,11 @@ VariantGwasForm.prototype.beforeRun = function () {
 };
 
 
-VariantGwasForm.prototype.getPanels = function () {
+VariantSplitForm.prototype.getPanels = function () {
     var items = [
         this._getBrowseInputForm(),
         this._getBrowseOutputForm(), ,
-        this._getTestForm()
+        this._getParametersForm()
     ];
 
     var form = Ext.create('Ext.panel.Panel', {
@@ -75,7 +91,7 @@ VariantGwasForm.prototype.getPanels = function () {
 };
 
 
-VariantGwasForm.prototype._getExampleForm = function () {
+VariantSplitForm.prototype._getExampleForm = function () {
     var _this = this;
 
     var example1 = Ext.create('Ext.Component', {
@@ -107,7 +123,7 @@ VariantGwasForm.prototype._getExampleForm = function () {
     return exampleForm;
 };
 
-VariantGwasForm.prototype._getBrowseInputForm = function () {
+VariantSplitForm.prototype._getBrowseInputForm = function () {
     var _this = this;
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
@@ -137,14 +153,11 @@ VariantGwasForm.prototype._getBrowseInputForm = function () {
     return formBrowser;
 };
 
-VariantGwasForm.prototype._getBrowseOutputForm = function () {
+VariantSplitForm.prototype._getBrowseOutputForm = function () {
     var file = Ext.create('Ext.form.field.Text', {
         id: this.id + "output-file",
         fieldLabel: 'Output',
         name: 'output-file',
-        padding: "5 0 0 5",
-        bodyPadding: 10,
-        width: 500
     });
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
@@ -169,77 +182,42 @@ VariantGwasForm.prototype._getBrowseOutputForm = function () {
     return formBrowser;
 };
 
-VariantGwasForm.prototype._getTestForm = function () {
+VariantSplitForm.prototype._getParametersForm = function () {
     var _this = this;
-    var assoc = Ext.create('Ext.form.field.Radio', {
-        id: "assoc" + "_" + this.id,
-        boxLabel: 'Assoc',
-        inputValue: 'assoc',
+    var chr = Ext.create('Ext.form.field.Radio', {
+        id: "chr" + "_" + this.id,
+        boxLabel: 'Chromosome',
+        inputValue: 'chromosome',
         checked: true,
-        name: 'test',
-        handler: function (field, value) {
-            if (value) {
-                var radio = Ext.getCmp(_this.id + "_radioGroupFunctionGwas");
-                radio.enable();
-                _this.analysis = "hpg-variant.gwas-assoc";
-                console.log(radio)
-            } else {
-                var radio = Ext.getCmp(_this.id + "_radioGroupFunctionGwas");
-                radio.disable();
-                _this.analysis = "hpg-variant.gwas-tdt";
-
-            }
-        }
+        name: 'criterion',
     });
 
-    var tdt = Ext.create('Ext.form.field.Radio', {
-        id: "tdt" + "_" + this.id,
-        boxLabel: 'TDT',
-        inputValue: 'tdt',
-        name: 'test'
+    var cov = Ext.create('Ext.form.field.Radio', {
+        id: "cov" + "_" + this.id,
+        boxLabel: 'Coverage',
+        inputValue: 'coverage',
+        name: 'criterion'
 
     });
 
-    var radioGroupTest = Ext.create('Ext.form.RadioGroup', {
+    var radioGroup = Ext.create('Ext.form.RadioGroup', {
         fieldLabel: 'Test',
         width: 500,
-        items: [
-            assoc,
-            tdt]
+        items: [chr, cov]
     });
-
-    var chisq = Ext.create('Ext.form.field.Radio', {
-        id: "chisq" + "_" + this.id,
-        boxLabel: 'Chisq',
-        inputValue: 'chisq',
-        checked: true,
-        name: 'function_test'
-    });
-
-    var fisher = Ext.create('Ext.form.field.Radio', {
-        id: "fisher" + "_" + this.id,
-        boxLabel: 'Fisher',
-        inputValue: 'fisher',
-        name: 'function_test'
-    });
-
-    var radioGroupFunction = Ext.create('Ext.form.RadioGroup', {
-        id: this.id + "_radioGroupFunctionGwas",
-        fieldLabel: 'Test',
-        width: 500,
-        items: [
-            chisq,
-            fisher]
-    });
-
+    
+    var intervals = _this.createTextFields("intervals");
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
-        title: "Test",
+        title: "Criterion",
         header:this.headerFormConfig,
         border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
-        items: [radioGroupTest, radioGroupFunction]
+        items: [
+            radioGroup,
+            intervals
+        ]
     });
 
     return formBrowser;
@@ -248,7 +226,7 @@ VariantGwasForm.prototype._getTestForm = function () {
 ;
 
 
-VariantGwasForm.prototype.loadExample1 = function () {
+VariantSplitForm.prototype.loadExample1 = function () {
     Ext.getCmp(this.id + 'vcf-file').setText('<span class="emph">Example 1</span>', false);
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_4K_variants_147_samples.vcf');
 

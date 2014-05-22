@@ -233,6 +233,29 @@ Variant.prototype = {
             }
         });
         this.variantGwasForm.draw();
+        
+        this.variantSplitForm = new VariantSplitForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            formBorder: false,
+            border: false,
+            style: {
+                borderTop: '1px solid #d1d9e3'
+            },
+//            title: 'GWAS',
+//            bodyPadding: '15 0 0 40',
+            bodyPadding: '20 0 0 200',
+//            headerConfig: {
+//                baseCls: 'analysis-header'
+//            },
+            headerFormConfig: {
+                baseCls: 'header-form'
+            }
+        });
+        this.variantSplitForm.draw();
+        
         this.variantEffectForm = new VariantEffectForm({
             webapp: this,
             closable: false,
@@ -283,6 +306,8 @@ Variant.prototype = {
         } else {
             this.sessionFinished();
         }
+                        
+        //this.container.add(this.variantFilterForm.panel);
     },
     _createHeaderWidget: function (targetId) {
         var _this = this;
@@ -335,6 +360,7 @@ Variant.prototype = {
             '       <li id="merge" class="preprocess">Merge</li>' +
             '       <li id="filter" class="preprocess">Filter</li>' +
             '       <li id="annot" class="preprocess">Annot</li>' +
+            '       <li id="split" class="preprocess">Split</li>' +
             '       <li id="analysis" class="title">Analysis</li>' +
             '       <li id="gwas" class="analysis">GWAS</li>' +
             '       <li id="effect" class="analysis">Effect</li>' +
@@ -392,7 +418,10 @@ Variant.prototype = {
                         _this.container.removeAll(false);
                         _this.container.add();
                         break;
-
+                    case "Split":
+                        _this.container.removeAll(false);
+                        _this.container.add(_this.variantSplitForm.panel);
+                        break;
                     case "GWAS":
                         _this.container.removeAll(false);
                         _this.container.add(_this.variantGwasForm.panel);
