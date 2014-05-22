@@ -51,7 +51,8 @@ VariantStatsForm.prototype.beforeRun = function () {
 VariantStatsForm.prototype.getPanels = function () {
     var items = [
         this._getBrowseInputForm(),
-        this._getBrowseOutputForm()
+        this._getBrowseOutputForm(),
+        this._getParametersForm()
     ];
 
     var form = Ext.create('Ext.panel.Panel', {
@@ -63,8 +64,8 @@ VariantStatsForm.prototype.getPanels = function () {
         //height:900,
         //width: "600",
         items: items,
-        defaults:{
-            margin:'0 0 15 0'
+        defaults: {
+            margin: '0 0 15 0'
         }
     });
 
@@ -74,41 +75,55 @@ VariantStatsForm.prototype.getPanels = function () {
     ];
 };
 
-
 VariantStatsForm.prototype._getExampleForm = function () {
     var _this = this;
 
     var example1 = Ext.create('Ext.Component', {
-        html: '<span class="s140"><span class="btn btn-default">Load</span> &nbsp; VCF file example</span>',
+        html: '<span class="s110"><span class="btn btn-default">Load</span> &nbsp; VCF file with ~3500 variants example</span>',
         cls: 'dedo',
         listeners: {
             afterrender: function () {
                 this.getEl().on("click", function () {
                     _this.loadExample1();
-                    Ext.example.msg("Example loaded", "");
+                    Utils.msg("Example loaded", "");
                 });
 
             }
         }
     });
-
-    var exampleForm = Ext.create('Ext.container.Container', {
+    var exampleForm = Ext.create('Ext.panel.Panel', {
         bodyPadding: 10,
-        cls:'bootstrap',
-        items: [this.note1, example1],
+        cls: 'bootstrap',
+        title:'Examples',
+        header: this.headerFormConfig,
+        border: this.formBorder,
+        items: [example1],
         defaults: {margin: '5 0 0 0'},
-        margin:'0 0 10 0'
+        margin: '0 0 10 0'
     });
 
     return exampleForm;
 };
 
+
 VariantStatsForm.prototype._getBrowseInputForm = function () {
     var _this = this;
 
+    var pedCont = this.createOpencgaBrowserCmp({
+        fieldLabel: 'Input PED file',
+        dataParamName: 'ped-file',
+        id: this.id + 'ped-file',
+        mode: 'fileSelection',
+        allowedTypes: ['ped'],
+        allowBlank: true
+    });
+    pedCont.child('textfield').on('change', function (t) {
+        console.log(t.getValue())
+    });
+
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Input",
-        header:this.headerFormConfig,
+        header: this.headerFormConfig,
         border: this.border,
         padding: "5 0 0 0",
         bodyPadding: 10,
@@ -121,45 +136,175 @@ VariantStatsForm.prototype._getBrowseInputForm = function () {
                 allowedTypes: ['vcf'],
                 allowBlank: false
             }),
-            this.createOpencgaBrowserCmp({
-                fieldLabel: 'Input PED file:',
-                dataParamName: 'ped-file',
-                id: this.id + 'ped-file',
-                mode: 'fileSelection',
-                allowedTypes: ['ped'],
-                allowBlank: true
-            })]
+            pedCont
+        ]
     });
     return formBrowser;
 };
 
 VariantStatsForm.prototype._getBrowseOutputForm = function () {
-    var file = Ext.create('Ext.form.field.Text', {
-        id: this.id + "output-file",
-        fieldLabel: 'Output',
-        name: 'output-file',
-        padding: "5 0 0 5",
-        bodyPadding: 10,
-        width: 500
-    });
-
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Output",
         //cls:'panel-border-top',
-        header:this.headerFormConfig,
+        header: this.headerFormConfig,
         border: this.border,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [
-            file,
-            this.createOpencgaBrowserCmp({
-                fieldLabel: 'Output folder',
-                dataParamName: 'output-folder',
-                id: this.id + 'outputFolder',
-                mode: 'fileSelection',
-//                allowedTypes: ['ped'],
-                allowBlank: true
-            })
+            {
+                xtype: 'textfield',
+                id: this.id + "out",
+                fieldLabel: 'File names prefix',
+                labelWidth: this.labelWidth,
+                name: 'out'
+            },
+//            this.createOpencgaBrowserCmp({
+//                fieldLabel: 'Folder',
+//                dataParamName: 'output-folder',
+//                id: this.id + 'outputFolder',
+//                mode: 'fileSelection',
+////                allowedTypes: ['ped'],
+//                allowBlank: true
+//            })
+        ]
+    });
+
+    return formBrowser;
+};
+
+VariantStatsForm.prototype._getParametersForm = function () {
+    var _this = this;
+    var samplesGrouping = Ext.create('Ext.form.field.ComboBox', {
+        fieldLabel: 'Variable to use for samples grouping',
+        labelWidth: this.labelWidth,
+        labelAlign: 'left',
+        name: 'variable',
+        store: Ext.create('Ext.data.Store', {
+            fields: ['name', 'value'],
+            data: [
+                {name: 'Phenotype', value: 'phenotype'},
+                {name: 'Family ID', value: 'Family ID'},
+                {name: 'Individual ID', value: 'Individual ID'},
+                {name: 'Paternal ID', value: 'Paternal ID'},
+                {name: 'Maternal ID', value: 'Maternal ID'},
+                {name: 'Gender', value: 'Gender'}
+                //    Population      Other info      Relationships from Pemberton et al AJHG 2010
+            ]
+        }),
+        allowBlank: false,
+        editable: false,
+        displayField: 'name',
+        valueField: 'value',
+        queryMode: 'local',
+        forceSelection: true,
+        listeners: {
+            afterrender: function () {
+                this.select(this.getStore().getAt(0));
+            },
+            change: function (field, e) {
+                var value = field.getValue();
+                if (value != null) {
+                    //?
+                }
+            }
+        }
+    });
+
+    var otherRecord;
+
+    var valuesGrouping = Ext.create('Ext.form.field.ComboBox', {
+        fieldLabel: 'Values of the variable for grouping',
+        labelWidth: this.labelWidth,
+        labelAlign: 'left',
+        name: 'variable',
+        store: Ext.create('Ext.data.Store', {
+            fields: ['name', 'value'],
+            data: [
+                {name: '1, 2', value: '1,2'},
+                {name: '0, 1', value: '0,1'},
+                {name: 'Other', value: 'other'}
+            ]
+        }),
+        allowBlank: false,
+        editable: false,
+        displayField: 'name',
+        valueField: 'value',
+        queryMode: 'local',
+        forceSelection: true,
+        listeners: {
+            afterrender: function () {
+                this.select(this.getStore().getAt(0));
+                otherRecord = this.getStore().getAt(2)
+            },
+            change: function (t, newValue, oldValue, eOpts) {
+                var record = this.findRecordByValue(newValue);
+                if (newValue === 'other') {
+                    this.nextSibling().show();
+                    this.nextSibling().nextSibling().show();
+                } else {
+                    this.nextSibling().hide();
+                    this.nextSibling().nextSibling().hide();
+                }
+            }
+        }
+    });
+
+    var formBrowser = Ext.create('Ext.panel.Panel', {
+        title: "Parameters",
+        //cls:'panel-border-top',
+        header: this.headerFormConfig,
+        border: this.border,
+        padding: "5 0 0 0",
+        bodyPadding: 10,
+        items: [
+            {
+                xtype: 'checkbox',
+                boxLabel: 'I want per-group report appart from global statistics',
+                name: 'topping',
+                inputValue: '1',
+                id: 'checkbox1',
+                handler: function () {
+                    if (this.getValue()) {
+                        this.nextSibling().show();
+                    } else {
+                        this.nextSibling().hide();
+                    }
+                }
+            },
+            {
+                xtype: 'fieldcontainer',
+                hidden: true,
+                items: [
+                    samplesGrouping,
+                    valuesGrouping,
+                    {
+                        xtype: 'fieldcontainer',
+                        hidden: true,
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'Other groups',
+                                labelWidth: this.labelWidth,
+                                emptyText: 'separated by comma'
+                            }
+                        ]
+                    },
+                    {
+                        xtype: 'button',
+                        text: 'Add group',
+                        hidden: true,
+                        margin: '5 0 0 ' + (this.labelWidth + 5),
+                        handler: function () {
+                            this.up().child('fieldcontainer').add({
+                                xtype: 'textfield',
+                                fieldLabel: 'Group',
+                                labelWidth: _this.labelWidth,
+                                emptyText: 'separated by comma'
+                            })
+                        }
+                    }
+                ]
+            }
         ]
     });
 
@@ -168,7 +313,7 @@ VariantStatsForm.prototype._getBrowseOutputForm = function () {
 
 
 VariantStatsForm.prototype.loadExample1 = function () {
-    Ext.getCmp(this.id + 'vcf-file').setText('<span class="emph">Example 1</span>', false);
+    Ext.getCmp(this.id + 'vcf-file').update('<span class="emph">Example 1</span>', false);
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_1000genomes_5000_variants.vcf');
 
 //    Ext.getCmp(this.id + 'ped-file').setText('<span class="emph">Example file.ped</span>', false);

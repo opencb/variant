@@ -214,7 +214,7 @@ VariantEffectForm.prototype._getBrowseForm = function () {
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [note1, this.createOpencgaBrowserCmp({
-            fieldLabel: 'Input VCF file:',
+            fieldLabel: 'Input VCF file',
             dataParamName: 'vcf-file',
             id: this.id + 'vcf-file',
             mode: 'fileSelection',
@@ -229,40 +229,52 @@ VariantEffectForm.prototype._getBrowseForm = function () {
 VariantEffectForm.prototype._getExampleForm = function () {
     var _this = this;
 
-    var example1 = Ext.create('Ext.Component', {
-        html: '<span class="s110"><span class="btn btn-default">Load</span> &nbsp; VCF file with ~3500 variants example</span>',
-        cls: 'dedo',
-        listeners: {
-            afterrender: function () {
-                this.getEl().on("click", function () {
+    var example1 = Ext.create('Ext.container.Container', {
+        layout: 'hbox',
+        items: [
+            {
+                xtype: 'button',
+                width: 200,
+                text: 'Load example 1',
+                handler: function () {
                     _this.loadExample1();
                     Utils.msg("Example loaded", "");
-                });
+                }
+            },
+            {
+                xtype: 'box',
+                margin: '5 0 0 15',
+                html: 'VCF file with ~3500 variants'
 
             }
-        }
+        ]
     });
-    var example2 = Ext.create('Ext.Component', {
-        html: '<span class="s140"><span class="btn btn-default">Load</span> &nbsp; VCF file with ~5000 variants example</span>',
-        cls: 'dedo',
-        listeners: {
-            afterrender: function () {
-                this.getEl().on("click", function () {
+    var example2 = Ext.create('Ext.container.Container', {
+        layout: 'hbox',
+        items: [
+            {
+                xtype: 'button',
+                width: 200,
+                text: 'Load example 1',
+                handler: function () {
                     _this.loadExample2();
                     Utils.msg("Example loaded", "");
-                });
+                }
+            },
+            {
+                xtype: 'box',
+                margin: '5 0 0 15',
+                html: 'VCF file with ~5000 variants'
 
             }
-        }
+        ]
     });
-
     var exampleForm = Ext.create('Ext.panel.Panel', {
         bodyPadding: 10,
-        cls: 'bootstrap',
-        title:'Examples',
+        title: 'Examples',
         header: this.headerFormConfig,
         border: this.formBorder,
-        items: [this.note1, example1],
+        items: [example1],
         defaults: {margin: '5 0 0 0'},
         margin: '0 0 10 0'
     });
