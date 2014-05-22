@@ -23,14 +23,14 @@ public class VariantStatsTask extends Task<Variant> {
         super();
         this.reader = reader;
         this.study = study;
-        stats = new ArchivedVariantFileStats(study.getAlias());
+        stats = new ArchivedVariantFileStats(study.getFileId());
     }
 
     public VariantStatsTask(VariantReader reader, VariantSource study, int priority) {
         super(priority);
         this.reader = reader;
         this.study = study;
-        stats = new ArchivedVariantFileStats(study.getAlias());
+        stats = new ArchivedVariantFileStats(study.getFileId());
     }
 
     @Override

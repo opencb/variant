@@ -14,35 +14,35 @@ import org.opencb.commons.run.Task;
  */
 public class VariantRunner extends Runner<Variant> {
 
-    protected VariantSource study;
+    protected VariantSource source;
 
     public VariantRunner(VariantSource study, VariantReader reader, PedigreeReader pedReader, List<VariantWriter> writer, List<Task<Variant>> tasks) {
         super(reader, writer, tasks);
-        this.study = study;
+        this.source = study;
         parsePhenotypes(pedReader);
     }
 
     private void parsePhenotypes(PedigreeReader pedReader) {
         if (pedReader != null) {
             pedReader.open();
-            study.setPedigree(pedReader.read());
+            source.setPedigree(pedReader.read());
             pedReader.close();
         }
     }
 
     public VariantSource getStudy() {
-        return study;
+        return source;
     }
 
     public void setStudy(VariantSource study) {
-        this.study = study;
+        this.source = study;
     }
 
     @Override
     protected void readerInit() {
         super.readerInit();
-        study.addMetadata("variant_file_header", ((VariantReader) reader).getHeader());
-        study.setSamples(((VariantReader) reader).getSampleNames());
+        source.addMetadata("variantFileHeader", ((VariantReader) reader).getHeader());
+        source.setSamples(((VariantReader) reader).getSampleNames());
     }
 
 }

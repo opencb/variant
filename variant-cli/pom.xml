@@ -109,27 +109,6 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>server-tgz</id>
-                        <phase>install</phase>
-                        <configuration>
-                            <target>
-                                <exec executable="cp">
-                                    <arg value="target/bierapp.war"/>
-                                    <arg value="target/bierapp-${project.version}.war"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
