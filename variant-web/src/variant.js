@@ -11,7 +11,7 @@ function Variant(args) {
     this.description = 'Home';
 //    this.description = 'Variant analysis tool'
     this.version = '2.0.6';
-    this.tools = ["hpg-variant.effect", "variant", "hpg-variant.vcf-stats", "hpg-variant.gwas-assoc", "hpg-variant.gwas-tdt"];
+    this.tools = ["hpg-variant.effect", "variant", "hpg-variant.vcf-stats",  "hpg-variant.vcf-merge", "hpg-variant.gwas-assoc", "hpg-variant.gwas-tdt"];
     this.border = false;
     this.targetId;
     this.width;
@@ -173,7 +173,7 @@ Variant.prototype = {
             webapp: this,
             closable: false,
             width: '50%',
-            testing: true,
+            //testing: true,
             formBorder: false,
             border: false,
             style: {
@@ -233,7 +233,7 @@ Variant.prototype = {
             }
         });
         this.variantGwasForm.draw();
-        
+
         this.variantSplitForm = new VariantSplitForm({
             webapp: this,
             closable: false,
@@ -255,7 +255,7 @@ Variant.prototype = {
             }
         });
         this.variantSplitForm.draw();
-        
+
         this.variantEffectForm = new VariantEffectForm({
             webapp: this,
             closable: false,
@@ -306,8 +306,9 @@ Variant.prototype = {
         } else {
             this.sessionFinished();
         }
-                        
-        //this.container.add(this.variantFilterForm.panel);
+
+                        //this.container.removeAll(false);
+                        //this.container.add(_this.variantMergeForm.panel);
     },
     _createHeaderWidget: function (targetId) {
         var _this = this;
@@ -687,7 +688,7 @@ Variant.prototype.showVCFviewer = function () {
 
         //Once actived, the div element is visible, and genomeMaps can be rendered
         Ext.getCmp(this.centerPanelId).setActiveTab(this.vcfViewer);
-//				
+//
 //		console.log(this.vcfViewer.getWidth());
 //		console.log(this.vcfViewer.getHeight());
 
@@ -894,6 +895,5 @@ Variant.prototype.getGMSidePanelItems = function () {
                 }
             }
         }
-
     ];
 }
