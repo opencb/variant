@@ -22,16 +22,23 @@
 VariantMergeForm.prototype = new GenericFormPanel();
 
 function VariantMergeForm(args) {
-    args.analysis = 'hpg-variant.merge';
+    args.analysis = 'hpg-variant.vcf-merge';
     args.border = false;
     GenericFormPanel.prototype.constructor.call(this, args);
 
     this.id = Utils.genId("VariantMergeForm");
     this.headerWidget = this.webapp.headerWidget;
     this.opencgaBrowserWidget = this.webapp.headerWidget.opencgaBrowserWidget;
+    
+    this.file_id = 0;
 }
 
 VariantMergeForm.prototype.beforeRun = function () {
+
+    var _this = this;
+
+    _this.paramsWS["vcf-list"] = (_this.paramsWS["vcf-file"]).join(",");
+    this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
 
     if (this.testing) {
         console.log("Watch out!!! testing flag is on, so job will not launched.")
@@ -41,9 +48,10 @@ VariantMergeForm.prototype.beforeRun = function () {
 
 VariantMergeForm.prototype.getPanels = function () {
     var items = [
-//        this._getSpeciesForm(),
+        //this._getSpeciesForm(),
         this._getBrowseInputForm(),
-        this._getBrowseOutputForm()
+        //this._getBrowseOutputForm(),
+        this._getParametersForm()
     ];
 
     var form = Ext.create('Ext.panel.Panel', {
@@ -75,9 +83,8 @@ VariantMergeForm.prototype._getExampleForm = function () {
             afterrender: function () {
                 this.getEl().on("click", function () {
                     _this.loadExample1();
-                    Ext.example.msg("Example loaded", "");
+                    Utils.msg("Example loaded", "");
                 });
-
             }
         }
     });
@@ -97,35 +104,10 @@ VariantMergeForm.prototype._getExampleForm = function () {
 VariantMergeForm.prototype._getSpeciesForm = function () {
     var _this = this;
 
-    var checkFlags = function (value) {
-        var outputOptions = Ext.getCmp('outputOptions' + _this.id);
-        if (value != "hsa") {
-            outputOptions.child('checkboxfield[inputValue=TF_binding_site_variant]').setValue(false).disable();
-            outputOptions.child('checkboxfield[inputValue=miRNA_target_site]').setValue(false).disable();
-            outputOptions.child('checkboxfield[id=other_regulatory]').setValue(false).disable();
-
-            outputOptions.child('checkboxfield[inputValue=SNP]').setValue(false).disable();
-            outputOptions.child('checkboxfield[id=uniprot_natural_variants]').setValue(false).disable();
-
-            outputOptions.child('checkboxfield[id=phenotypic_annotated_SNPs]').setValue(false).disable();
-            outputOptions.child('checkboxfield[id=disease_mutations]').setValue(false).disable();
-        } else {
-            outputOptions.child('checkboxfield[inputValue=TF_binding_site_variant]').setValue(false).enable();
-            outputOptions.child('checkboxfield[inputValue=miRNA_target_site]').setValue(false).enable();
-            outputOptions.child('checkboxfield[id=other_regulatory]').setValue(false).enable();
-
-            outputOptions.child('checkboxfield[inputValue=SNP]').setValue(false).enable();
-            outputOptions.child('checkboxfield[id=uniprot_natural_variants]').setValue(false).enable();
-
-            outputOptions.child('checkboxfield[id=phenotypic_annotated_SNPs]').setValue(false).enable();
-            outputOptions.child('checkboxfield[id=disease_mutations]').setValue(false).enable();
-        }
-    };
-
     var speciesForm = Ext.create('Ext.panel.Panel', {
         title: "Species",
         header: this.headerFormConfig,
-        border: true,
+        border: this.border,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: []
@@ -153,11 +135,11 @@ VariantMergeForm.prototype._getSpeciesForm = function () {
             allowBlank: false,
             store: species,
             listeners: {
-                change: function () {
-                    if (this.getValue()) {
-                        checkFlags(this.getValue());
-                    }
-                }
+                //change: function () {
+                    //if (this.getValue()) {
+                        //checkFlags(this.getValue());
+                    //}
+                //}
             }
         });
         speciesCombo.select(speciesCombo.getStore().data.items[0]);
@@ -184,7 +166,15 @@ VariantMergeForm.prototype._getBrowseInputForm = function () {
             this.createOpencgaBrowserCmp({
                 fieldLabel: 'Input VCF file:',
                 dataParamName: 'vcf-file',
-//                id: this.id + 'vcf-file',
+                id: this.id + 'vcf-file-1',
+                mode: 'fileSelection',
+                allowedTypes: ['vcf'],
+                allowBlank: false
+            }),
+            this.createOpencgaBrowserCmp({
+                fieldLabel: 'Input VCF file:',
+                dataParamName: 'vcf-file',
+                id: this.id + 'vcf-file-2',
                 mode: 'fileSelection',
                 allowedTypes: ['vcf'],
                 allowBlank: false
@@ -196,21 +186,21 @@ VariantMergeForm.prototype._getBrowseInputForm = function () {
         text: "Add more files",
         margin: "0 0 15 105",
         handler: function () {
+            _this.file_id++;
             var file = _this.createOpencgaBrowserCmp({
                 fieldLabel: 'Input VCF file:',
                 dataParamName: 'vcf-file',
-                //  id: this.id + 'vcf-file',
+                id: this.id + '_vcf-file_' + _this.file_id,
                 mode: 'fileSelection',
                 allowedTypes: ['vcf'],
                 allowBlank: false
             })
 
-            formBrowser.insert(1, file);
-//            _this.regionFields.push(reg);
+            //formBrowser.insert(1, file);
         }
     });
 
-    formBrowser.insert(2, button);
+    //formBrowser.insert(2, button);
 
     return formBrowser;
 };
@@ -231,7 +221,7 @@ VariantMergeForm.prototype._getBrowseOutputForm = function () {
         //  id: this.id + 'vcf-file',
         mode: 'fileSelection',
         allowedTypes: ['vcf'],
-        allowBlank: false
+        //allowBlank: false
     });
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
@@ -246,18 +236,79 @@ VariantMergeForm.prototype._getBrowseOutputForm = function () {
         ]
     });
 
-
     return formBrowser;
 };
 
 VariantMergeForm.prototype.loadExample1 = function () {
-    Ext.getCmp(this.id + 'vcf-file').setText('<span class="emph">Example file.vcf</span>', false);
-    Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_file.vcf');
+    Ext.getCmp(this.id + 'vcf-file-1').update('<span class="emph">file_1.vcf</span>', false);
+    Ext.getCmp(this.id + 'vcf-file-1' + 'hidden').setValue('example_file_1.vcf');
 
-    Ext.getCmp(this.id + 'ped-file').setText('<span class="emph">Example file.ped</span>', false);
-    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_file.ped');
+    Ext.getCmp(this.id + 'vcf-file-2').update('<span class="emph">file_2.vcf</span>', false);
+    Ext.getCmp(this.id + 'vcf-file-2' + 'hidden').setValue('example_file_2.vcf');
 
 
     Ext.getCmp(this.id + 'jobname').setValue("VCF example");
     Ext.getCmp(this.id + 'jobdescription').setValue("VCF example");
 };
+
+VariantMergeForm.prototype._getParametersForm = function () {
+    var _this = this;
+    var ref = Ext.create('Ext.form.field.Radio', {
+        id: "ref" + "_" + this.id,
+        boxLabel: 'Reference (0/0)',
+        inputValue: 'reference',
+        checked: true,
+        name: 'missing-mode',
+    });
+
+    var mis = Ext.create('Ext.form.field.Radio', {
+        id: "mis" + "_" + this.id,
+        boxLabel: 'Missing (./.)',
+        inputValue: 'missing',
+        name: 'missing-mode'
+
+    });
+
+    var radioGroup = Ext.create('Ext.form.RadioGroup', {
+        fieldLabel: 'Fill empty variant/sample relationships as',
+        width: 500,
+        items: [ref, mis]
+    });
+
+    var info = {
+        xtype: 'checkbox',
+        boxLabel: 'Copy old INFO to samples',
+        name: 'copy-info',
+        inputValue: 'copy-info',
+        checked: false
+    };
+
+    var filter = {
+        xtype: 'checkbox',
+        boxLabel: 'Copy olf FILTER to samples',
+        name: 'copy-filter',
+        inputValue: 'copy-filter',
+        checked: false
+    };
+
+    var strict_ref = {
+        xtype: 'checkbox',
+        boxLabel: 'Enforce same reference in all files',
+        name: 'scrict-ref',
+        inputValue: 'strict-ref',
+        checked: false
+    };
+
+    var formBrowser = Ext.create('Ext.panel.Panel', {
+        title: "Parameters",
+        header:this.headerFormConfig,
+        border: this.formBorder,
+        padding: "5 0 0 0",
+        bodyPadding: 10,
+        items: [ radioGroup, info, filter, strict_ref]
+    });
+
+    return formBrowser;
+
+}
+;
