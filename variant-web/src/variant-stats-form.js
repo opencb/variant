@@ -56,6 +56,23 @@ VariantStatsForm.prototype.beforeRun = function () {
     if (this.paramsWS["ped-file"] == "") {
         delete this.paramsWS["ped-file"];
     }
+    var otherGroups = [];
+    if (this.paramsWS["variable-group"] == "other") {
+        if(!Array.isArray(this.paramsWS["other-variable-groups"])){
+            this.paramsWS["other-variable-groups"] = [this.paramsWS["other-variable-groups"]];
+        }
+        for (var i = 0; i < this.paramsWS["other-variable-groups"].length; i++) {
+            var group = this.paramsWS["other-variable-groups"][i];
+            if(group !== ''){
+                group = group.replace(/\s/gi, '');
+                group = group.replace(/;/gi, ',');
+                otherGroups.push(group)
+            }
+        }
+        this.paramsWS["variable-group"] = otherGroups.join(";");
+    }
+    delete this.paramsWS["other-variable-groups"];
+
     this.paramsWS["db"] = "";
     this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
 
@@ -95,36 +112,50 @@ VariantStatsForm.prototype.getPanels = function () {
 VariantStatsForm.prototype._getExampleForm = function () {
     var _this = this;
 
-    var example1 = Ext.create('Ext.Component', {
-        html: '<span class="s110"><span class="btn btn-default">Load</span> &nbsp; VCF file with ~3500 variants</span>',
-        cls: 'dedo',
-        listeners: {
-            afterrender: function () {
-                this.getEl().on("click", function () {
+    var example1 = Ext.create('Ext.container.Container', {
+        layout: 'hbox',
+        items: [
+            {
+                xtype: 'button',
+                width: 200,
+                text: 'Load example 1',
+                handler: function () {
                     _this.loadExample1();
-                    Utils.msg("Example loaded", "");
-                });
+                    Utils.msg("Example 1", "Loaded");
+                }
+            },
+            {
+                xtype: 'box',
+                margin: '5 0 0 15',
+                html: 'VCF file with ~3500 variants'
 
             }
-        }
+        ]
     });
-    var example2 = Ext.create('Ext.Component', {
-        html: '<span class="s110"><span class="btn btn-default">Load</span> &nbsp; VCF file with 4000 variants and 147 samples</span>',
-        cls: 'dedo',
-        listeners: {
-            afterrender: function () {
-                this.getEl().on("click", function () {
+    var example2 = Ext.create('Ext.container.Container', {
+        layout: 'hbox',
+        items: [
+            {
+                xtype: 'button',
+                width: 200,
+                text: 'Load example 1',
+                handler: function () {
                     _this.loadExample2();
-                    Utils.msg("Example loaded", "");
-                });
+                    Utils.msg("Example 2", "Loaded");
+                }
+            },
+            {
+                xtype: 'box',
+                margin: '5 0 0 15',
+                html: 'VCF file with 4000 variants and 147 samples'
 
             }
-        }
+        ]
     });
+
 
     var exampleForm = Ext.create('Ext.panel.Panel', {
         bodyPadding: 10,
-        cls: 'bootstrap',
         title: 'Examples',
         header: this.headerFormConfig,
         border: this.formBorder,
@@ -259,12 +290,12 @@ VariantStatsForm.prototype._getParametersForm = function () {
         fieldLabel: 'Values of the variable for grouping',
         labelWidth: this.labelWidth,
         labelAlign: 'left',
-        name: 'variable',
+        name: 'variable-group',
         store: Ext.create('Ext.data.Store', {
             fields: ['name', 'value'],
             data: [
-                {name: '1, 2', value: '1,2'},
-                {name: '0, 1', value: '0,1'},
+                {name: '1;2', value: '1;2'},
+                {name: '0;1', value: '0;1'},
                 {name: 'Other', value: 'other'}
             ]
         }),
@@ -292,9 +323,8 @@ VariantStatsForm.prototype._getParametersForm = function () {
         }
     });
 
-    var formBrowser = Ext.create('Ext.panel.Panel', {
+    var form = Ext.create('Ext.form.Panel', {
         title: "Parameters",
-        //cls:'panel-border-top',
         header: this.headerFormConfig,
         border: this.border,
         padding: "5 0 0 0",
@@ -302,7 +332,7 @@ VariantStatsForm.prototype._getParametersForm = function () {
         items: [
             {
                 xtype: 'checkbox',
-                boxLabel: 'I want per-group report appart from global statistics',
+                boxLabel: 'I Want per-group report in addition to global statistics',
                 name: 'topping',
                 inputValue: '1',
                 id: 'checkbox1',
@@ -328,6 +358,7 @@ VariantStatsForm.prototype._getParametersForm = function () {
                                 xtype: 'textfield',
                                 fieldLabel: 'Other groups',
                                 labelWidth: this.labelWidth,
+                                name: 'other-variable-groups',
                                 emptyText: 'separated by comma'
                             }
                         ]
@@ -342,6 +373,7 @@ VariantStatsForm.prototype._getParametersForm = function () {
                                 xtype: 'textfield',
                                 fieldLabel: 'Group',
                                 labelWidth: _this.labelWidth,
+                                name: 'other-variable-groups',
                                 emptyText: 'separated by comma'
                             })
                         }
@@ -351,7 +383,7 @@ VariantStatsForm.prototype._getParametersForm = function () {
         ]
     });
 
-    return formBrowser;
+    return form;
 };
 
 

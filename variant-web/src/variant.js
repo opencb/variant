@@ -152,7 +152,7 @@ Variant.prototype = {
             webapp: this,
             closable: false,
             width: '50%',
-            testing: false,
+            testing: true,
             formBorder: false,
             border: false,
             style: {
