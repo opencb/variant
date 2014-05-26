@@ -150,5 +150,6 @@ VariantAnnotForm.prototype._getParametersForm = function () {
 };
 
 VariantAnnotForm.prototype.loadExample1 = function () {
+    this.clean();
 };
 

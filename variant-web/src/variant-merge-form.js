@@ -326,10 +326,12 @@ VariantMergeForm.prototype._getParametersForm = function () {
 //};
 
 VariantMergeForm.prototype.loadExample1 = function () {
-    Ext.getCmp(this.id + 'vcf-file-1').update('<span class="emph">file_1.vcf</span>', false);
+    this.clean();
+
+    Ext.getCmp(this.id + 'vcf-file-1').setValue('<span class="emph">file_1.vcf</span>', false);
     Ext.getCmp(this.id + 'vcf-file-1' + 'hidden').setValue('example_file_1.vcf');
 
-    Ext.getCmp(this.id + 'vcf-file-2').update('<span class="emph">file_2.vcf</span>', false);
+    Ext.getCmp(this.id + 'vcf-file-2').setValue('<span class="emph">file_2.vcf</span>', false);
     Ext.getCmp(this.id + 'vcf-file-2' + 'hidden').setValue('example_file_2.vcf');
 
 

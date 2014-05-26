@@ -456,8 +456,9 @@ VariantEffectForm.prototype._getOutputForm = function () {
 
 
 VariantEffectForm.prototype.loadExample1 = function () {
+    this.clean();
 
-    Ext.getCmp(this.id + 'vcf-file').update('<span class="emph">Example 1</span>', false);
+    Ext.getCmp(this.id + 'vcf-file').setValue('<span class="emph">Example 1</span>', false);
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_CHB.exon.2010_03.sites.fixed.vcf');
 
 
