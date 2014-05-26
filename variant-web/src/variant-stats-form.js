@@ -30,25 +30,15 @@ function VariantStatsForm(args) {
     this.headerWidget = this.webapp.headerWidget;
     this.opencgaBrowserWidget = this.webapp.headerWidget.opencgaBrowserWidget;
 
-
-    this.samplesData = [
-        {name: 'Phenotype', value: 'phenotype'},
-        {name: 'Family ID', value: 'Family ID'},
-        {name: 'Individual ID', value: 'Individual ID'},
-        {name: 'Paternal ID', value: 'Paternal ID'},
-        {name: 'Maternal ID', value: 'Maternal ID'},
-        {name: 'Gender', value: 'Gender'}
-        //    Population      Other info      Relationships from Pemberton et al AJHG 2010
-    ];
+    this.uniqueFieldMap = {};
     this.samplesStore = Ext.create('Ext.data.Store', {
         fields: ['name', 'value'],
-        data: this.samplesData
+        data: []
     });
 
 }
 
 VariantStatsForm.prototype.beforeRun = function () {
-
     if (this.testing) {
         console.log("Watch out!!! testing flag is on, so job will not launched.")
     }
@@ -56,22 +46,39 @@ VariantStatsForm.prototype.beforeRun = function () {
     if (this.paramsWS["ped-file"] == "") {
         delete this.paramsWS["ped-file"];
     }
-    var otherGroups = [];
-    if (this.paramsWS["variable-group"] == "other") {
-        if(!Array.isArray(this.paramsWS["other-variable-groups"])){
-            this.paramsWS["other-variable-groups"] = [this.paramsWS["other-variable-groups"]];
-        }
-        for (var i = 0; i < this.paramsWS["other-variable-groups"].length; i++) {
-            var group = this.paramsWS["other-variable-groups"][i];
-            if(group !== ''){
-                group = group.replace(/\s/gi, '');
-                group = group.replace(/;/gi, ',');
-                otherGroups.push(group)
+    if (this.paramsWS["out"] == "") {
+        delete this.paramsWS["out"];
+    }
+
+    if (this.parametersCheckbox.getValue()) {
+        if (this.customGroupsCheckbox.getValue()) {
+            var groups = [];
+            if (!Array.isArray(this.paramsWS["other-variable-groups"])) {
+                this.paramsWS["other-variable-groups"] = [this.paramsWS["other-variable-groups"]];
+            }
+            for (var i = 0; i < this.paramsWS["other-variable-groups"].length; i++) {
+                var group = this.paramsWS["other-variable-groups"][i];
+                if (group !== '') {
+                    group = group.replace(/\s/gi, '');
+                    group = group.replace(/;/gi, ',');
+                    group = _.uniq(group.split(',')).join(',');
+
+                    groups.push(group)
+                }
+            }
+            if (groups.length > 1) {//at least 2 groups
+                this.paramsWS["variable-group"] = '"'+groups.join(";")+'"';
+            }else{
+                delete this.paramsWS["variable-group"];
             }
         }
-        this.paramsWS["variable-group"] = otherGroups.join(";");
+    } else {
+        delete this.paramsWS["variable"];
+        delete this.paramsWS["variable-group"];
     }
+
     delete this.paramsWS["other-variable-groups"];
+    delete this.paramsWS["remove_param"];
 
     this.paramsWS["db"] = "";
     this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
@@ -92,11 +99,7 @@ VariantStatsForm.prototype.getPanels = function () {
     var form = Ext.create('Ext.panel.Panel', {
         margin: "15 0 5 0",
         border: false,
-//		layout:{type:'vbox', align: 'stretch'},
         buttonAlign: 'center',
-        width: "99%",
-        //height:900,
-        //width: "600",
         items: items,
         defaults: {
             margin: '0 0 15 0'
@@ -184,23 +187,10 @@ VariantStatsForm.prototype._getBrowseInputForm = function () {
                 sessionId: $.cookie("bioinfo_sid"),
                 bucketId: selectEv.bucketId,
                 objectId: selectEv.idQuery,
-                start: 0,
-                limit: 1,
+                start: -1,
+                limit: -1,
                 success: function (data) {
-                    var lines = data.split('\n');
-                    if (lines.length > 0) {
-                        var line = lines[0];
-                        if (line.charAt(0) === '#') {
-                            var fields = line.substr(1).split('\t');
-                            var newSamples = [];
-                            for (var i = 6; i < fields.length; i++) {
-                                var field = fields[i];
-                                newSamples.push({name: field, value: field});
-                            }
-                            var data = _this.samplesData.concat(newSamples);
-                            _this.samplesStore.loadData(data);
-                        }
-                    }
+                    _this._parsePED(data);
                 }
             });
         }
@@ -259,7 +249,7 @@ VariantStatsForm.prototype._getBrowseOutputForm = function () {
 
 VariantStatsForm.prototype._getParametersForm = function () {
     var _this = this;
-    var samplesGrouping = Ext.create('Ext.form.field.ComboBox', {
+    this.samplesGroupingCombo = Ext.create('Ext.form.field.ComboBox', {
         fieldLabel: 'Variable to use for samples grouping',
         labelWidth: this.labelWidth,
         labelAlign: 'left',
@@ -273,113 +263,140 @@ VariantStatsForm.prototype._getParametersForm = function () {
         forceSelection: true,
         listeners: {
             afterrender: function () {
-                this.select(this.getStore().getAt(0));
+//                this.select(this.getStore().getAt(0));
             },
             change: function (field, e) {
                 var value = field.getValue();
                 if (value != null) {
-                    //?
+                    _this.cleanGroups();
+                    _this.variablesBox.setValue(Object.keys(_this.uniqueFieldMap[value]).join(', '));
                 }
             }
         }
     });
 
-    var otherRecord;
+    this.parametersCheckbox = Ext.create('Ext.form.field.Checkbox', {
+        name: 'remove_param',
+        boxLabel: 'I Want per-group report in addition to global statistics',
+        disabled: true,
+        handler: function () {
+            if (this.getValue()) {
+                this.nextSibling().show();
+            } else {
+                this.nextSibling().hide();
+            }
+        }
+    });
 
-    var valuesGrouping = Ext.create('Ext.form.field.ComboBox', {
-        fieldLabel: 'Values of the variable for grouping',
-        labelWidth: this.labelWidth,
-        labelAlign: 'left',
-        name: 'variable-group',
-        store: Ext.create('Ext.data.Store', {
-            fields: ['name', 'value'],
-            data: [
-                {name: '1;2', value: '1;2'},
-                {name: '0;1', value: '0;1'},
-                {name: 'Other', value: 'other'}
-            ]
-        }),
-        allowBlank: false,
-        editable: false,
-        displayField: 'name',
-        valueField: 'value',
-        queryMode: 'local',
-        forceSelection: true,
-        listeners: {
-            afterrender: function () {
-                this.select(this.getStore().getAt(0));
-                otherRecord = this.getStore().getAt(2)
+    this.customGroupsCheckbox = Ext.create('Ext.form.field.Checkbox', {
+        boxLabel: 'Create custom groups',
+        name: 'remove_param',
+        handler: function () {
+            if (this.getValue()) {
+                _this.groupsFieldContainer.show();
+                _this.addGroupButton.show();
+                _this.removeGroupButton.show();
+                _this.variablesBox.show();
+            } else {
+                _this.groupsFieldContainer.hide();
+                _this.addGroupButton.hide();
+                _this.removeGroupButton.hide();
+                _this.variablesBox.hide();
+            }
+        }
+    });
+
+    this.groupsFieldContainer = Ext.create('Ext.form.FieldContainer', {
+        hidden: true,
+        items: [
+            {
+                xtype: 'textfield',
+                fieldLabel: 'Group',
+                labelWidth: this.labelWidth,
+                name: 'other-variable-groups',
+                emptyText: 'separated by comma',
+                validator: function (value) {
+                    return _this._variableGroupValidator(value)
+                }
             },
-            change: function (t, newValue, oldValue, eOpts) {
-                var record = this.findRecordByValue(newValue);
-                if (newValue === 'other') {
-                    this.nextSibling().show();
-                    this.nextSibling().nextSibling().show();
-                } else {
-                    this.nextSibling().hide();
-                    this.nextSibling().nextSibling().hide();
+            {
+                xtype: 'textfield',
+                fieldLabel: 'Group',
+                labelWidth: this.labelWidth,
+                name: 'other-variable-groups',
+                emptyText: 'separated by comma',
+                validator: function (value) {
+                    return _this._variableGroupValidator(value)
                 }
+            }
+        ]
+    });
+
+    this.addGroupButton = Ext.create('Ext.button.Button', {
+        text: 'Add group',
+        hidden: true,
+        margin: '5 0 0 ' + (this.labelWidth + 5),
+        handler: function () {
+            _this.groupsFieldContainer.add({
+                xtype: 'textfield',
+                fieldLabel: 'Group',
+                labelWidth: _this.labelWidth,
+                name: 'other-variable-groups',
+                emptyText: 'separated by comma',
+                validator: function (value) {
+                    return _this._variableGroupValidator(value)
+                }
+            })
+        }
+    });
+    this.removeGroupButton = Ext.create('Ext.button.Button', {
+        text: "Remove group",
+        hidden: true,
+        margin: '5 0 0 10',
+        handler: function () {
+            var childs = _this.groupsFieldContainer.query('>*');
+            if(childs.length > 2){
+                _this.groupsFieldContainer.remove(_this.groupsFieldContainer.query('>*:last')[0]);
             }
         }
     });
+
+    this.variablesBox = Ext.create('Ext.form.field.TextArea', {
+        name: 'remove_param',
+        grow: true,
+        hidden: true,
+        labelWidth: _this.labelWidth,
+        fieldLabel: 'Values found',
+        height: 100,
+        width: 450,
+        fieldStyle: {
+            color: 'gray'
+        },
+        editable: false
+    });
+
+    this.groupingFieldContainer = Ext.create('Ext.form.FieldContainer', {
+        hidden: true,
+        items: [
+            this.samplesGroupingCombo,
+            this.customGroupsCheckbox,
+            this.variablesBox,
+            this.groupsFieldContainer,
+            this.addGroupButton,
+            this.removeGroupButton
+        ]
+    });
+
 
     var form = Ext.create('Ext.form.Panel', {
-        title: "Parameters",
+        title: 'Parameters <span style="font-size:13px;color:grey">(Valid PED file required)</span>',
         header: this.headerFormConfig,
         border: this.border,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [
-            {
-                xtype: 'checkbox',
-                boxLabel: 'I Want per-group report in addition to global statistics',
-                name: 'topping',
-                inputValue: '1',
-                id: 'checkbox1',
-                handler: function () {
-                    if (this.getValue()) {
-                        this.nextSibling().show();
-                    } else {
-                        this.nextSibling().hide();
-                    }
-                }
-            },
-            {
-                xtype: 'fieldcontainer',
-                hidden: true,
-                items: [
-                    samplesGrouping,
-                    valuesGrouping,
-                    {
-                        xtype: 'fieldcontainer',
-                        hidden: true,
-                        items: [
-                            {
-                                xtype: 'textfield',
-                                fieldLabel: 'Other groups',
-                                labelWidth: this.labelWidth,
-                                name: 'other-variable-groups',
-                                emptyText: 'separated by comma'
-                            }
-                        ]
-                    },
-                    {
-                        xtype: 'button',
-                        text: 'Add group',
-                        hidden: true,
-                        margin: '5 0 0 ' + (this.labelWidth + 5),
-                        handler: function () {
-                            this.up().child('fieldcontainer').add({
-                                xtype: 'textfield',
-                                fieldLabel: 'Group',
-                                labelWidth: _this.labelWidth,
-                                name: 'other-variable-groups',
-                                emptyText: 'separated by comma'
-                            })
-                        }
-                    }
-                ]
-            }
+            this.parametersCheckbox,
+            this.groupingFieldContainer
         ]
     });
 
@@ -388,6 +405,8 @@ VariantStatsForm.prototype._getParametersForm = function () {
 
 
 VariantStatsForm.prototype.loadExample1 = function () {
+    this.clean();
+    this.cleanParameters();
 
     Ext.getCmp(this.id + 'vcf-file').update('<span class="emph">Example 1.vcf</span>', false);
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_1000genomes_5000_variants.vcf');
@@ -395,18 +414,93 @@ VariantStatsForm.prototype.loadExample1 = function () {
     Ext.getCmp(this.id + 'ped-file').update('No file selected', false);
     Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('');
 
-    Ext.getCmp(this.id + 'jobname').setValue("VCF Stats example");
-    Ext.getCmp(this.id + 'jobdescription').setValue("VCF Stats example");
+    Ext.getCmp(this.id + 'jobname').setValue("VCF Stats example 3500");
+    Ext.getCmp(this.id + 'jobdescription').setValue("example");
 };
 
 VariantStatsForm.prototype.loadExample2 = function () {
+    this.clean();
+    this.cleanParameters();
+
     Ext.getCmp(this.id + 'vcf-file').update('<span class="emph">Example 2.vcf</span>', false);
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_4K_variants_147_samples.vcf');
 
     Ext.getCmp(this.id + 'ped-file').update('<span class="emph">Example 2.ped</span>', false);
     Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_4K_variants_147_samples.ped');
 
+    Ext.getCmp(this.id + 'jobname').setValue("VCF Stats example 4000");
+    Ext.getCmp(this.id + 'jobdescription').setValue("example");
+};
 
-    Ext.getCmp(this.id + 'jobname').setValue("VCF Stats example");
-    Ext.getCmp(this.id + 'jobdescription').setValue("VCF Stats example");
+VariantStatsForm.prototype.cleanParameters = function () {
+    this.parametersCheckbox.setValue(false);
+    this.parametersCheckbox.disable();
+    this.cleanGroups();
+    this.samplesStore.removeAll();
+};
+VariantStatsForm.prototype.cleanGroups = function () {
+    this.groupsFieldContainer.removeAll();
+    this.addGroupButton.el.dom.click();
+    this.addGroupButton.el.dom.click();
+};
+
+VariantStatsForm.prototype._parsePED = function (data) {
+    var fieldsPosition = {};
+    this.uniqueFieldMap = {};
+
+
+    var lines = data.split('\n');
+    if (lines.length > 0) {
+        var line = lines[0];
+        if (line.charAt(0) === '#') {
+            this.parametersCheckbox.enable();
+            var fields = line.substr(1).split('\t');
+            var fieldNames = [];
+            for (var i = 0; i < fields.length; i++) {
+                var field = fields[i];
+                fieldsPosition[i] = field;
+                this.uniqueFieldMap[field] = {};
+                fieldNames.push({name: field, value: field});
+            }
+            this.samplesStore.loadData(fieldNames);
+
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i];
+                if (line !== '' && line.charAt(0) !== '#') {
+                    var fields = line.split('\t');
+                    for (var j = 0; j < fields.length; j++) {
+                        var field = fields[j];
+                        this.uniqueFieldMap[fieldsPosition[j]][field] = true;
+                    }
+                }
+            }
+
+
+            var phenotypeRecord = this.samplesStore.getAt(5);
+            if (phenotypeRecord) {
+                this.samplesGroupingCombo.select(phenotypeRecord);
+            } else {
+                this.cleanParameters()
+            }
+        } else {
+            this.cleanParameters()
+        }
+
+
+    }
+};
+
+
+VariantStatsForm.prototype._variableGroupValidator = function (value) {
+    if (value == '') return true;
+
+    var field = this.samplesGroupingCombo.getValue();
+    var tokens = value.split(',');
+    for (var i = 0; i < tokens.length; i++) {
+        var token = tokens[i];
+        if (!this.uniqueFieldMap[field][token]) {
+            return false;
+        }
+    }
+    return true;
 };

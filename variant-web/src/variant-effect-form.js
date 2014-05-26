@@ -34,22 +34,20 @@ VariantEffectForm.prototype.beforeRun = function () {
     //validate regions
     var regionPatt = /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/;
     var regions = [];
-    if(!Array.isArray(this.paramsWS["region"])){
+    if (!Array.isArray(this.paramsWS["region"])) {
         this.paramsWS["region"] = [this.paramsWS["region"]];
     }
     for (var i = 0; i < this.paramsWS['region'].length; i++) {
         var regionStr = this.paramsWS['region'][i];
-        if(regionStr !== '' && regionPatt.test(regionStr)){
+        if (regionStr !== '' && regionPatt.test(regionStr)) {
             regions.push(regionStr);
         }
     }
-    if(regions.length > 0){
+    if (regions.length > 0) {
         this.paramsWS["region"] = regions.join(',');
-    }else{
+    } else {
         delete this.paramsWS["region"];
     }
-
-
 
 
     if (this.paramsWS["alleles"] == '') {
@@ -69,13 +67,8 @@ VariantEffectForm.prototype.beforeRun = function () {
         delete this.paramsWS["maf"];
     }
 
-    if (Ext.getCmp("Only SNPs_" + this.id).getValue()) {
-        this.paramsWS["snp"] = "include";
-    }
-    if (Ext.getCmp("Only Non-SNPs_" + this.id).getValue()) {
-        this.paramsWS["snp"] = "exclude";
-    }
-    if (Ext.getCmp("All_" + this.id).getValue()) {
+
+    if (this.paramsWS["snp"] === '') {
         delete this.paramsWS["snp"];
     }
 
@@ -142,7 +135,7 @@ VariantEffectForm.prototype._getExampleForm = function () {
                 text: 'Load example 1',
                 handler: function () {
                     _this.loadExample1();
-                    Utils.msg("Example loaded", "");
+                    Utils.msg("Example", "Loaded");
                 }
             },
             {
@@ -339,18 +332,45 @@ VariantEffectForm.prototype._getFilterForm = function () {
         allowDecimals: true
     });
 
-    var radioItems = [];
-    radioItems.push(this.createRadio("All", "snp", true));
-    radioItems.push(this.createRadio("Only SNPs", "snp"));
-    radioItems.push(this.createRadio("Only Non-SNPs", "snp"));
     var radioGroup = Ext.create('Ext.form.RadioGroup', {
         fieldLabel: 'SNP',
         labelWidth: this.labelWidth,
-        items: radioItems
+        items: [
+            {
+                boxLabel: 'All',
+                inputValue: '',
+                name: 'snp',
+                checked: true
+            },
+            {
+                boxLabel: 'Only SNPs',
+                inputValue: 'include',
+                name: 'snp'
+            },
+            {
+                boxLabel: 'Only Non-SNPs',
+                inputValue: 'exclude',
+                name: 'snp'
+            }
+        ]
+    });
+
+
+    this.regionsFieldContainer = Ext.create('Ext.form.FieldContainer', {
+        items: [
+            {
+                xtype: 'textfield',
+                fieldLabel: 'Region',
+                labelWidth: this.labelWidth,
+                name: 'region',
+                emptyText: "chr:start-end",
+                regex: /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/
+            }
+        ]
     });
 
     var button = Ext.create('Ext.button.Button', {
-        text: "Add more regions",
+        text: "Add region",
         margin: "0 0 15 " + (this.labelWidth + 5),
         handler: function () {
             this.previousSibling().add({
@@ -361,6 +381,17 @@ VariantEffectForm.prototype._getFilterForm = function () {
                 emptyText: "chr:start-end",
                 regex: /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/
             });
+        }
+    });
+
+    var removeRegionButton = Ext.create('Ext.button.Button', {
+        text: "Remove region",
+        margin: "0 0 15 10",
+        handler: function () {
+            var childs = _this.regionsFieldContainer.query('>*');
+            if (childs.length > 1) {
+                _this.regionsFieldContainer.remove(_this.regionsFieldContainer.query('>*:last')[0]);
+            }
         }
     });
 
@@ -377,20 +408,9 @@ VariantEffectForm.prototype._getFilterForm = function () {
             gene,
             quality,
             minAlleles,
-            {
-                xtype: 'fieldcontainer',
-                items: [
-                    {
-                        xtype: 'textfield',
-                        fieldLabel: 'Region',
-                        labelWidth: this.labelWidth,
-                        name: 'region',
-                        emptyText: "chr:start-end",
-                        regex: /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/
-                    }
-                ]
-            },
+            this.regionsFieldContainer,
             button,
+            removeRegionButton,
             radioGroup
         ]
     });

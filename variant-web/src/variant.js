@@ -68,7 +68,7 @@ Variant.prototype = {
         this.rightDiv = $('<div id="right-side-panel"></div>')[0];
         $(this.rightDiv).css({
             position: 'absolute',
-            'z-index': '50',
+            'z-index': '10000',
             right: '0px'
         });
         $(this.wrapDiv).append(this.rightDiv);
@@ -152,7 +152,7 @@ Variant.prototype = {
             webapp: this,
             closable: false,
             width: '50%',
-            testing: true,
+            testing: false,
             formBorder: false,
             border: false,
             style: {
