@@ -120,7 +120,7 @@ VariantStatsForm.prototype._getExampleForm = function () {
         items: [
             {
                 xtype: 'button',
-                width: 200,
+                width: this.labelWidth,
                 text: 'Load example 1',
                 handler: function () {
                     _this.loadExample1();
@@ -140,7 +140,7 @@ VariantStatsForm.prototype._getExampleForm = function () {
         items: [
             {
                 xtype: 'button',
-                width: 200,
+                width: this.labelWidth,
                 text: 'Load example 1',
                 handler: function () {
                     _this.loadExample2();

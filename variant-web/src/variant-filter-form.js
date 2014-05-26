@@ -22,7 +22,7 @@
 VariantFilterForm.prototype = new GenericFormPanel();
 
 function VariantFilterForm(args) {
-    args.analysis = 'hpg-variant.filter';
+    args.analysis = 'hpg-variant.vcf-filter';
     GenericFormPanel.prototype.constructor.call(this, args);
 
     this.id = Utils.genId("VariantFilterForm");
@@ -31,6 +31,63 @@ function VariantFilterForm(args) {
 }
 
 VariantFilterForm.prototype.beforeRun = function () {
+
+
+    //validate regions
+    var regionPatt = /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/;
+    var regions = [];
+    if (!Array.isArray(this.paramsWS["region"])) {
+        this.paramsWS["region"] = [this.paramsWS["region"]];
+    }
+    for (var i = 0; i < this.paramsWS['region'].length; i++) {
+        var regionStr = this.paramsWS['region'][i];
+        if (regionStr !== '' && regionPatt.test(regionStr)) {
+            regions.push(regionStr);
+        }
+    }
+    if (regions.length > 0) {
+        this.paramsWS["region"] = regions.join(',');
+    } else {
+        delete this.paramsWS["region"];
+    }
+
+
+    this.paramsWS["gene"] = this.paramsWS["gene"].replace(/\s/gm, "").replace(/(^,*)|(,*$)/g, "");
+    if (this.paramsWS["gene"] === '') {
+        delete this.paramsWS["gene"];
+    }
+    if (this.paramsWS["alleles"] === '') {
+        delete this.paramsWS["alleles"];
+    }
+    if (this.paramsWS["coverage"] === '') {
+        delete this.paramsWS["coverage"];
+    }
+    if (this.paramsWS["quality"] === '') {
+        delete this.paramsWS["quality"];
+    }
+    if (this.paramsWS["maf"] === '') {
+        delete this.paramsWS["maf"];
+    }
+    if (this.paramsWS["missing"] === '') {
+        delete this.paramsWS["missing"];
+    }
+    if (this.paramsWS["dominant"] === '') {
+        delete this.paramsWS["dominant"];
+    }
+    if (this.paramsWS["recessive"] === '') {
+        delete this.paramsWS["recessive"];
+    }
+    if (this.paramsWS["var-type"] === '') {
+        delete this.paramsWS["var-type"];
+    }
+
+
+    if (this.paramsWS["ped-file"] == "") {
+        delete this.paramsWS["ped-file"];
+    }
+
+    this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
+
     if (this.testing) {
         console.log("Watch out!!! testing flag is on, so job will not launched.")
     }
@@ -39,9 +96,7 @@ VariantFilterForm.prototype.beforeRun = function () {
 
 VariantFilterForm.prototype.getPanels = function () {
     var items = [
-        this._getSpeciesForm(),
         this._getBrowseInputForm(),
-        this._getBrowseOutputForm(),
         this._getFilterForm()
     ];
 
@@ -62,16 +117,83 @@ VariantFilterForm.prototype.getPanels = function () {
     return [this._getExampleForm(), form];
 };
 
+
+VariantFilterForm.prototype._getExampleForm = function () {
+    var _this = this;
+
+    var example1 = Ext.create('Ext.container.Container', {
+        layout: 'hbox',
+        items: [
+            {
+                xtype: 'button',
+                width: this.labelWidth,
+                text: 'Load example 1',
+                handler: function () {
+                    _this.loadExample1();
+                    Utils.msg("Example 1", "Loaded");
+                }
+            },
+            {
+                xtype: 'box',
+                margin: '5 0 0 15',
+                html: 'VCF file with ~3500 variants'
+
+            }
+        ]
+    });
+
+    var exampleForm = Ext.create('Ext.panel.Panel', {
+        bodyPadding: 10,
+        title: 'Examples',
+        header: this.headerFormConfig,
+        border: this.formBorder,
+        items: [example1],
+        defaults: {margin: '5 0 0 0'},
+        margin: '0 0 10 0'
+    });
+
+    return exampleForm;
+};
+
+
 VariantFilterForm.prototype._getBrowseInputForm = function () {
     var _this = this;
 
+    var speciesStore = Ext.create('Ext.data.Store', {
+        autoLoad: false,
+        fields: ['species', 'common', 'scientific', 'assembly', 'sciAsembly'],
+        data: this.webapp.speciesList
+    });
+
+    var speciesCombo = Ext.create('Ext.form.field.ComboBox', {
+//        id: _this.id + "speciesCombo",
+        fieldLabel: 'Choose Species',
+        labelWidth: this.labelWidth,
+        labelAlign: 'left',
+        name: 'species',
+        displayField: 'species',
+        valueField: 'species',
+        editable: false,
+        allowBlank: false,
+        store: speciesStore,
+        listeners: {
+            change: function () {
+                if (this.getValue()) {
+                    //
+                }
+            }
+        }
+    });
+
+
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Input",
-        header:this.headerFormConfig,
+        header: this.headerFormConfig,
         border: this.border,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [
+            /* speciesCombo, */
             this.createOpencgaBrowserCmp({
                 fieldLabel: 'Input VCF file',
                 dataParamName: 'vcf-file',
@@ -87,349 +209,211 @@ VariantFilterForm.prototype._getBrowseInputForm = function () {
                 mode: 'fileSelection',
                 allowedTypes: ['ped'],
                 allowBlank: true
-            })]
-    });
-    return formBrowser;
-}
-
-
-VariantFilterForm.prototype._getBrowseOutputForm = function () {
-    var file = Ext.create('Ext.form.field.Text', {
-        id: this.id + "output-file",
-        fieldLabel: 'Output',
-        name: 'output-file',
-        padding: "5 0 0 5",
-        bodyPadding: 10,
-        width: 500
-    });
-
-    var formBrowser = Ext.create('Ext.panel.Panel', {
-        title: "Output",
-        //cls:'panel-border-top',
-        header:this.headerFormConfig,
-        border: this.border,
-        padding: "5 0 0 0",
-        bodyPadding: 10,
-        items: [
-            file,
-            this.createOpencgaBrowserCmp({
-                fieldLabel: 'Output folder',
-                dataParamName: 'output-folder',
-                id: this.id + 'outputFolder',
-                mode: 'fileSelection',
-//                allowedTypes: ['ped'],
-                allowBlank: true
             })
         ]
     });
-
     return formBrowser;
 }
 
 VariantFilterForm.prototype._getFilterForm = function () {
     var _this = this;
-    var items = [];
-    
-    var region = Ext.create('Ext.form.field.Text', {
-        id: this.id + "region",
-        fieldLabel: 'Region (chr:start-end)',
-        name: 'region',
-        width: 500,
-        //emptyText: "chr:start-end",
-        regex: /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/
+
+
+    this.regionsFieldContainer = Ext.create('Ext.form.FieldContainer', {
+        items: [
+            {
+                xtype: 'textfield',
+                fieldLabel: 'Region',
+                labelWidth: this.labelWidth,
+                name: 'region',
+                emptyText: "chr:start-end",
+                regex: /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/
+            }
+        ]
     });
-    
-    items.push(region);
-    
-    
-    var gene = {
-        id: this.id + "gene",
+
+    var button = Ext.create('Ext.button.Button', {
+        text: "Add region",
+        margin: "0 0 15 " + (this.labelWidth + 5),
+        handler: function () {
+            this.previousSibling().add({
+                xtype: 'textfield',
+                fieldLabel: 'Region',
+                labelWidth: _this.labelWidth,
+                name: 'region',
+                emptyText: "chr:start-end",
+                regex: /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/
+            });
+        }
+    });
+
+    var removeRegionButton = Ext.create('Ext.button.Button', {
+        text: "Remove region",
+        margin: "0 0 15 10",
+        handler: function () {
+            var childs = _this.regionsFieldContainer.query('>*');
+            if (childs.length > 1) {
+                _this.regionsFieldContainer.remove(_this.regionsFieldContainer.query('>*:last')[0]);
+            }
+        }
+    });
+
+
+    this.gene = Ext.create('Ext.form.field.TextArea', {
         fieldLabel: 'Gene list (csv)',
-        xtype: 'textarea',
+        labelWidth: this.labelWidth,
         name: 'gene',
         flex: 1,
-        width: 500,
         enableKeyEvents: true,
         value: ''
-    };
-    items.push(gene);
+    });
 
-    var alleles = Ext.create('Ext.form.field.Number', {
-        id: this.id + "num_alleles",
+    this.alleles = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'Number of alleles',
+        labelWidth: this.labelWidth,
         name: 'alleles',
-        width: 500,
         minValue: 1,
         allowDecimals: false
     });
-    items.push(alleles);
-    
-    var coverage = Ext.create('Ext.form.field.Number', {
-        id: this.id + "coverage",
+
+    this.coverage = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'Minimum coverage',
+        labelWidth: this.labelWidth,
         name: 'coverage',
-        width: 500,
         minValue: 0,
         allowDecimals: false
     });
-    items.push(coverage);
 
-    var quality = Ext.create('Ext.form.field.Number', {
-        id: this.id + "quality",
+    this.quality = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'Minimum quality',
+        labelWidth: this.labelWidth,
         name: 'quality',
-        width: 500,
         minValue: 0,
         allowDecimals: false
     });
-    items.push(quality);
-    
-    var minAlleles = Ext.create('Ext.form.field.Number', {
-        id: this.id + "minAlleles",
+
+    this.minAlleles = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'Minimum allele freq. (MAF)',
+        labelWidth: this.labelWidth,
         name: 'maf',
-        width: 500,
         minValue: 0,
         maxValue: 1,
         step: 0.01,
         decimalPrecision: 12,
         allowDecimals: true
     });
-    items.push(minAlleles);
 
-    var minAlleles = Ext.create('Ext.form.field.Number', {
-        id: this.id + "minAlleles",
-        fieldLabel: 'Minimum allele freq. (MAF)',
-        name: 'maf',
-        width: 500,
+    this.maxMissing = Ext.create('Ext.form.field.Number', {
+        fieldLabel: 'Maximum missing values',
+        labelWidth: this.labelWidth,
+        name: 'missing',
         minValue: 0,
         maxValue: 1,
         step: 0.01,
         decimalPrecision: 12,
         allowDecimals: true
     });
-    items.push(minAlleles);
 
 
-    var dominant = Ext.create('Ext.form.field.Number', {
-        id: this.id + "dominant",
+    this.dominant = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'Dominant inheritance pattern',
+        labelWidth: this.labelWidth,
         name: 'dominant',
-        width: 500,
         minValue: 0,
         maxValue: 1,
         step: 0.01,
         decimalPrecision: 12,
         allowDecimals: true
     });
-    items.push(dominant);
 
-    var recessive = Ext.create('Ext.form.field.Number', {
-        id: this.id + "recessive",
+    this.recessive = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'Recessive inheritance pattern',
+        labelWidth: this.labelWidth,
         name: 'recessive',
-        width: 500,
         minValue: 0,
         maxValue: 1,
         step: 0.01,
         decimalPrecision: 12,
         allowDecimals: true
     });
-    items.push(recessive);
- 
 
-    var radioItems = [];
-    radioItems.push(this.createRadio("All", "variant_type", true));
-    radioItems.push(this.createRadio("Only SNPs", "variant_type"));
-    radioItems.push(this.createRadio("Only Indel", "variant_type"));
-    radioItems.push(this.createRadio("Structural", "variant_type"));
-    var radioGroup = Ext.create('Ext.form.RadioGroup', {
-        fieldLabel: 'Variant Type',
-        width: 500,
-        items: radioItems
+
+    this.variantTypeRadioGroup = Ext.create('Ext.form.RadioGroup', {
+        fieldLabel: 'Variant type',
+        labelWidth: this.labelWidth,
+        items: [
+            {
+                boxLabel: 'All',
+                inputValue: '',
+                name: 'var-type',
+                checked: true
+            },
+            {
+                boxLabel: 'SNP',
+                inputValue: 'snv',
+                name: 'var-type'
+            },
+            {
+                boxLabel: 'Indel',
+                inputValue: 'indel',
+                name: 'var-type'
+            },
+            {
+                boxLabel: 'Structural',
+                inputValue: 'structural',
+                name: 'var-type'
+            }
+
+        ]
     });
-    items.push(radioGroup);
-   
-    var save = {
-        xtype: 'checkbox',
-        boxLabel: 'Save rejected variants to another file', 
-        name: 'save',
-        inputValue: 'save',
+
+
+    this.rejectedCheckbox = Ext.create('Ext.form.field.Checkbox', {
+        boxLabel: 'Save rejected variants to another file',
+        name: 'save-rejected',
+        inputValue: '',
         checked: false
-    };
+    });
 
 
-    items.push(save);
-    //var radioSNPItems = [];
-    //radioSNPItems.push(this.createRadio("All", "snp", true));
-    //radioSNPItems.push(this.createRadio("Only SNPs", "snp"));
-    //radioSNPItems.push(this.createRadio("Only Indel","snp"));
-    //var radioSNPGroup = Ext.create('Ext.form.RadioGroup', {
-        //fieldLabel: 'SNP',
-        //width: 500,
-        //items: radioSNPItems
-    //});
-    //items.push(radioSNPGroup);
-    
-    //var radioINDELItems = [];
-    //radioINDELItems.push(this.createRadio("All", "indel", true));
-    //radioINDELItems.push(this.createRadio("Only SNPs", "indel"));
-    //radioINDELItems.push(this.createRadio("Only Indel","indel"));
-    //var radioINDELGroup = Ext.create('Ext.form.RadioGroup', {
-        //fieldLabel: 'Indel',
-        //width: 500,
-        //items: radioINDELItems
-    //});
-    //items.push(radioINDELGroup); 
-    
-    
-    
     var formFilterOptions = Ext.create('Ext.form.Panel', {
         title: "Filters",
         header: this.headerFormConfig,
         border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
-        items: items
+        items: [
+            this.regionsFieldContainer,
+            button,
+            removeRegionButton,
+
+            this.gene,
+            this.alleles,
+            this.coverage,
+            this.quality,
+            this.minAlleles,
+            this.maxMissing,
+            this.dominant,
+            this.recessive,
+            this.variantTypeRadioGroup,
+
+            this.rejectedCheckbox
+        ]
     });
+
 
     return formFilterOptions;
 }
 
-VariantFilterForm.prototype._getExampleForm = function () {
-    var _this = this;
-
-    var example1 = Ext.create('Ext.Component', {
-        html: '<span class="s140"><span class="btn btn-default">Load</span> &nbsp; VCF file with ~3500 variants example</span>',
-        cls: 'dedo',
-        listeners: {
-            afterrender: function () {
-                this.getEl().on("click", function () {
-                    _this.loadExample1();
-                    Utils.msg("Example loaded", "");
-                });
-
-            }
-        }
-    });
-    var example2 = Ext.create('Ext.Component', {
-        html: '<span class="s140"><span class="btn btn-default">Load</span> &nbsp; VCF file with ~5000 variants example</span>',
-        cls: 'dedo',
-        listeners: {
-            afterrender: function () {
-                this.getEl().on("click", function () {
-                    _this.loadExample2();
-                    Utils.msg("Example loaded", "");
-                });
-
-            }
-        }
-    });
-
-    var exampleForm = Ext.create('Ext.panel.Panel', {
-        bodyPadding: 10,
-        cls: 'bootstrap',
-        title:'Examples',
-        header: this.headerFormConfig,
-        border: this.formBorder,
-        items: [
-            this.note1,
-            example1,
-            this.note2,
-            example2,
-        ],
-        defaults: {margin: '5 0 0 0'},
-        margin: '0 0 10 0'
-    });
-
-    return exampleForm;
-};
-
-
 
 VariantFilterForm.prototype.loadExample1 = function () {
+    this.clean();
 
-    Ext.getCmp(this.id + 'vcf-file').update('<span class="emph">Example 1</span>', false);
-    Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_CHB.exon.2010_03.sites.fixed.vcf');
-
+    Ext.getCmp(this.id + 'vcf-file').setValue('Example vcf 3500');
+    Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_');
 
     Ext.getCmp(this.id + 'jobname').setValue("Example vcf 3500");
     Ext.getCmp(this.id + 'jobdescription').setValue("VCF file with ~3500 variants");
 
-    Ext.getCmp("Only SNPs_" + this.id).setValue(true);
-
+    this.variantTypeRadioGroup.setValue({'var-type': 'snv'});
 };
-VariantFilterForm.prototype._getSpeciesForm = function () {
-    var _this = this;
-
-    //var checkFlags = function (value) {
-        //var outputOptions = Ext.getCmp('outputOptions' + _this.id);
-        //if (value != "hsa") {
-            //outputOptions.child('checkboxfield[inputValue=TF_binding_site_variant]').setValue(false).disable();
-            //outputOptions.child('checkboxfield[inputValue=miRNA_target_site]').setValue(false).disable();
-            //outputOptions.child('checkboxfield[id=other_regulatory]').setValue(false).disable();
-
-            //outputOptions.child('checkboxfield[inputValue=SNP]').setValue(false).disable();
-            //outputOptions.child('checkboxfield[id=uniprot_natural_variants]').setValue(false).disable();
-
-            //outputOptions.child('checkboxfield[id=phenotypic_annotated_SNPs]').setValue(false).disable();
-            //outputOptions.child('checkboxfield[id=disease_mutations]').setValue(false).disable();
-        //} else {
-            //outputOptions.child('checkboxfield[inputValue=TF_binding_site_variant]').setValue(false).enable();
-            //outputOptions.child('checkboxfield[inputValue=miRNA_target_site]').setValue(false).enable();
-            //outputOptions.child('checkboxfield[id=other_regulatory]').setValue(false).enable();
-
-            //outputOptions.child('checkboxfield[inputValue=SNP]').setValue(false).enable();
-            //outputOptions.child('checkboxfield[id=uniprot_natural_variants]').setValue(false).enable();
-
-            //outputOptions.child('checkboxfield[id=phenotypic_annotated_SNPs]').setValue(false).enable();
-            //outputOptions.child('checkboxfield[id=disease_mutations]').setValue(false).enable();
-        //}
-    //};
-
-    var speciesForm = Ext.create('Ext.panel.Panel', {
-        title: "Species",
-        header: this.headerFormConfig,
-        border: this.formBorder,
-        padding: "5 0 0 0",
-        bodyPadding: 10,
-        items: []
-    });
-
-    $.ajax({url: CELLBASE_HOST + "/latest/species?of=json", success: function (data, textStatus, jqXHR) {
-        // Create the combo box, attached to the states data store
-        var objdata = JSON.parse(data);
-        for (var i = 0; i < objdata.length; i++) {
-            objdata[i].sciAsembly = objdata[i].scientific + " (" + objdata[i].assembly + ")";
-        }
-        var species = Ext.create('Ext.data.Store', {
-            autoLoad: true,
-            fields: ['species', 'common', 'scientific', 'assembly', 'sciAsembly'],
-            data: objdata
-        });
-        var speciesCombo = Ext.create('Ext.form.field.ComboBox', {
-            id: _this.id + "speciesCombo",
-            name: 'species',
-            fieldLabel: 'Choose Species',
-            displayField: 'sciAsembly',
-            valueField: 'species',
-            editable: false,
-            width: 350,
-            allowBlank: false,
-            store: species,
-            listeners: {
-                change: function () {
-                    if (this.getValue()) {
-                        //checkFlags(this.getValue());
-                    }
-                }
-            }
-        });
-        speciesCombo.select(speciesCombo.getStore().data.items[0]);
-        speciesForm.add(speciesCombo);
-    }, error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus);
-    }});
-
-    return speciesForm;
-}

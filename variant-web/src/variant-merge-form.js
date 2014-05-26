@@ -34,9 +34,7 @@ function VariantMergeForm(args) {
 }
 
 VariantMergeForm.prototype.beforeRun = function () {
-    this.testing = true;
     this.paramsWS["vcf-list"] = this.paramsWS["vcf-file"].join(",");
-
 
     delete this.paramsWS["vcf-file"];
     this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
@@ -81,7 +79,7 @@ VariantMergeForm.prototype._getExampleForm = function () {
         items: [
             {
                 xtype: 'button',
-                width: 200,
+                width: this.labelWidth,
                 text: 'Load example 1',
                 handler: function () {
                     _this.loadExample1();

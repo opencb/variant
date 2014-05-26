@@ -131,7 +131,7 @@ VariantEffectForm.prototype._getExampleForm = function () {
         items: [
             {
                 xtype: 'button',
-                width: 200,
+                width: this.labelWidth,
                 text: 'Load example 1',
                 handler: function () {
                     _this.loadExample1();
@@ -151,7 +151,7 @@ VariantEffectForm.prototype._getExampleForm = function () {
         items: [
             {
                 xtype: 'button',
-                width: 200,
+                width: this.labelWidth,
                 text: 'Load example 1',
                 handler: function () {
                     _this.loadExample2();
@@ -200,7 +200,7 @@ VariantEffectForm.prototype._getInputForm = function () {
     var speciesStore = Ext.create('Ext.data.Store', {
         autoLoad: true,
         fields: ['species', 'common', 'scientific', 'assembly', 'sciAsembly'],
-        data: []
+        data: this.webapp.speciesList
     });
 
     var speciesCombo = Ext.create('Ext.form.field.ComboBox', {
@@ -209,7 +209,7 @@ VariantEffectForm.prototype._getInputForm = function () {
         labelWidth: this.labelWidth,
         labelAlign: 'left',
         name: 'species',
-        displayField: 'sciAsembly',
+        displayField: 'species',
         valueField: 'species',
         editable: false,
         allowBlank: false,
@@ -229,7 +229,7 @@ VariantEffectForm.prototype._getInputForm = function () {
         border: this.border,
         padding: "5 0 0 0",
         bodyPadding: 10,
-        items: [speciesCombo, browseVcf]
+        items: [/*speciesCombo,*/ browseVcf]
     });
 
     var checkFlags = function (value) {
@@ -256,19 +256,6 @@ VariantEffectForm.prototype._getInputForm = function () {
             outputOptions.child('checkboxfield[id=disease_mutations]').setValue(false).enable();
         }
     };
-
-
-    $.ajax({url: CELLBASE_HOST + "/latest/species?of=json", success: function (data, textStatus, jqXHR) {
-        // Create the combo box, attached to the states data store
-        var objdata = JSON.parse(data);
-        for (var i = 0; i < objdata.length; i++) {
-            objdata[i].sciAsembly = objdata[i].scientific + " (" + objdata[i].assembly + ")";
-        }
-        speciesStore.loadData(objdata);
-        speciesCombo.select(speciesStore.getAt(0));
-    }, error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus);
-    }});
 
     return speciesForm;
 };

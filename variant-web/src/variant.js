@@ -11,11 +11,31 @@ function Variant(args) {
     this.description = 'Home';
 //    this.description = 'Variant analysis tool'
     this.version = '2.0.6';
-    this.tools = ["hpg-variant.effect", "variant", "hpg-variant.vcf-stats",  "hpg-variant.vcf-merge", "hpg-variant.gwas-assoc", "hpg-variant.gwas-tdt"];
+    this.tools = [
+        "variant",
+        "hpg-variant.vcf-stats",
+        "hpg-variant.vcf-merge",
+        "hpg-variant.vcf-filter",
+        "hpg-variant.vcf-annot",
+        "hpg-variant.vcf-split",
+        "hpg-variant.effect",
+        "hpg-variant.gwas-assoc",
+        "hpg-variant.gwas-tdt"
+    ];
     this.border = false;
     this.targetId;
     this.width;
     this.height;
+    this.speciesList = [
+        {
+            assembly: "GRCh37.p7",
+            common: "human",
+            id: "extModel256-1",
+            sciAsembly: "Homo sapiens (GRCh37.p7)",
+            scientific: "Homo sapiens",
+            species: "hsa"
+        }
+    ];
 
 
     //set instantiation args, must be last
@@ -173,7 +193,7 @@ Variant.prototype = {
             webapp: this,
             closable: false,
             width: '50%',
-            //testing: true,
+            testing: false,
             formBorder: false,
             border: false,
             style: {
@@ -194,7 +214,7 @@ Variant.prototype = {
             webapp: this,
             closable: false,
             width: '50%',
-            testing: true,
+            testing: false,
             formBorder: false,
             border: false,
             style: {
@@ -256,6 +276,28 @@ Variant.prototype = {
         });
         this.variantSplitForm.draw();
 
+        this.variantAnnotForm = new VariantAnnotForm({
+            webapp: this,
+            closable: false,
+            width: '50%',
+            testing: true,
+            formBorder: false,
+            border: false,
+            style: {
+                borderTop: '1px solid #d1d9e3'
+            },
+//            title: 'GWAS',
+//            bodyPadding: '15 0 0 40',
+            bodyPadding: '20 0 0 200',
+//            headerConfig: {
+//                baseCls: 'analysis-header'
+//            },
+            headerFormConfig: {
+                baseCls: 'header-form'
+            }
+        });
+        this.variantAnnotForm.draw();
+
         this.variantEffectForm = new VariantEffectForm({
             webapp: this,
             closable: false,
@@ -307,8 +349,8 @@ Variant.prototype = {
             this.sessionFinished();
         }
 
-                        //this.container.removeAll(false);
-                        //this.container.add(_this.variantMergeForm.panel);
+        //this.container.removeAll(false);
+        //this.container.add(_this.variantMergeForm.panel);
     },
     _createHeaderWidget: function (targetId) {
         var _this = this;
@@ -417,7 +459,7 @@ Variant.prototype = {
                         break;
                     case "Annot":
                         _this.container.removeAll(false);
-                        _this.container.add();
+                        _this.container.add(_this.variantAnnotForm.panel);
                         break;
                     case "Split":
                         _this.container.removeAll(false);
@@ -545,6 +587,7 @@ Variant.prototype.setSize = function (width, height) {
 Variant.prototype.jobItemClick = function (record) {
     var _this = this;
 
+    this.jobListWidget.toggle(false);
     this.headerWidget.toogleAppMenu(false);
     this.headerWidget.setDescription('Results');
 
