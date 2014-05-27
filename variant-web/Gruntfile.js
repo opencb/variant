@@ -12,18 +12,8 @@ module.exports = function (grunt) {
         concat: {
             dist: {
                 src: [
-                    'src/variant-filter-widget.js',
-                    'src/variant-filter-form.js',
-                    'src/variant-effect-form.js',
-                    'src/variant-index-form.js',
-                    'src/variant-stats-form.js',
-                    'src/variant-gwas-form.js',
-                    'src/variant-merge-form.js',
-                    'src/variant-split-form.js',
-                    'src/variant-annot-form.js',
-                    'src/variant-widget.js',
-                    'src/variant-stats-widget.js',
-                    'src/variant-gwas-widget.js',
+                    'src/widgets/*.js',
+                    'src/forms/*.js',
                     'src/variant.js'
                 ],
                 dest: '<%= def.build %>/<%= def.name %>.js'

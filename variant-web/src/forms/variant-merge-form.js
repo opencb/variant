@@ -250,7 +250,6 @@ VariantMergeForm.prototype._getParametersForm = function () {
     var radioGroup = Ext.create('Ext.form.RadioGroup', {
         fieldLabel: 'Fill empty variant/sample relationships as',
         labelWidth: this.labelWidth,
-        width: 500,
         items: [ref, mis]
     });
 
@@ -278,7 +277,7 @@ VariantMergeForm.prototype._getParametersForm = function () {
         checked: false
     };
 
-    var formBrowser = Ext.create('Ext.panel.Panel', {
+    var formBrowser = Ext.create('Ext.form.Panel', {
         title: "Parameters",
         header: this.headerFormConfig,
         border: this.formBorder,

@@ -22,7 +22,7 @@
 VariantSplitForm.prototype = new GenericFormPanel();
 
 function VariantSplitForm(args) {
-    args.analysis = 'hpg-variant.gwas-assoc';
+    args.analysis = 'hpg-variant.vcf-split';
     GenericFormPanel.prototype.constructor.call(this, args);
 
     this.id = Utils.genId("VariantSplitForm");
@@ -69,21 +69,16 @@ VariantSplitForm.prototype.beforeRun = function () {
 VariantSplitForm.prototype.getPanels = function () {
     var items = [
         this._getBrowseInputForm(),
-        this._getBrowseOutputForm(), ,
         this._getParametersForm()
     ];
 
     var form = Ext.create('Ext.panel.Panel', {
         margin: "15 0 5 0",
         border: false,
-//		layout:{type:'vbox', align: 'stretch'},
         buttonAlign: 'center',
-        width: "99%",
-        //height:900,
-        //width: "600",
         items: items,
-        defaults:{
-            margin:'0 0 15 0'
+        defaults: {
+            margin: '0 0 15 0'
         }
     });
 
@@ -94,30 +89,35 @@ VariantSplitForm.prototype.getPanels = function () {
 VariantSplitForm.prototype._getExampleForm = function () {
     var _this = this;
 
-    var example1 = Ext.create('Ext.Component', {
-        width: 275,
-        html: '<span class="s140"><span class="btn btn-default">Load</span> &nbsp; VCF file example</span>',
-        cls: 'dedo',
-        listeners: {
-            afterrender: function () {
-                this.getEl().on("click", function () {
+    var example1 = Ext.create('Ext.container.Container', {
+        layout: 'hbox',
+        items: [
+            {
+                xtype: 'button',
+                width: this.labelWidth,
+                text: 'Load example 1',
+                handler: function () {
                     _this.loadExample1();
-                    Ext.example.msg("Example loaded", "");
-                });
+                    Utils.msg("Example 1", "Loaded");
+                }
+            },
+            {
+                xtype: 'box',
+                margin: '5 0 0 15',
+                html: 'VCF file with ~3500 variants'
 
             }
-        }
+        ]
     });
 
     var exampleForm = Ext.create('Ext.panel.Panel', {
         bodyPadding: 10,
-        cls:'bootstrap',
         title: 'Examples',
         header: this.headerFormConfig,
         border: this.formBorder,
-        items: [this.note1, example1],
+        items: [example1],
         defaults: {margin: '5 0 0 0'},
-        margin:'0 0 10 0'
+        margin: '0 0 10 0'
     });
 
     return exampleForm;
@@ -128,7 +128,7 @@ VariantSplitForm.prototype._getBrowseInputForm = function () {
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Input",
-        header:this.headerFormConfig,
+        header: this.headerFormConfig,
         border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
@@ -150,35 +150,6 @@ VariantSplitForm.prototype._getBrowseInputForm = function () {
                 allowBlank: false
             })]
     });
-    return formBrowser;
-};
-
-VariantSplitForm.prototype._getBrowseOutputForm = function () {
-    var file = Ext.create('Ext.form.field.Text', {
-        id: this.id + "output-file",
-        fieldLabel: 'Output',
-        name: 'output-file',
-    });
-
-    var formBrowser = Ext.create('Ext.panel.Panel', {
-        title: "Output",
-        header:this.headerFormConfig,
-        border: this.formBorder,
-        padding: "5 0 0 0",
-        bodyPadding: 10,
-        items: [
-            file,
-            this.createOpencgaBrowserCmp({
-                fieldLabel: 'Output folder:',
-                dataParamName: 'output-folder',
-                id: this.id + 'outputFolder',
-                mode: 'fileSelection',
-//                allowedTypes: ['ped'],
-                allowBlank: true
-            })
-        ]
-    });
-
     return formBrowser;
 };
 
@@ -205,12 +176,12 @@ VariantSplitForm.prototype._getParametersForm = function () {
         width: 500,
         items: [chr, cov]
     });
-    
+
     var intervals = _this.createTextFields("intervals");
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Criterion",
-        header:this.headerFormConfig,
+        header: this.headerFormConfig,
         border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
@@ -227,10 +198,10 @@ VariantSplitForm.prototype._getParametersForm = function () {
 
 
 VariantSplitForm.prototype.loadExample1 = function () {
-    Ext.getCmp(this.id + 'vcf-file').setText('<span class="emph">Example 1</span>', false);
+    Ext.getCmp(this.id + 'vcf-file').setValue('Example 1');
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_4K_variants_147_samples.vcf');
 
-    Ext.getCmp(this.id + 'ped-file').setText('<span class="emph">Example 1</span>', false);
+    Ext.getCmp(this.id + 'ped-file').setValue('Example 1');
     Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_4K_variants_147_samples.ped');
 
 

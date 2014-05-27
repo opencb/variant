@@ -108,11 +108,7 @@ VariantEffectForm.prototype.getPanels = function () {
     var form = Ext.create('Ext.panel.Panel', {
         margin: "15 0 5 0",
         border: false,
-//		layout:{type:'vbox', align: 'stretch'},
         buttonAlign: 'center',
-        width: "99%",
-        //height:900,
-        //width: "600",
         items: items,
         defaults: {
             margin: '0 0 15 0'

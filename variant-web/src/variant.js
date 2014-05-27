@@ -11,17 +11,17 @@ function Variant(args) {
     this.description = 'Home';
 //    this.description = 'Variant analysis tool'
     this.version = '2.0.6';
-    this.tools = [
-        "variant",
-        "hpg-variant.vcf-stats",
-        "hpg-variant.vcf-merge",
-        "hpg-variant.vcf-filter",
-        "hpg-variant.vcf-annot",
-        "hpg-variant.vcf-split",
-        "hpg-variant.effect",
-        "hpg-variant.gwas-assoc",
-        "hpg-variant.gwas-tdt"
-    ];
+    this.tools = {
+        'variant': true,
+        'hpg-variant.vcf-stats': true,
+        'hpg-variant.vcf-merge': true,
+        'hpg-variant.vcf-filter': true,
+        'hpg-variant.vcf-annot': true,
+        'hpg-variant.vcf-split': true,
+        'hpg-variant.effect': true,
+        'hpg-variant.gwas-assoc': true,
+        'hpg-variant.gwas-tdt': true
+    };
     this.border = false;
     this.targetId;
     this.width;
@@ -168,10 +168,12 @@ Variant.prototype = {
         /* Job List Widget */
         this.jobListWidget = this._createJobListWidget($(this.rightDiv).attr('id'));
 
+
+        // PREPROCESS
         this.variantStatsForm = new VariantStatsForm({
             webapp: this,
             closable: false,
-            width: '50%',
+            width: 600,
             testing: false,
             formBorder: false,
             border: false,
@@ -181,9 +183,6 @@ Variant.prototype = {
 //            title: 'Stats',
 //            bodyPadding: '15 0 0 40',
             bodyPadding: '20 0 0 200',
-//            headerConfig: {
-//                baseCls: 'header-panel'
-//            },
             headerFormConfig: {
                 baseCls: 'header-form'
             }
@@ -192,7 +191,7 @@ Variant.prototype = {
         this.variantMergeForm = new VariantMergeForm({
             webapp: this,
             closable: false,
-            width: '50%',
+            width: 600,
             testing: false,
             formBorder: false,
             border: false,
@@ -201,9 +200,6 @@ Variant.prototype = {
             },
 //            title: 'Merge',
             bodyPadding: '20 0 0 200',
-//            headerConfig: {
-//                baseCls: 'preprocess-header'
-//            },
             headerFormConfig: {
                 baseCls: 'header-form'
             }
@@ -213,7 +209,7 @@ Variant.prototype = {
         this.variantFilterForm = new VariantFilterForm({
             webapp: this,
             closable: false,
-            width: '50%',
+            width: 600,
             testing: false,
             formBorder: false,
             border: false,
@@ -222,20 +218,16 @@ Variant.prototype = {
             },
 //            title: 'Filter',
             bodyPadding: '20 0 0 200',
-//            headerConfig: {
-//                baseCls: 'preprocess-header'
-//            },
             headerFormConfig: {
                 baseCls: 'header-form'
             }
         });
         this.variantFilterForm.draw();
 
-
-        this.variantGwasForm = new VariantGwasForm({
+        this.variantAnnotForm = new VariantAnnotForm({
             webapp: this,
             closable: false,
-            width: '50%',
+            width: 600,
             testing: true,
             formBorder: false,
             border: false,
@@ -245,19 +237,16 @@ Variant.prototype = {
 //            title: 'GWAS',
 //            bodyPadding: '15 0 0 40',
             bodyPadding: '20 0 0 200',
-//            headerConfig: {
-//                baseCls: 'analysis-header'
-//            },
             headerFormConfig: {
                 baseCls: 'header-form'
             }
         });
-        this.variantGwasForm.draw();
+        this.variantAnnotForm.draw();
 
         this.variantSplitForm = new VariantSplitForm({
             webapp: this,
             closable: false,
-            width: '50%',
+            width: 600,
             testing: true,
             formBorder: false,
             border: false,
@@ -267,19 +256,39 @@ Variant.prototype = {
 //            title: 'GWAS',
 //            bodyPadding: '15 0 0 40',
             bodyPadding: '20 0 0 200',
-//            headerConfig: {
-//                baseCls: 'analysis-header'
-//            },
             headerFormConfig: {
                 baseCls: 'header-form'
             }
         });
         this.variantSplitForm.draw();
 
-        this.variantAnnotForm = new VariantAnnotForm({
+
+        this.variantIndexForm = new VariantIndexForm({
             webapp: this,
             closable: false,
-            width: '50%',
+            width: 600,
+            testing: true,
+            formBorder: false,
+            border: false,
+            style: {
+                borderTop: '1px solid #d1d9e3'
+            },
+//            title: 'Index',
+            bodyPadding: '20 0 0 200',
+            headerFormConfig: {
+                baseCls: 'header-form'
+            }
+        });
+        this.variantIndexForm.draw();
+
+
+
+
+        // Analysis
+        this.variantGwasForm = new VariantGwasForm({
+            webapp: this,
+            closable: false,
+            width: 600,
             testing: true,
             formBorder: false,
             border: false,
@@ -287,16 +296,12 @@ Variant.prototype = {
                 borderTop: '1px solid #d1d9e3'
             },
 //            title: 'GWAS',
-//            bodyPadding: '15 0 0 40',
             bodyPadding: '20 0 0 200',
-//            headerConfig: {
-//                baseCls: 'analysis-header'
-//            },
             headerFormConfig: {
                 baseCls: 'header-form'
             }
         });
-        this.variantAnnotForm.draw();
+        this.variantGwasForm.draw();
 
         this.variantEffectForm = new VariantEffectForm({
             webapp: this,
@@ -310,36 +315,29 @@ Variant.prototype = {
             },
 //            title: 'Effect',
             bodyPadding: '20 0 0 200',
-//            headerConfig: {
-//                baseCls: 'analysis-header'
-//            },
             headerFormConfig: {
                 baseCls: 'header-form'
             }
         });
         this.variantEffectForm.draw();
 
-
-        this.variantIndexForm = new VariantIndexForm({
+        this.variantEpistasisForm = new VariantEpistasisForm({
             webapp: this,
             closable: false,
-            width: '50%',
-            testing: true,
+            width: 600,
+            testing: false,
             formBorder: false,
             border: false,
             style: {
                 borderTop: '1px solid #d1d9e3'
             },
-//            title: 'Index',
+//            title: 'Effect',
             bodyPadding: '20 0 0 200',
-//            headerConfig: {
-//                baseCls: 'visualization-header'
-//            },
             headerFormConfig: {
                 baseCls: 'header-form'
             }
         });
-        this.variantIndexForm.draw();
+        this.variantEpistasisForm.draw();
 
 
         /*check login*/
@@ -407,6 +405,7 @@ Variant.prototype = {
             '       <li id="analysis" class="title">Analysis</li>' +
             '       <li id="gwas" class="analysis">GWAS</li>' +
             '       <li id="effect" class="analysis">Effect</li>' +
+            '       <li id="epistasis" class="analysis">Epistasis</li>' +
             '       <li id="visualization" class="title">Visualization</li>' +
 //            '       <li id="index" class="visualization">Index</li>' +
             '       <li id="results" class="visualization">Results</li>' +
@@ -472,6 +471,10 @@ Variant.prototype = {
                     case "Effect":
                         _this.container.removeAll(false);
                         _this.container.add(_this.variantEffectForm.panel);
+                        break;
+                    case "Epistasis":
+                        _this.container.removeAll(false);
+                        _this.container.add(_this.variantEpistasisForm.panel);
                         break;
 
                     case "Index":
