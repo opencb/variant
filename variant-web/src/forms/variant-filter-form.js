@@ -31,8 +31,6 @@ function VariantFilterForm(args) {
 }
 
 VariantFilterForm.prototype.beforeRun = function () {
-
-
     //validate regions
     var regionPatt = /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/;
     var regions = [];
@@ -77,9 +75,28 @@ VariantFilterForm.prototype.beforeRun = function () {
     if (this.paramsWS["recessive"] === '') {
         delete this.paramsWS["recessive"];
     }
-    if (this.paramsWS["var-type"] === '') {
-        delete this.paramsWS["var-type"];
+
+    if (Array.isArray(this.paramsWS["var-type"])) {
+        if (this.paramsWS["var-type"].length === 3) {
+            delete this.paramsWS["var-type"]
+        } else if (this.paramsWS["var-type"].length == 2) {
+            this.paramsWS["var-type"] = this.paramsWS["var-type"].join(',');
+        }
     }
+
+
+//    if (this.paramsWS["var-type"] === '') {
+//        delete this.paramsWS["var-type"];
+//    }
+//    if (this.paramsWS["snp"] === '') {
+//        delete this.paramsWS["snp"];
+//    }
+//    if (this.paramsWS["indel"] === '') {
+//        delete this.paramsWS["indel"];
+//    }
+//
+//
+//
 
 
     if (this.paramsWS["ped-file"] == "") {
@@ -87,10 +104,6 @@ VariantFilterForm.prototype.beforeRun = function () {
     }
 
     this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
-
-    if (this.testing) {
-        console.log("Watch out!!! testing flag is on, so job will not launched.")
-    }
 };
 
 
@@ -338,34 +351,31 @@ VariantFilterForm.prototype._getFilterForm = function () {
     });
 
 
-    this.variantTypeRadioGroup = Ext.create('Ext.form.RadioGroup', {
-        fieldLabel: 'Variant type',
-        labelWidth: this.labelWidth,
-        items: [
-            {
-                boxLabel: 'All',
-                inputValue: '',
-                name: 'var-type',
-                checked: true
-            },
-            {
-                boxLabel: 'SNP',
-                inputValue: 'snv',
-                name: 'var-type'
-            },
-            {
-                boxLabel: 'Indel',
-                inputValue: 'indel',
-                name: 'var-type'
-            },
-            {
-                boxLabel: 'Structural',
-                inputValue: 'structural',
-                name: 'var-type'
-            }
+    this.snpCheckBox = {
+        xtype: 'radio',
+//        xtype: 'checkbox',
+        boxLabel: 'SNP',
+        name: 'var-type',
+        inputValue: 'snv',
+        checked: true
+    };
+    this.indelCheckBox = {
+        xtype: 'radio',
+//        xtype: 'checkbox',
+        boxLabel: 'Indel',
+        name: 'var-type',
+        inputValue: 'indel',
+//        checked: true
+    };
 
-        ]
-    });
+    this.structuralCheckBox = {
+        xtype: 'radio',
+//        xtype: 'checkbox',
+        boxLabel: 'Structural',
+        name: 'var-type',
+        inputValue: 'structural',
+//        checked: true
+    };
 
 
     this.rejectedCheckbox = Ext.create('Ext.form.field.Checkbox', {
@@ -395,8 +405,16 @@ VariantFilterForm.prototype._getFilterForm = function () {
             this.maxMissing,
             this.dominant,
             this.recessive,
-            this.variantTypeRadioGroup,
-
+            {
+                xtype: 'fieldcontainer',
+                fieldLabel: 'Variant type',
+                labelWidth: this.labelWidth,
+                items: [
+                    this.snpCheckBox,
+                    this.indelCheckBox,
+                    this.structuralCheckBox,
+                ]
+            },
             this.rejectedCheckbox
         ]
     });
@@ -414,6 +432,4 @@ VariantFilterForm.prototype.loadExample1 = function () {
 
     Ext.getCmp(this.id + 'jobname').setValue("Example vcf 3500");
     Ext.getCmp(this.id + 'jobdescription').setValue("VCF file with ~3500 variants");
-
-    this.variantTypeRadioGroup.setValue({'var-type': 'snv'});
 };

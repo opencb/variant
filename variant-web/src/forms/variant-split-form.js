@@ -31,38 +31,12 @@ function VariantSplitForm(args) {
 }
 
 VariantSplitForm.prototype.beforeRun = function () {
-
-    if (this.testing) {
-        console.log("Watch out!!! testing flag is on, so job will not launched.")
-    }
-
-//    switch (this.paramsWS["function_test"]) {
-//        case "fisher":
-//            this.paramsWS["fisher"] = "";
-//            if (this.paramsWS["chisq"]) {
-//                delete this.paramsWS["chisq"];
-//            }
-//            break;
-//        case "chisq":
-//            this.paramsWS["chisq"] = "";
-//            if (this.paramsWS["fisher"]) {
-//                delete this.paramsWS["fisher"];
-//            }
-//            break;
-//
-//    }
-
-    if (this.paramsWS["test"] == "assoc") {
-        delete this.paramsWS["chisq"];
-        delete this.paramsWS["fisher"];
-
-        this.paramsWS[this.paramsWS["function_test"]] = "";
+    if (Array.isArray(this.paramsWS["intervals"])) {
+        this.paramsWS["intervals"].sort();
+        this.paramsWS["intervals"] = this.paramsWS["intervals"].join(',');
     }
 
     this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
-    console.log(this.paramsWS);
-    console.log(this.analysis);
-
 };
 
 
@@ -140,54 +114,98 @@ VariantSplitForm.prototype._getBrowseInputForm = function () {
                 mode: 'fileSelection',
                 allowedTypes: ['vcf'],
                 allowBlank: false
-            }),
-            this.createOpencgaBrowserCmp({
-                fieldLabel: 'Input PED file:',
-                dataParamName: 'ped-file',
-                id: this.id + 'ped-file',
-                mode: 'fileSelection',
-                allowedTypes: ['ped'],
-                allowBlank: false
-            })]
+            })
+        ]
     });
     return formBrowser;
 };
 
 VariantSplitForm.prototype._getParametersForm = function () {
     var _this = this;
-    var chr = Ext.create('Ext.form.field.Radio', {
-        id: "chr" + "_" + this.id,
+    this.chromosome = Ext.create('Ext.form.field.Radio', {
         boxLabel: 'Chromosome',
         inputValue: 'chromosome',
-        checked: true,
         name: 'criterion',
+        checked: true
     });
 
-    var cov = Ext.create('Ext.form.field.Radio', {
-        id: "cov" + "_" + this.id,
+    this.coverage = Ext.create('Ext.form.field.Radio', {
         boxLabel: 'Coverage',
         inputValue: 'coverage',
-        name: 'criterion'
-
+        name: 'criterion',
+        handler: function () {
+            if (this.getValue()) {
+                _this.intervalsFieldContainer.show();
+                _this.addIntervalButton.show();
+                _this.removeIntervalButton.show();
+            } else {
+                _this.cleanIntervals();
+                _this.intervalsFieldContainer.hide();
+                _this.addIntervalButton.hide();
+                _this.removeIntervalButton.hide();
+            }
+        }
     });
 
     var radioGroup = Ext.create('Ext.form.RadioGroup', {
-        fieldLabel: 'Test',
-        width: 500,
-        items: [chr, cov]
+        fieldLabel: 'Criterion',
+        labelWidth: this.labelWidth,
+        items: [this.chromosome, this.coverage]
     });
 
-    var intervals = _this.createTextFields("intervals");
 
-    var formBrowser = Ext.create('Ext.panel.Panel', {
-        title: "Criterion",
+    this.intervalsFieldContainer = Ext.create('Ext.form.FieldContainer', {
+        hidden: true,
+        items: [
+            {
+                xtype: 'numberfield',
+                fieldLabel: 'Interval stop limit',
+                labelWidth: this.labelWidth,
+                name: 'intervals',
+                emptyText: "1000"
+            }
+        ]
+    });
+
+    this.addIntervalButton = Ext.create('Ext.button.Button', {
+        hidden: true,
+        text: "Add interval",
+        margin: "0 0 15 " + (this.labelWidth + 5),
+        handler: function () {
+            this.previousSibling().add({
+                xtype: 'numberfield',
+                fieldLabel: 'Interval',
+                labelWidth: _this.labelWidth,
+                name: 'intervals',
+                emptyText: "2000"
+            });
+        }
+    });
+
+    this.removeIntervalButton = Ext.create('Ext.button.Button', {
+        hidden: true,
+        text: "Remove interval",
+        margin: "0 0 15 10",
+        handler: function () {
+            var childs = _this.intervalsFieldContainer.query('>*');
+            if (childs.length > 1) {
+                _this.intervalsFieldContainer.remove(_this.intervalsFieldContainer.query('>*:last')[0]);
+            }
+        }
+    });
+
+
+    var formBrowser = Ext.create('Ext.form.Panel', {
+        title: "Parameters",
         header: this.headerFormConfig,
         border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
         items: [
             radioGroup,
-            intervals
+            this.intervalsFieldContainer,
+            this.addIntervalButton,
+            this.removeIntervalButton
         ]
     });
 
@@ -201,10 +219,11 @@ VariantSplitForm.prototype.loadExample1 = function () {
     Ext.getCmp(this.id + 'vcf-file').setValue('Example 1');
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_4K_variants_147_samples.vcf');
 
-    Ext.getCmp(this.id + 'ped-file').setValue('Example 1');
-    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_4K_variants_147_samples.ped');
-
-
     Ext.getCmp(this.id + 'jobname').setValue("GWAS example");
     Ext.getCmp(this.id + 'jobdescription').setValue("GWAS example");
+};
+
+VariantSplitForm.prototype.cleanIntervals = function () {
+    this.intervalsFieldContainer.removeAll();
+    this.addIntervalButton.el.dom.click();
 };

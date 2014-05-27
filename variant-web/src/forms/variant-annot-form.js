@@ -35,12 +35,7 @@ function VariantAnnotForm(args) {
 
 VariantAnnotForm.prototype.beforeRun = function () {
 
-
     this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
-
-    if (this.testing) {
-        console.log("Watch out!!! testing flag is on, so job will not launched.")
-    }
 };
 
 
@@ -106,7 +101,6 @@ VariantAnnotForm.prototype._getExampleForm = function () {
 };
 
 
-
 VariantAnnotForm.prototype._getBrowseInputForm = function () {
     var _this = this;
 
@@ -136,13 +130,38 @@ VariantAnnotForm.prototype._getParametersForm = function () {
     var _this = this;
 
 
+    this.dbsnp = {
+        xtype: 'checkbox',
+        boxLabel: 'dbSNP',
+        name: 'dbsnp',
+        inputValue: '',
+        checked: true
+    };
+    this.effect = {
+        xtype: 'checkbox',
+        boxLabel: 'Effect',
+        name: 'effect',
+        inputValue: '',
+//        checked: true
+    };
+
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Parameters",
         header: this.headerFormConfig,
         border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
-        items: [ ]
+        items: [
+            {
+                xtype: 'fieldcontainer',
+                fieldLabel: 'Annotate',
+                labelWidth: this.labelWidth,
+                items: [
+                    this.dbsnp,
+                    this.effect
+                ]
+            }
+        ]
     });
 
     return formBrowser;

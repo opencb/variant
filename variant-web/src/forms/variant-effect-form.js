@@ -461,7 +461,6 @@ VariantEffectForm.prototype.loadExample1 = function () {
     Ext.getCmp(this.id + 'jobname').setValue("Example vcf 3500");
     Ext.getCmp(this.id + 'jobdescription').setValue("VCF file with ~3500 variants");
 
-    Ext.getCmp("Only SNPs_" + this.id).setValue(true);
 //
 //
 //

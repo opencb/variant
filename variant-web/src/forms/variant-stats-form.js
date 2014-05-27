@@ -196,7 +196,7 @@ VariantStatsForm.prototype._getBrowseInputForm = function () {
         }
     });
 
-    var formBrowser = Ext.create('Ext.panel.Panel', {
+    var formBrowser = Ext.create('Ext.form.Panel', {
         title: "Input",
         header: this.headerFormConfig,
         border: this.border,

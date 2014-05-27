@@ -79,8 +79,7 @@ Variant.prototype = {
         $(this.wrapDiv).css({
             position: 'absolute',
             height: '100%',
-            width: '100%',
-            background: '#314559'
+            width: '100%'
         });
         $(this.div).append(this.wrapDiv);
 
@@ -228,7 +227,7 @@ Variant.prototype = {
             webapp: this,
             closable: false,
             width: 600,
-            testing: true,
+            testing: false,
             formBorder: false,
             border: false,
             style: {
@@ -247,7 +246,7 @@ Variant.prototype = {
             webapp: this,
             closable: false,
             width: 600,
-            testing: true,
+            testing: false,
             formBorder: false,
             border: false,
             style: {
@@ -381,7 +380,12 @@ Variant.prototype = {
                 },
                 'jobs:click': function () {
                     _this.jobListWidget.toggle();
+                },
+                'about:click': function () {
+                    _this.jobListWidget.toggle(false);
+//                    _this.headerWidget.
                 }
+
             }
         });
         headerWidget.draw();
