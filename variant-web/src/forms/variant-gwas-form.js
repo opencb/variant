@@ -31,7 +31,7 @@ function VariantGwasForm(args) {
 }
 
 VariantGwasForm.prototype.beforeRun = function () {
-    
+
     var regionPatt = /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/;
     var regions = [];
     if (!Array.isArray(this.paramsWS["region"])) {
@@ -95,7 +95,7 @@ VariantGwasForm.prototype.beforeRun = function () {
     if (this.testing) {
         console.log("Watch out!!! testing flag is on, so job will not launched.")
     }
-    
+
     this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
 
 };
@@ -113,8 +113,8 @@ VariantGwasForm.prototype.getPanels = function () {
         border: false,
         buttonAlign: 'center',
         items: items,
-        defaults:{
-            margin:'0 0 15 0'
+        defaults: {
+            margin: '0 0 15 0'
         }
     });
 
@@ -163,7 +163,7 @@ VariantGwasForm.prototype._getBrowseInputForm = function () {
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Input",
-        header:this.headerFormConfig,
+        header: this.headerFormConfig,
         border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
@@ -255,7 +255,7 @@ VariantGwasForm.prototype._getTestForm = function () {
 
     var formBrowser = Ext.create('Ext.panel.Panel', {
         title: "Test",
-        header:this.headerFormConfig,
+        header: this.headerFormConfig,
         border: this.formBorder,
         padding: "5 0 0 0",
         bodyPadding: 10,
@@ -276,8 +276,8 @@ VariantGwasForm.prototype.loadExample1 = function () {
     Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_4K_variants_147_samples.ped');
 
 
-    Ext.getCmp(this.id + 'jobname').setValue("GWAS example");
-    Ext.getCmp(this.id + 'jobdescription').setValue("GWAS example");
+    Ext.getCmp(this.id + 'jobname').setValue("GWAS 4K");
+    Ext.getCmp(this.id + 'jobdescription').setValue("147 variants");
 }
 
 VariantGwasForm.prototype._getFilterForm = function () {
@@ -430,7 +430,7 @@ VariantGwasForm.prototype._getFilterForm = function () {
     };
 
     var formFilterOptions = Ext.create('Ext.form.Panel', {
-        title: "Filters",
+        title: 'Filters <span style="font-size:13px;color:grey">(optional)</span>',
         header: this.headerFormConfig,
         border: this.formBorder,
         padding: "5 0 0 0",
