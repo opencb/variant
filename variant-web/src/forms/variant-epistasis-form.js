@@ -32,6 +32,58 @@ function VariantEpistasisForm(args) {
 
 VariantEpistasisForm.prototype.beforeRun = function () {
     console.log(this.paramsWS);
+    
+    var regionPatt = /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/;
+    var regions = [];
+    if (!Array.isArray(this.paramsWS["region"])) {
+        this.paramsWS["region"] = [this.paramsWS["region"]];
+    }
+    for (var i = 0; i < this.paramsWS['region'].length; i++) {
+        var regionStr = this.paramsWS['region'][i];
+        if (regionStr !== '' && regionPatt.test(regionStr)) {
+            regions.push(regionStr);
+        }
+    }
+    if (regions.length > 0) {
+        this.paramsWS["region"] = regions.join(',');
+    } else {
+        delete this.paramsWS["region"];
+    }
+
+
+    this.paramsWS["gene"] = this.paramsWS["gene"].replace(/\s/gm, "").replace(/(^,*)|(,*$)/g, "");
+    if (this.paramsWS["gene"] === '') {
+        delete this.paramsWS["gene"];
+    }
+    if (this.paramsWS["alleles"] === '') {
+        delete this.paramsWS["alleles"];
+    }
+    if (this.paramsWS["coverage"] === '') {
+        delete this.paramsWS["coverage"];
+    }
+    if (this.paramsWS["quality"] === '') {
+        delete this.paramsWS["quality"];
+    }
+    if (this.paramsWS["maf"] === '') {
+        delete this.paramsWS["maf"];
+    }
+    if (this.paramsWS["missing"] === '') {
+        delete this.paramsWS["missing"];
+    }
+    if (this.paramsWS["dominant"] === '') {
+        delete this.paramsWS["dominant"];
+    }
+    if (this.paramsWS["recessive"] === '') {
+        delete this.paramsWS["recessive"];
+    }
+
+    if (Array.isArray(this.paramsWS["var-type"])) {
+        if (this.paramsWS["var-type"].length === 3) {
+            delete this.paramsWS["var-type"]
+        } else if (this.paramsWS["var-type"].length == 2) {
+            this.paramsWS["var-type"] = this.paramsWS["var-type"].join(',');
+        }
+    }
 
     if (this.testing) {
         console.log("Watch out!!! testing flag is on, so job will not launched.")
@@ -44,6 +96,7 @@ VariantEpistasisForm.prototype.beforeRun = function () {
 VariantEpistasisForm.prototype.getPanels = function () {
     var items = [
         this._getBrowseInputForm(),
+        this._getFilterForm(),
         this._getParametersForm()
     ];
 
@@ -134,7 +187,7 @@ VariantEpistasisForm.prototype._getParametersForm = function () {
     this.combined = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'SNPs combined at once',
         labelWidth: this.labelWidth,
-        name: '',
+        name: 'order',
         minValue: 0,
         allowDecimals: false
     });
@@ -215,6 +268,192 @@ VariantEpistasisForm.prototype._getParametersForm = function () {
 
     return formBrowser;
 
+}
+
+VariantEpistasisForm.prototype._getFilterForm = function () {
+    var _this = this;
+
+
+    this.regionsFieldContainer = Ext.create('Ext.form.FieldContainer', {
+        items: [
+            {
+                xtype: 'textfield',
+                fieldLabel: 'Region',
+                labelWidth: this.labelWidth,
+                name: 'region',
+                emptyText: "chr:start-end",
+                regex: /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/
+            }
+        ]
+    });
+
+    var button = Ext.create('Ext.button.Button', {
+        text: "Add region",
+        margin: "0 0 15 " + (this.labelWidth + 5),
+        handler: function () {
+            this.previousSibling().add({
+                xtype: 'textfield',
+                fieldLabel: 'Region',
+                labelWidth: _this.labelWidth,
+                name: 'region',
+                emptyText: "chr:start-end",
+                regex: /^([a-zA-Z0-9])+\:([0-9])+\-([0-9])+$/
+            });
+        }
+    });
+
+    var removeRegionButton = Ext.create('Ext.button.Button', {
+        text: "Remove region",
+        margin: "0 0 15 10",
+        handler: function () {
+            var childs = _this.regionsFieldContainer.query('>*');
+            if (childs.length > 1) {
+                _this.regionsFieldContainer.remove(_this.regionsFieldContainer.query('>*:last')[0]);
+            }
+        }
+    });
+
+
+    this.gene = Ext.create('Ext.form.field.TextArea', {
+        fieldLabel: 'Gene list (csv)',
+        labelWidth: this.labelWidth,
+        name: 'gene',
+        flex: 1,
+        enableKeyEvents: true,
+        value: ''
+    });
+
+    this.alleles = Ext.create('Ext.form.field.Number', {
+        fieldLabel: 'Number of alleles',
+        labelWidth: this.labelWidth,
+        name: 'alleles',
+        minValue: 1,
+        allowDecimals: false
+    });
+
+    this.coverage = Ext.create('Ext.form.field.Number', {
+        fieldLabel: 'Minimum coverage',
+        labelWidth: this.labelWidth,
+        name: 'coverage',
+        minValue: 0,
+        allowDecimals: false
+    });
+
+    this.quality = Ext.create('Ext.form.field.Number', {
+        fieldLabel: 'Minimum quality',
+        labelWidth: this.labelWidth,
+        name: 'quality',
+        minValue: 0,
+        allowDecimals: false
+    });
+
+    this.minAlleles = Ext.create('Ext.form.field.Number', {
+        fieldLabel: 'Minimum allele freq. (MAF)',
+        labelWidth: this.labelWidth,
+        name: 'maf',
+        minValue: 0,
+        maxValue: 1,
+        step: 0.01,
+        decimalPrecision: 12,
+        allowDecimals: true
+    });
+
+    this.maxMissing = Ext.create('Ext.form.field.Number', {
+        fieldLabel: 'Maximum missing values',
+        labelWidth: this.labelWidth,
+        name: 'missing',
+        minValue: 0,
+        maxValue: 1,
+        step: 0.01,
+        decimalPrecision: 12,
+        allowDecimals: true
+    });
+
+
+    this.dominant = Ext.create('Ext.form.field.Number', {
+        fieldLabel: 'Dominant inheritance pattern',
+        labelWidth: this.labelWidth,
+        name: 'dominant',
+        minValue: 0,
+        maxValue: 1,
+        step: 0.01,
+        decimalPrecision: 12,
+        allowDecimals: true
+    });
+
+    this.recessive = Ext.create('Ext.form.field.Number', {
+        fieldLabel: 'Recessive inheritance pattern',
+        labelWidth: this.labelWidth,
+        name: 'recessive',
+        minValue: 0,
+        maxValue: 1,
+        step: 0.01,
+        decimalPrecision: 12,
+        allowDecimals: true
+    });
+
+
+    this.snpCheckBox = {
+        xtype: 'radio',
+//        xtype: 'checkbox',
+        boxLabel: 'SNP',
+        name: 'var-type',
+        inputValue: 'snv',
+        checked: true
+    };
+    this.indelCheckBox = {
+        xtype: 'radio',
+//        xtype: 'checkbox',
+        boxLabel: 'Indel',
+        name: 'var-type',
+        inputValue: 'indel',
+//        checked: true
+    };
+
+    this.structuralCheckBox = {
+        xtype: 'radio',
+//        xtype: 'checkbox',
+        boxLabel: 'Structural',
+        name: 'var-type',
+        inputValue: 'structural',
+//        checked: true
+    };
+
+
+    var formFilterOptions = Ext.create('Ext.form.Panel', {
+        title: "Filters",
+        header: this.headerFormConfig,
+        border: this.formBorder,
+        padding: "5 0 0 0",
+        bodyPadding: 10,
+        items: [
+            this.regionsFieldContainer,
+            button,
+            removeRegionButton,
+
+            this.gene,
+            this.alleles,
+            this.coverage,
+            this.quality,
+            this.minAlleles,
+            this.maxMissing,
+            this.dominant,
+            this.recessive,
+            {
+                xtype: 'fieldcontainer',
+                fieldLabel: 'Variant type',
+                labelWidth: this.labelWidth,
+                items: [
+                    this.snpCheckBox,
+                    this.indelCheckBox,
+                    this.structuralCheckBox,
+                ]
+            }
+        ]
+    });
+
+
+    return formFilterOptions;
 };
 
 
@@ -226,6 +465,6 @@ VariantEpistasisForm.prototype.loadExample1 = function () {
     Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_4K_variants_147_samples.ped');
 
 
-    Ext.getCmp(this.id + 'jobname').setValue("GWAS example");
-    Ext.getCmp(this.id + 'jobdescription').setValue("GWAS example");
+    Ext.getCmp(this.id + 'jobname').setValue("Epistasis example");
+    Ext.getCmp(this.id + 'jobdescription').setValue("Epistasis example");
 };
