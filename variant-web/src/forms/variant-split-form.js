@@ -35,6 +35,10 @@ VariantSplitForm.prototype.beforeRun = function () {
         this.paramsWS["intervals"].sort();
         this.paramsWS["intervals"] = this.paramsWS["intervals"].join(',');
     }
+    if (this.paramsWS["intervals"] === '') {
+        delete this.paramsWS["intervals"];
+    }
+
 
     this.paramsWS["config"] = "/httpd/bioinfo/opencga/analysis/hpg-variant/bin";
 };
@@ -63,7 +67,7 @@ VariantSplitForm.prototype.getPanels = function () {
 VariantSplitForm.prototype._getExampleForm = function () {
     var _this = this;
 
-    var example1 = Ext.create('Ext.container.Container', {
+    var example2 = Ext.create('Ext.container.Container', {
         layout: 'hbox',
         items: [
             {
@@ -71,14 +75,14 @@ VariantSplitForm.prototype._getExampleForm = function () {
                 width: this.labelWidth,
                 text: 'Load example 1',
                 handler: function () {
-                    _this.loadExample1();
-                    Utils.msg("Example 1", "Loaded");
+                    _this.loadExample2();
+                    Utils.msg("Example 2", "147 Samples ~4000 variants");
                 }
             },
             {
                 xtype: 'box',
                 margin: '5 0 0 15',
-                html: 'VCF file with ~3500 variants'
+                html: '147 Samples ~4000 variants'
 
             }
         ]
@@ -89,7 +93,7 @@ VariantSplitForm.prototype._getExampleForm = function () {
         title: 'Examples',
         header: this.headerFormConfig,
         border: this.formBorder,
-        items: [example1],
+        items: [example2],
         defaults: {margin: '5 0 0 0'},
         margin: '0 0 10 0'
     });
@@ -139,7 +143,6 @@ VariantSplitForm.prototype._getParametersForm = function () {
                 _this.addIntervalButton.show();
                 _this.removeIntervalButton.show();
             } else {
-                _this.cleanIntervals();
                 _this.intervalsFieldContainer.hide();
                 _this.addIntervalButton.hide();
                 _this.removeIntervalButton.hide();
@@ -172,7 +175,7 @@ VariantSplitForm.prototype._getParametersForm = function () {
         text: "Add interval",
         margin: "0 0 15 " + (this.labelWidth + 5),
         handler: function () {
-            this.previousSibling().add({
+            _this.intervalsFieldContainer.add({
                 xtype: 'numberfield',
                 fieldLabel: 'Interval',
                 labelWidth: _this.labelWidth,
@@ -215,15 +218,12 @@ VariantSplitForm.prototype._getParametersForm = function () {
 ;
 
 
-VariantSplitForm.prototype.loadExample1 = function () {
-    Ext.getCmp(this.id + 'vcf-file').setValue('Example 1');
+VariantSplitForm.prototype.loadExample2 = function () {
+    this.clean();
+
+    Ext.getCmp(this.id + 'vcf-file').setValue('4K_variants_147_samples');
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_4K_variants_147_samples.vcf');
 
-    Ext.getCmp(this.id + 'jobname').setValue("GWAS example");
-    Ext.getCmp(this.id + 'jobdescription').setValue("GWAS example");
-};
-
-VariantSplitForm.prototype.cleanIntervals = function () {
-    this.intervalsFieldContainer.removeAll();
-    this.addIntervalButton.el.dom.click();
+    Ext.getCmp(this.id + 'jobname').setValue("Split 4K");
+    Ext.getCmp(this.id + 'jobdescription').setValue("147 samples");
 };

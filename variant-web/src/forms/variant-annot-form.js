@@ -65,8 +65,7 @@ VariantAnnotForm.prototype.getPanels = function () {
 VariantAnnotForm.prototype._getExampleForm = function () {
     var _this = this;
 
-
-    var example1 = Ext.create('Ext.container.Container', {
+    var example2 = Ext.create('Ext.container.Container', {
         layout: 'hbox',
         items: [
             {
@@ -74,25 +73,24 @@ VariantAnnotForm.prototype._getExampleForm = function () {
                 width: this.labelWidth,
                 text: 'Load example 1',
                 handler: function () {
-                    _this.loadExample1();
-                    Utils.msg("Example 1", "Loaded");
+                    _this.loadExample2();
+                    Utils.msg("Example 2", "147 Samples ~4000 variants");
                 }
             },
             {
                 xtype: 'box',
                 margin: '5 0 0 15',
-                html: 'VCF file with ~3500 variants'
+                html: '147 Samples ~4000 variants'
 
             }
         ]
     });
-
     var exampleForm = Ext.create('Ext.panel.Panel', {
         bodyPadding: 10,
         title: 'Examples',
         header: this.headerFormConfig,
         border: this.formBorder,
-        items: [example1],
+        items: [example2],
         defaults: {margin: '5 0 0 0'},
         margin: '0 0 10 0'
     });
@@ -112,9 +110,9 @@ VariantAnnotForm.prototype._getBrowseInputForm = function () {
         bodyPadding: 10,
         items: [
             this.createOpencgaBrowserCmp({
+                id: this.id + 'vcf-file',
                 fieldLabel: 'Input VCF file',
                 dataParamName: 'vcf-file',
-                id: this.id + 'vcf-file',
                 mode: 'fileSelection',
                 allowedTypes: ['vcf'],
                 allowBlank: false
@@ -168,7 +166,14 @@ VariantAnnotForm.prototype._getParametersForm = function () {
 
 };
 
-VariantAnnotForm.prototype.loadExample1 = function () {
+VariantAnnotForm.prototype.loadExample2 = function () {
     this.clean();
+
+    Ext.getCmp(this.id + 'vcf-file').setValue('4K_variants_147_samples.vcf');
+    Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_4K_variants_147_samples.vcf');
+
+    Ext.getCmp(this.id + 'jobname').setValue("Annot 4K");
+    Ext.getCmp(this.id + 'jobdescription').setValue("147 Samples");
+
 };
 

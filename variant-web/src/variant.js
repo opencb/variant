@@ -442,46 +442,57 @@ Variant.prototype = {
                         _this.headerWidget.toogleAppMenu(false);
                         break;
                     case "Results":
+                        _this.jobListWidget.show();
                         _this.container.removeAll(false);
                         _this.container.add(_this.resultPanel);
+                        _this.headerWidget.toogleAppMenu(false);
                         break;
                     case "Upload":
                         _this.headerWidget.opencgaBrowserWidget.show({mode: 'manager'});
                         break;
                     case "Stats":
+                        _this.jobListWidget.show();
                         _this.container.removeAll(false);
                         _this.container.add(_this.variantStatsForm.panel);
                         break;
                     case "Merge":
+                        _this.jobListWidget.show();
                         _this.container.removeAll(false);
                         _this.container.add(_this.variantMergeForm.panel);
                         break;
                     case "Filter":
+                        _this.jobListWidget.show();
                         _this.container.removeAll(false);
                         _this.container.add(_this.variantFilterForm.panel);
                         break;
                     case "Annot":
+                        _this.jobListWidget.show();
                         _this.container.removeAll(false);
                         _this.container.add(_this.variantAnnotForm.panel);
                         break;
                     case "Split":
+                        _this.jobListWidget.show();
                         _this.container.removeAll(false);
                         _this.container.add(_this.variantSplitForm.panel);
                         break;
                     case "GWAS":
+                        _this.jobListWidget.show();
                         _this.container.removeAll(false);
                         _this.container.add(_this.variantGwasForm.panel);
                         break;
                     case "Effect":
+                        _this.jobListWidget.show();
                         _this.container.removeAll(false);
                         _this.container.add(_this.variantEffectForm.panel);
                         break;
+                        _this.jobListWidget.show();
                     case "Epistasis":
                         _this.container.removeAll(false);
                         _this.container.add(_this.variantEpistasisForm.panel);
                         break;
 
                     case "Index":
+                        _this.jobListWidget.show();
                         _this.container.removeAll(false);
                         _this.container.add(_this.variantIndexForm.panel);
                         break;

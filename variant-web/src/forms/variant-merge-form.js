@@ -89,7 +89,7 @@ VariantMergeForm.prototype._getExampleForm = function () {
             {
                 xtype: 'box',
                 margin: '5 0 0 15',
-                html: 'VCF file with ~3500 variants'
+                html: '2 VCF files'
 
             }
         ]
@@ -334,7 +334,7 @@ VariantMergeForm.prototype.loadExample1 = function () {
     Ext.getCmp(this.id + 'vcf-file-2' + 'hidden').setValue('example_file_2.vcf');
 
 
-    Ext.getCmp(this.id + 'jobname').setValue("VCF example");
-    Ext.getCmp(this.id + 'jobdescription').setValue("VCF example");
+    Ext.getCmp(this.id + 'jobname').setValue("Merge");
+    Ext.getCmp(this.id + 'jobdescription').setValue("2 VCF files");
 };
 

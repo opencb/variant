@@ -124,13 +124,13 @@ VariantStatsForm.prototype._getExampleForm = function () {
                 text: 'Load example 1',
                 handler: function () {
                     _this.loadExample1();
-                    Utils.msg("Example 1", "Loaded");
+                    Utils.msg("Example 1", "1000 Genomes ~5000 variants");
                 }
             },
             {
                 xtype: 'box',
                 margin: '5 0 0 15',
-                html: 'VCF file with ~3500 variants'
+                html: '1000 Genomes ~5000 variants'
 
             }
         ]
@@ -144,13 +144,13 @@ VariantStatsForm.prototype._getExampleForm = function () {
                 text: 'Load example 1',
                 handler: function () {
                     _this.loadExample2();
-                    Utils.msg("Example 2", "Loaded");
+                    Utils.msg("Example 2", "147 Samples ~4000 variants");
                 }
             },
             {
                 xtype: 'box',
                 margin: '5 0 0 15',
-                html: 'VCF file with 4000 variants and 147 samples'
+                html: '147 Samples ~4000 variants'
 
             }
         ]
@@ -255,7 +255,7 @@ VariantStatsForm.prototype._getParametersForm = function () {
         labelAlign: 'left',
         name: 'variable',
         store: this.samplesStore,
-        allowBlank: false,
+        allowBlank: true,
         editable: false,
         displayField: 'name',
         valueField: 'value',
@@ -408,28 +408,28 @@ VariantStatsForm.prototype.loadExample1 = function () {
     this.clean();
     this.cleanParameters();
 
-    Ext.getCmp(this.id + 'vcf-file').setValue('Example 1.vcf');
+    Ext.getCmp(this.id + 'vcf-file').setValue('1000genomes_5000_variants.vcf');
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_1000genomes_5000_variants.vcf');
 
-    Ext.getCmp(this.id + 'ped-file').setValue('No file selected');
-    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('');
+    Ext.getCmp(this.id + 'ped-file').setValue('1000genomes_5000_variants.ped');
+    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_1000genomes_5000_variants.ped');
 
-    Ext.getCmp(this.id + 'jobname').setValue("VCF Stats example 3500");
-    Ext.getCmp(this.id + 'jobdescription').setValue("example");
+    Ext.getCmp(this.id + 'jobname').setValue("Stats 5K");
+    Ext.getCmp(this.id + 'jobdescription').setValue("1000 Genomes");
 };
 
 VariantStatsForm.prototype.loadExample2 = function () {
     this.clean();
     this.cleanParameters();
 
-    Ext.getCmp(this.id + 'vcf-file').setValue('Example 2.vcf');
+    Ext.getCmp(this.id + 'vcf-file').setValue('4K_variants_147_samples.vcf');
     Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_4K_variants_147_samples.vcf');
 
-    Ext.getCmp(this.id + 'ped-file').setValue('Example 2.ped');
+    Ext.getCmp(this.id + 'ped-file').setValue('4K_variants_147_samples.ped');
     Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_4K_variants_147_samples.ped');
 
-    Ext.getCmp(this.id + 'jobname').setValue("VCF Stats example 4000");
-    Ext.getCmp(this.id + 'jobdescription').setValue("example");
+    Ext.getCmp(this.id + 'jobname').setValue("Stats 4K");
+    Ext.getCmp(this.id + 'jobdescription').setValue("147 Samples");
 };
 
 VariantStatsForm.prototype.cleanParameters = function () {

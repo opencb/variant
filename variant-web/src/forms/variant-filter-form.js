@@ -134,7 +134,7 @@ VariantFilterForm.prototype.getPanels = function () {
 VariantFilterForm.prototype._getExampleForm = function () {
     var _this = this;
 
-    var example1 = Ext.create('Ext.container.Container', {
+    var example2 = Ext.create('Ext.container.Container', {
         layout: 'hbox',
         items: [
             {
@@ -142,14 +142,14 @@ VariantFilterForm.prototype._getExampleForm = function () {
                 width: this.labelWidth,
                 text: 'Load example 1',
                 handler: function () {
-                    _this.loadExample1();
-                    Utils.msg("Example 1", "Loaded");
+                    _this.loadExample2();
+                    Utils.msg("Example 2", "147 Samples ~4000 variants");
                 }
             },
             {
                 xtype: 'box',
                 margin: '5 0 0 15',
-                html: 'VCF file with ~3500 variants'
+                html: '147 Samples ~4000 variants'
 
             }
         ]
@@ -160,7 +160,7 @@ VariantFilterForm.prototype._getExampleForm = function () {
         title: 'Examples',
         header: this.headerFormConfig,
         border: this.formBorder,
-        items: [example1],
+        items: [example2],
         defaults: {margin: '5 0 0 0'},
         margin: '0 0 10 0'
     });
@@ -424,12 +424,15 @@ VariantFilterForm.prototype._getFilterForm = function () {
 }
 
 
-VariantFilterForm.prototype.loadExample1 = function () {
+VariantFilterForm.prototype.loadExample2 = function () {
     this.clean();
 
-    Ext.getCmp(this.id + 'vcf-file').setValue('Example vcf 3500');
-    Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_');
+    Ext.getCmp(this.id + 'vcf-file').setValue('4K_variants_147_samples.vcf');
+    Ext.getCmp(this.id + 'vcf-file' + 'hidden').setValue('example_4K_variants_147_samples.vcf');
 
-    Ext.getCmp(this.id + 'jobname').setValue("Example vcf 3500");
-    Ext.getCmp(this.id + 'jobdescription').setValue("VCF file with ~3500 variants");
+    Ext.getCmp(this.id + 'ped-file').setValue('4K_variants_147_samples.ped');
+    Ext.getCmp(this.id + 'ped-file' + 'hidden').setValue('example_4K_variants_147_samples.ped');
+
+    Ext.getCmp(this.id + 'jobname').setValue("Filter 4K");
+    Ext.getCmp(this.id + 'jobdescription').setValue("147 Samples");
 };
