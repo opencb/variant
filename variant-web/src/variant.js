@@ -20,7 +20,8 @@ function Variant(args) {
         'hpg-variant.vcf-split': true,
         'hpg-variant.effect': true,
         'hpg-variant.gwas-assoc': true,
-        'hpg-variant.gwas-tdt': true
+        'hpg-variant.gwas-tdt': true,
+        'hpg-variant.epistasis': true
     };
     this.border = false;
     this.targetId;
