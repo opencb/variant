@@ -551,7 +551,7 @@ Variant.prototype = {
                 'pageSize': 7,
                 'targetId': targetId,
                 'order': 0,
-                'width': 280,
+                'width': 300,
                 'height': 625,
                 border: true,
                 'mode': 'view'
