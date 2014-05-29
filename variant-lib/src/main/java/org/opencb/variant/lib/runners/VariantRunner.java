@@ -25,7 +25,7 @@ public class VariantRunner extends Runner<Variant> {
     private void parsePhenotypes(PedigreeReader pedReader) {
         if (pedReader != null) {
             pedReader.open();
-            source.setPedigree(pedReader.read());
+            source.setPedigree(pedReader.read().get(0));
             pedReader.close();
         }
     }
