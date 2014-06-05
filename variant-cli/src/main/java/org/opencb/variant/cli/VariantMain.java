@@ -1,10 +1,5 @@
 package org.opencb.variant.cli;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
 import org.apache.commons.cli.*;
 import org.opencb.biodata.formats.variant.io.VariantReader;
 import org.opencb.biodata.formats.variant.io.VariantWriter;
@@ -12,17 +7,8 @@ import org.opencb.biodata.formats.variant.vcf4.io.VariantVcfDataWriter;
 import org.opencb.biodata.formats.variant.vcf4.io.VariantVcfReader;
 import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.VariantSource;
-import org.opencb.biodata.tools.variant.annotation.VariantAnnotator;
-import org.opencb.biodata.tools.variant.annotation.VariantConsequenceTypeAnnotator;
-import org.opencb.biodata.tools.variant.annotation.VariantGeneNameAnnotator;
-import org.opencb.biodata.tools.variant.annotation.VariantPolyphenSIFTAnnotator;
-import org.opencb.biodata.tools.variant.annotation.VariantSNPAnnotator;
-import org.opencb.biodata.tools.variant.filtering.VariantBedFilter;
-import org.opencb.biodata.tools.variant.filtering.VariantConsequenceTypeFilter;
-import org.opencb.biodata.tools.variant.filtering.VariantFilter;
-import org.opencb.biodata.tools.variant.filtering.VariantGeneFilter;
-import org.opencb.biodata.tools.variant.filtering.VariantRegionFilter;
-import org.opencb.biodata.tools.variant.filtering.VariantSnpFilter;
+import org.opencb.biodata.tools.variant.annotation.*;
+import org.opencb.biodata.tools.variant.filtering.*;
 import org.opencb.commons.containers.list.SortedList;
 import org.opencb.commons.run.Task;
 import org.opencb.variant.lib.runners.VariantRunner;
@@ -31,7 +17,14 @@ import org.opencb.variant.lib.runners.tasks.VariantEffectTask;
 import org.opencb.variant.lib.runners.tasks.VariantFilterTask;
 import org.opencb.variant.lib.runners.tasks.VariantStatsTask;
 
-//import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -196,7 +189,7 @@ public class VariantMain {
 
     private static List<VariantAnnotator> parseAnnotations(CommandLine commandLine) {
         List<VariantAnnotator> annots = new ArrayList<>();
-        
+
         if (commandLine.hasOption("annot-polyphen-sift")) {
             annots.add(new VariantPolyphenSIFTAnnotator());
         }
@@ -227,9 +220,9 @@ public class VariantMain {
             annots.add(new VariantGeneNameAnnotator());
         }
 
-//        if(commandLine.hasOption("annot-control")){
-//            annots.add(new VariantControlMongoAnnotator());
-//        }
+        if (commandLine.hasOption("annot-control")) {
+            annots.add(new VariantControlMongoAnnotator());
+        }
 
         return annots;
     }
