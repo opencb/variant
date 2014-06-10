@@ -11,11 +11,15 @@
 
     <artifactId>variant-cli</artifactId>
 
-    <packaging>war</packaging>
-    <name>bierapp</name>
+    <!--<packaging>war</packaging>-->
+    <name>variant-cli</name>
 
 
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
@@ -49,6 +53,26 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>appassembler-maven-plugin</artifactId>
+        </dependency>
+<!--        <dependency>
+            <groupId>org.opencb.opencga</groupId>
+            <artifactId>opencga-storage</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.17</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-multipart</artifactId>
+            <version>1.17</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -87,8 +111,8 @@
                         <configuration>
                             <target>
                                 <exec executable="cp">
-                                    <arg value="target/bierapp.war" />
-                                    <arg value="target/bierapp-${project.version}.war" />
+                                    <arg value="target/bierapp.war"/>
+                                    <arg value="target/bierapp-${project.version}.war"/>
                                 </exec>
                             </target>
                         </configuration>
@@ -112,6 +136,32 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.5</version>
+
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!--<assembleDirectory>target/variant</assembleDirectory>-->
+                    <repositoryName>libs</repositoryName>
+                    <programs>
+                        <program>
+                            <mainClass>org.opencb.variant.cli.VariantMain</mainClass>
+                            <name>variant.sh</name>
+                        </program>
+                    </programs>
+                </configuration>
+            </plugin>
+
         </plugins>
         <extensions>
             <extension>

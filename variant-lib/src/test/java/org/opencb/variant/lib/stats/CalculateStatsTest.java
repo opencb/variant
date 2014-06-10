@@ -5,8 +5,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.opencb.variant.lib.io.VariantStatsRunner;
-import org.opencb.variant.lib.io.variant.writers.VariantStatsFileDataWriter;
+import org.opencb.commons.bioformats.variant.VariantSource;
+
+import java.util.Arrays;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,6 +17,8 @@ import org.opencb.variant.lib.io.variant.writers.VariantStatsFileDataWriter;
  * To change this template use File | Settings | File Templates.
  */
 public class CalculateStatsTest {
+    @Rule
+    public TestName name = new TestName();
     private Long start, end;
     private String path = "/opt/data/";
     private String vcfFileName;
@@ -23,11 +26,6 @@ public class CalculateStatsTest {
     private String pathStats;
     private String dbFilename;
     private String dbFilters;
-
-
-    @Rule
-    public TestName name = new TestName();
-
 
     @Before
     public void setUp() throws Exception {
@@ -53,14 +51,10 @@ public class CalculateStatsTest {
     @Test
     public void testCalculateStatsList() throws Exception {
 
+        VariantSource study = new VariantSource("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList("hola", "adios"));
 
-        VariantStatsRunner vr = new VariantStatsRunner(vcfFileName, dbFilename, pedFileName);
-
-        vr.writer(new VariantStatsFileDataWriter(pathStats));
-        vr.setEffect(true);
-
-        vr.run();
-
+//        VariantRunner vr = new VariantStatsRunner(study, new VariantVcfDataReader(vcfFileName), null, new VariantVcfSqliteWriter(dbFilename));
+//        vr.run();
 
     }
 }

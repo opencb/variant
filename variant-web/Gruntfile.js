@@ -5,7 +5,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         // Metadata.
         meta: {
-            version: '2.0.0',
+            version: '2.0.4',
             jsorolla: {
                 dir: '/lib/jsorolla/',
                 //genome viewer contains cellbse and utils
@@ -35,6 +35,13 @@ module.exports = function (grunt) {
                 src: [
                     'src/variant-filter-widget.js',
                     'src/variant-effect-form.js',
+                    'src/variant-index-form.js',
+                    'src/variant-stats-form.js',
+                    'src/variant-gwas-form.js',
+                    'src/variant-merge-form.js',
+                    'src/variant-widget.js',
+                    'src/variant-stats-widget.js',
+                    'src/variant-gwas-widget.js',
                     'src/variant.js'
                 ],
                 dest: 'build/<%= meta.version %>/variant-<%= meta.version %>.js'
@@ -78,6 +85,9 @@ module.exports = function (grunt) {
                             'build/<%= meta.version %>/vendor/jquery.min.js',
                             'build/<%= meta.version %>/vendor/underscore*.js',
                             'build/<%= meta.version %>/vendor/backbone*.js',
+                            'build/<%= meta.version %>/vendor/bootstrap-scoped-dist/js/bootstrap.min.js',
+                            'build/<%= meta.version %>/vendor/typeahead.min.js',
+
                             'build/<%= meta.version %>/vendor/jquery.mousewheel*.js',
                             'build/<%= meta.version %>/vendor/gl-matrix-min*.js',
                             'build/<%= meta.version %>/vendor/ChemDoodleWeb*.js',
@@ -85,8 +95,7 @@ module.exports = function (grunt) {
                             'build/<%= meta.version %>/vendor/purl*.js',
                             'build/<%= meta.version %>/vendor/jquery.sha1*.js',
                             'build/<%= meta.version %>/vendor/jquery.qtip*.js',
-                            'build/<%= meta.version %>/vendor/rawdeflate*.js',
-                            'build/<%= meta.version %>/vendor/jquery-ui-1.10.3*/js/jquery-ui*min.js'
+                            'build/<%= meta.version %>/vendor/rawdeflate*.js'
 
                         ],
                         gv: [
@@ -102,7 +111,9 @@ module.exports = function (grunt) {
                         'vendor': [
                             'build/<%= meta.version %>/vendor/ChemDoodleWeb*.css',
                             'build/<%= meta.version %>/vendor/jquery.qtip*.css',
-                            'build/<%= meta.version %>/vendor/jquery-ui-1.10.3*/css/**/jquery-ui*min.css'
+                            'build/<%= meta.version %>/vendor/bootstrap-scoped-dist/css/bootstrap.min.css',
+                            'build/<%= meta.version %>/vendor/typeahead.js-bootstrap.css'
+
                         ]
                     }
                 }
@@ -135,8 +146,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-curl');
     grunt.loadNpmTasks('grunt-hub');
 
-    grunt.registerTask('log-deploy', 'Deploy path info', function (version) {
-        grunt.log.writeln("DEPLOY COMMAND: scp -r build/{version} cafetero@mem16:/httpd/bioinfo/www-apps/variant/");
+    grunt.registerTask('log-deploy', 'Deploy path info', function () {
+        grunt.log.writeln("DEPLOY COMMAND: scp -r build/" + grunt.config.data.meta.version + " cafetero@mem16:/httpd/bioinfo/www-apps/variant/");
     });
 
     // Default task.
