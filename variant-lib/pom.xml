@@ -6,7 +6,7 @@
     <parent>
         <artifactId>variant</artifactId>
         <groupId>org.opencb.variant</groupId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -46,6 +46,18 @@
             <artifactId>commons-lib</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.opencb.biodata</groupId>
+            <artifactId>formats</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opencb.biodata</groupId>
+            <artifactId>models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opencb.biodata</groupId>
+            <artifactId>tools</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
         </dependency>
@@ -66,4 +78,22 @@
             <artifactId>jersey-media-multipart</artifactId>
         </dependency>
     </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                        <testExcludes>
+                            <exclude>**/VariantAnnotRunnerTest.java</exclude>
+                            <exclude>**/VariantAnnotTaskTest.java</exclude>
+                        </testExcludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -3,9 +3,9 @@ package org.opencb.variant.lib.runners.tasks;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import org.opencb.commons.bioformats.variant.Variant;
-import org.opencb.commons.bioformats.variant.effect.EffectCalculator;
-import org.opencb.commons.bioformats.variant.utils.effect.VariantEffect;
+import org.opencb.biodata.models.variant.Variant;
+import org.opencb.biodata.models.variant.effect.VariantEffect;
+import org.opencb.biodata.tools.variant.EffectCalculator;
 import org.opencb.commons.run.Task;
 
 /**
