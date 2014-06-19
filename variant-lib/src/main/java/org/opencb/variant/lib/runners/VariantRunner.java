@@ -42,7 +42,6 @@ public class VariantRunner extends Runner<Variant> {
     protected void readerInit() {
         super.readerInit();
         source.addMetadata("variantFileHeader", ((VariantReader) reader).getHeader());
-        source.setSamples(((VariantReader) reader).getSampleNames());
     }
 
 }
