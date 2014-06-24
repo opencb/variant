@@ -198,10 +198,10 @@ public class VariantMain {
 //            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
 //            Map<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
 //            annots.add(new VariantControlAnnotator(infoPrefix, controlList));
-//        } else if (commandLine.hasOption("annot-control-file")) {
-//            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
-//            annots.add(new VariantControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-file")));
-//        }
+        if (commandLine.hasOption("annot-control-file")) {
+            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
+            annots.add(new VariantControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-file")));
+        }
 //
 //        if (commandLine.hasOption("annot-control-evs")) {
 //            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
