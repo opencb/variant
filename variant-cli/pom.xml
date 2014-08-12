@@ -5,7 +5,7 @@
     <parent>
         <artifactId>variant</artifactId>
         <groupId>org.opencb.variant</groupId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>org.opencb.variant</groupId>
             <artifactId>variant-lib</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.opencb.biodata</groupId>
@@ -112,27 +112,6 @@
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>server-tgz</id>
-                        <phase>install</phase>
-                        <configuration>
-                            <target>
-                                <exec executable="cp">
-                                    <arg value="target/bierapp.war"/>
-                                    <arg value="target/bierapp-${project.version}.war"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>

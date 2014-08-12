@@ -7,13 +7,43 @@
     <groupId>org.opencb.variant</groupId>
     <artifactId>variant</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <modules>
         <module>variant-lib</module>
         <module>variant-cli</module>
     </modules>
 
+    <mailingLists>
+        <mailingList>
+            <name>OpenCB Mailing List</name>
+            <archive>https://groups.google.com/forum/#!forum/opencb</archive>
+            <post>opencb@googlegroups.com</post>
+        </mailingList>
+    </mailingLists>
+
+    <developers>
+        <developer>
+            <id>imedina</id>
+            <name>Nacho</name>
+            <email>imedina@ebi.ac.uk</email>
+        </developer>
+        <developer>
+            <id>aaleman</id>
+            <name>Alejandro</name>
+            <email>aaleman@cipf.es</email>
+        </developer>
+        <developer>
+            <id>cyenyxe</id>
+            <name>Cristina</name>
+            <email>cyenyxe@ebi.ac.uk</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/opencb/variant</url>
+    </scm>
+    
     <properties>
         <java.version>1.7</java.version>
     </properties>
@@ -85,44 +115,12 @@
             <dependency>
                 <groupId>org.opencb.commons</groupId>
                 <artifactId>bioformats</artifactId>
-                <version>1.0.0</version>
+                <version>2.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.opencb.commons</groupId>
                 <artifactId>commons-lib</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opencb.biodata</groupId>
-                <artifactId>tools</artifactId>
-                <version>0.1</version>
-            </dependency>
-            
-            
-            <dependency>
-                <groupId>org.xerial</groupId>
-                <artifactId>sqlite-jdbc</artifactId>
-                <version>3.7.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>1.7.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey.core</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>2.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey.media</groupId>
-                <artifactId>jersey-media-multipart</artifactId>
-                <version>2.4</version>
+                <version>2.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.opencb.biodata</groupId>
@@ -139,16 +137,34 @@
                 <artifactId>tools</artifactId>
                 <version>0.1</version>
             </dependency>
-<!--            <dependency>
-                <groupId>org.opencb.opencga</groupId>
-                <artifactId>opencga-storage</artifactId>
-                <version>0.2.0</version>
+            
+            <dependency>
+                <groupId>org.xerial</groupId>
+                <artifactId>sqlite-jdbc</artifactId>
+                <version>3.7.2</version>
             </dependency>
             <dependency>
-                <groupId>org.opencb.opencga</groupId>
-                <artifactId>opencga-lib</artifactId>
-                <version>0.2.0</version>
-            </dependency>-->
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>1.7.5</version>
+            </dependency>
+            
+            <!-- TEST -->
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-multipart</artifactId>
+                <version>2.4</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
