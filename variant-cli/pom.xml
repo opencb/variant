@@ -5,7 +5,7 @@
     <parent>
         <artifactId>variant</artifactId>
         <groupId>org.opencb.variant</groupId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -31,15 +31,15 @@
         </dependency>
         <dependency>
             <groupId>org.opencb.biodata</groupId>
-            <artifactId>formats</artifactId>
+            <artifactId>biodata-formats</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opencb.biodata</groupId>
-            <artifactId>models</artifactId>
+            <artifactId>biodata-models</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opencb.biodata</groupId>
-            <artifactId>tools</artifactId>
+            <artifactId>biodata-tools</artifactId>
         </dependency>
         <dependency>
             <groupId>org.utgenome.thirdparty</groupId>
