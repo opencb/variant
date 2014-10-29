@@ -16,8 +16,16 @@ public class VariantRunner extends Runner<Variant> {
 
     protected VariantSource source;
 
-    public VariantRunner(VariantSource study, VariantReader reader, PedigreeReader pedReader, List<VariantWriter> writer, List<Task<Variant>> tasks) {
+    public VariantRunner(VariantSource study, VariantReader reader, PedigreeReader pedReader, 
+            List<VariantWriter> writer, List<Task<Variant>> tasks) {
         super(reader, writer, tasks);
+        this.source = study;
+        parsePhenotypes(pedReader);
+    }
+
+    public VariantRunner(VariantSource study, VariantReader reader, PedigreeReader pedReader, 
+            List<VariantWriter> writer, List<Task<Variant>> tasks, int batchSize) {
+        super(reader, writer, tasks, batchSize);
         this.source = study;
         parsePhenotypes(pedReader);
     }
