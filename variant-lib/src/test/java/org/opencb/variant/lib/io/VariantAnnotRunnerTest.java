@@ -5,8 +5,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.opencb.commons.bioformats.variant.annotators.VariantAnnotator;
-import org.opencb.commons.bioformats.variant.annotators.VariantControlAnnotator;
 import org.opencb.variant.lib.runners.VariantAnnotRunner;
 
 import java.io.IOException;

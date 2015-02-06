@@ -1,77 +1,69 @@
 package org.opencb.variant.lib.runners.tasks;
 
-import org.opencb.commons.bioformats.variant.Variant;
-import org.opencb.commons.bioformats.variant.VariantSource;
-import org.opencb.commons.bioformats.variant.stats.StatsCalculator;
-import org.opencb.commons.bioformats.variant.utils.stats.VariantGlobalStats;
-import org.opencb.commons.bioformats.variant.utils.stats.VariantStats;
-import org.opencb.commons.bioformats.variant.utils.stats.VariantStatsWrapper;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
-import org.opencb.commons.run.Task;
-
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
+import org.opencb.biodata.formats.variant.io.VariantReader;
+import org.opencb.biodata.models.variant.VariantSourceEntry;
+import org.opencb.biodata.models.variant.Variant;
+import org.opencb.biodata.models.variant.VariantSource;
+import org.opencb.biodata.models.variant.stats.VariantSourceStats;
+import org.opencb.biodata.models.variant.stats.VariantAggregatedStats;
+import org.opencb.biodata.models.variant.stats.VariantStats;
+import org.opencb.commons.run.Task;
 
 /**
  * @author Alejandro Aleman Ramos <aaleman@cipf.es>
+ * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
 public class VariantStatsTask extends Task<Variant> {
 
     private VariantReader reader;
-    private VariantSource study;
-    private VariantStatsWrapper stats;
+    private VariantSource source;
+    private VariantSourceStats stats;
 
     public VariantStatsTask(VariantReader reader, VariantSource study) {
         super();
         this.reader = reader;
-        this.study = study;
-        stats = new VariantStatsWrapper();
-
+        this.source = study;
+        stats = new VariantSourceStats(study.getFileId(), study.getStudyId());
     }
 
     public VariantStatsTask(VariantReader reader, VariantSource study, int priority) {
         super(priority);
         this.reader = reader;
-        this.study = study;
-        stats = new VariantStatsWrapper();
-
+        this.source = study;
+        stats = new VariantSourceStats(study.getFileId(), study.getStudyId());
     }
 
     @Override
     public boolean apply(List<Variant> batch) throws IOException {
-
-        stats.setSampleNames(reader.getSampleNames());
-        stats.setVariantStats(StatsCalculator.variantStats(batch, reader.getSampleNames(), study.getPedigree()));
-        stats.addGlobalStats(StatsCalculator.globalStats(stats.getVariantStats()));
-        stats.addSampleStats(StatsCalculator.sampleStats(batch, reader.getSampleNames(), study.getPedigree()));
-
-        if (study.getPedigree() != null) {
-            stats.addGroupStats("phenotype", StatsCalculator.groupStats(batch, study.getPedigree(), "phenotype"));
-            stats.addGroupStats("family", StatsCalculator.groupStats(batch, study.getPedigree(), "family"));
-            stats.addSampleGroupStats("phenotype", StatsCalculator.sampleGroupStats(batch, study.getPedigree(), "phenotype"));
-            stats.addSampleGroupStats("family", StatsCalculator.sampleGroupStats(batch, study.getPedigree(), "family"));
+//        VariantStats.calculateStatsForVariantsList(batch, source.getPedigree());
+        for (Variant variant : batch) {
+            for (VariantSourceEntry file : variant.getSourceEntries().values()) {
+                VariantStats variantStats = null;
+                switch (source.getAggregation()) {
+                    case NONE:
+                        variantStats = new VariantStats(variant);
+                        break;
+                    case BASIC:
+                        variantStats = new VariantAggregatedStats(variant);
+                        break;
+                    case EVS:
+                        // TODO Should create an object!
+                        break;
+                }
+                file.setStats(variantStats.calculate(file.getSamplesData(), file.getAttributes(), source.getPedigree()));
+            }
         }
-
-        Iterator<Variant> variantIterator = batch.iterator();
-        Iterator<VariantStats> statsIterator = stats.getVariantStats().iterator();
-
-        while (variantIterator.hasNext() && statsIterator.hasNext()) {
-            variantIterator.next().setStats(statsIterator.next());
-        }
-
-
+        
+        stats.updateFileStats(batch);
+        stats.updateSampleStats(batch, source.getPedigree());
         return true;
     }
 
     @Override
     public boolean post() {
-
-        VariantGlobalStats finalGlobalStats = stats.getFinalGlobalStats();
-
-        study.setStats(finalGlobalStats);
-
+        source.setStats(stats.getFileStats());
         return true;
-
     }
 }

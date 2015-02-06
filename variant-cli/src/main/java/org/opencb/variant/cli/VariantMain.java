@@ -1,14 +1,30 @@
 package org.opencb.variant.cli;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
 import org.apache.commons.cli.*;
-import org.opencb.commons.bioformats.variant.Variant;
-import org.opencb.commons.bioformats.variant.VariantSource;
-import org.opencb.commons.bioformats.variant.annotators.*;
-import org.opencb.commons.bioformats.variant.filters.*;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.readers.VariantVcfReader;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantVcfDataWriter;
-import org.opencb.commons.bioformats.variant.vcf4.io.writers.VariantWriter;
+import org.opencb.biodata.formats.variant.io.VariantReader;
+import org.opencb.biodata.formats.variant.io.VariantWriter;
+import org.opencb.biodata.formats.variant.vcf4.io.VariantVcfDataWriter;
+import org.opencb.biodata.formats.variant.vcf4.io.VariantVcfReader;
+import org.opencb.biodata.models.variant.Variant;
+import org.opencb.biodata.models.variant.VariantSource;
+import org.opencb.biodata.tools.variant.annotation.VariantAnnotator;
+import org.opencb.biodata.tools.variant.annotation.VariantConsequenceTypeAnnotator;
+import org.opencb.biodata.tools.variant.annotation.VariantControlAnnotator;
+import org.opencb.biodata.tools.variant.annotation.VariantControlMongoAnnotator;
+import org.opencb.biodata.tools.variant.annotation.VariantGenesAnnotator;
+import org.opencb.biodata.tools.variant.annotation.VariantPolyphenSIFTAnnotator;
+import org.opencb.biodata.tools.variant.annotation.VariantSNPAnnotator;
+import org.opencb.biodata.tools.variant.filtering.VariantBedFilter;
+import org.opencb.biodata.tools.variant.filtering.VariantConsequenceTypeFilter;
+import org.opencb.biodata.tools.variant.filtering.VariantFilter;
+import org.opencb.biodata.tools.variant.filtering.VariantGeneFilter;
+import org.opencb.biodata.tools.variant.filtering.VariantRegionFilter;
+import org.opencb.biodata.tools.variant.filtering.VariantSnpFilter;
 import org.opencb.commons.containers.list.SortedList;
 import org.opencb.commons.run.Task;
 import org.opencb.variant.lib.runners.VariantRunner;
@@ -17,20 +33,10 @@ import org.opencb.variant.lib.runners.tasks.VariantEffectTask;
 import org.opencb.variant.lib.runners.tasks.VariantFilterTask;
 import org.opencb.variant.lib.runners.tasks.VariantStatsTask;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
-
-//import org.opencb.opencga.storage.variant.VariantVcfSqliteWriter;
 
 /**
- * Created with IntelliJ IDEA.
- * User: aaleman
- * Date: 9/5/13
- * Time: 11:33 AM
- * To change this template use File | Settings | File Templates.
+ * @author Alejandro Aleman Ramos <aaleman@cipf.es>
+ * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
 public class VariantMain {
 
@@ -144,10 +150,9 @@ public class VariantMain {
         List<Task<Variant>> taskList = new SortedList<>();
         List<VariantWriter> writers = new ArrayList<>();
 
-        VariantSource study = new VariantSource("study1", "s1", "Study 1", Arrays.asList("Alejandro", "Cristina"), Arrays.asList(inputFile, pedFile));
-        VariantReader reader = new VariantVcfReader(inputFile);
+        VariantSource study = new VariantSource(inputFile, "f1", "s1", "Study 1");
+        VariantReader reader = new VariantVcfReader(study, inputFile);
         VariantWriter writer = new VariantVcfDataWriter(reader, outputFile);
-
 
         List<VariantFilter> filters = parseFilters(commandLine);
         List<VariantAnnotator> annots = parseAnnotations(commandLine);
@@ -194,19 +199,19 @@ public class VariantMain {
             annots.add(new VariantPolyphenSIFTAnnotator());
         }
 
-        if (commandLine.hasOption("annot-control-list")) {
-            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
-            Map<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
-            annots.add(new VariantControlAnnotator(infoPrefix, controlList));
-        } else if (commandLine.hasOption("annot-control-file")) {
+//        if (commandLine.hasOption("annot-control-list")) {
+//            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
+//            Map<String, String> controlList = getControlList(commandLine.getOptionValue("annot-control-list"));
+//            annots.add(new VariantControlAnnotator(infoPrefix, controlList));
+        if (commandLine.hasOption("annot-control-file")) {
             String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "CONTROL";
             annots.add(new VariantControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-file")));
         }
-
-        if (commandLine.hasOption("annot-control-evs")) {
-            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
-            annots.add(new VariantEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
-        }
+//
+//        if (commandLine.hasOption("annot-control-evs")) {
+//            String infoPrefix = commandLine.hasOption("annot-control-prefix") ? commandLine.getOptionValue("annot-control-prefix") : "EVS";
+//            annots.add(new VariantEVSControlAnnotator(infoPrefix, commandLine.getOptionValue("annot-control-evs")));
+//        }
 
         if (commandLine.hasOption("annot-snp")) {
             annots.add(new VariantSNPAnnotator());
@@ -217,10 +222,10 @@ public class VariantMain {
         }
 
         if (commandLine.hasOption("annot-genename")) {
-            annots.add(new VariantGeneNameAnnotator());
+            annots.add(new VariantGenesAnnotator());
         }
 
-        if(commandLine.hasOption("annot-control")){
+        if (commandLine.hasOption("annot-control")) {
             annots.add(new VariantControlMongoAnnotator());
         }
 
@@ -252,9 +257,6 @@ public class VariantMain {
             filters.add(new VariantGeneFilter(new File(commandLine.getOptionValue("filter-gene-file"))));
         }
 
-        if (commandLine.hasOption("filter-retain")) {
-            filters.add(new VariantRetainFilter(commandLine.getOptionValue("filter-retain")));
-        }
         return filters;
     }
 
